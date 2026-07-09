@@ -1,0 +1,266 @@
+object ChangeInfoO: TChangeInfoO
+  Left = 608
+  Top = 177
+  Width = 1305
+  Height = 675
+  Caption = 'Change Info Kho De SQ'
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'MS Sans Serif'
+  Font.Style = []
+  OldCreateOrder = False
+  OnClose = FormClose
+  OnDestroy = FormDestroy
+  PixelsPerInch = 96
+  TextHeight = 13
+  object Panel1: TPanel
+    Left = 0
+    Top = 0
+    Width = 1289
+    Height = 74
+    Align = alTop
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -13
+    Font.Name = 'MS Sans Serif'
+    Font.Style = []
+    ParentFont = False
+    TabOrder = 0
+    object Label1: TLabel
+      Left = 48
+      Top = 16
+      Width = 67
+      Height = 16
+      Caption = 'Don Hang :'
+    end
+    object Label2: TLabel
+      Left = 48
+      Top = 48
+      Width = 58
+      Height = 16
+      Caption = 'Barcode :'
+    end
+    object Label3: TLabel
+      Left = 304
+      Top = 16
+      Width = 32
+      Height = 16
+      Caption = 'Size :'
+    end
+    object Button1: TButton
+      Left = 464
+      Top = 21
+      Width = 113
+      Height = 33
+      Hint = #39023#31034#26597#35426
+      Caption = 'QUERY'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -13
+      Font.Name = 'MS Sans Serif'
+      Font.Style = [fsBold]
+      ParentFont = False
+      TabOrder = 0
+      OnClick = Button1Click
+    end
+    object Edit1: TEdit
+      Left = 120
+      Top = 8
+      Width = 169
+      Height = 24
+      TabOrder = 1
+    end
+    object Button2: TButton
+      Left = 584
+      Top = 21
+      Width = 113
+      Height = 33
+      Hint = #39023#31034#26597#35426
+      Caption = 'Save'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -13
+      Font.Name = 'MS Sans Serif'
+      Font.Style = [fsBold]
+      ParentFont = False
+      TabOrder = 2
+      OnClick = Button2Click
+    end
+    object Edit2: TEdit
+      Left = 120
+      Top = 40
+      Width = 169
+      Height = 24
+      TabOrder = 3
+    end
+    object Edit3: TEdit
+      Left = 344
+      Top = 8
+      Width = 57
+      Height = 24
+      TabOrder = 4
+    end
+  end
+  object DBGridEh1: TDBGridEh
+    Left = 0
+    Top = 74
+    Width = 1289
+    Height = 562
+    Align = alClient
+    DataSource = DS1
+    EvenRowColor = clYellow
+    Flat = False
+    FooterColor = clWindow
+    FooterFont.Charset = DEFAULT_CHARSET
+    FooterFont.Color = clWindowText
+    FooterFont.Height = -11
+    FooterFont.Name = 'MS Sans Serif'
+    FooterFont.Style = []
+    FooterRowCount = 1
+    OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghMultiSortMarking, dghDialogFind]
+    SumList.Active = True
+    TabOrder = 1
+    TitleFont.Charset = DEFAULT_CHARSET
+    TitleFont.Color = clWindowText
+    TitleFont.Height = -11
+    TitleFont.Name = 'MS Sans Serif'
+    TitleFont.Style = []
+    Columns = <
+      item
+        EditButtons = <>
+        FieldName = 'ID'
+        Footers = <>
+        ReadOnly = True
+      end
+      item
+        EditButtons = <>
+        FieldName = 'CODEBAR'
+        Footers = <>
+        ReadOnly = True
+      end
+      item
+        EditButtons = <>
+        FieldName = 'MA_KE'
+        Footers = <>
+      end
+      item
+        EditButtons = <>
+        FieldName = 'Qty'
+        Footers = <>
+      end
+      item
+        EditButtons = <>
+        FieldName = 'Status'
+        Footers = <>
+        ReadOnly = True
+      end
+      item
+        EditButtons = <>
+        FieldName = 'USERID'
+        Footers = <>
+        ReadOnly = True
+      end
+      item
+        EditButtons = <>
+        FieldName = 'USERDATE'
+        Footers = <>
+        ReadOnly = True
+      end
+      item
+        EditButtons = <>
+        FieldName = 'DEPNO'
+        Footers = <>
+        ReadOnly = True
+      end
+      item
+        EditButtons = <>
+        FieldName = 'ysbh'
+        Footers = <>
+        ReadOnly = True
+      end
+      item
+        EditButtons = <>
+        FieldName = 'xxcc'
+        Footers = <>
+        ReadOnly = True
+      end>
+  end
+  object Query1: TQuery
+    DatabaseName = 'DB'
+    SQL.Strings = (
+      
+        'select smzl_make.*,smdd.ysbh,smddss.xxcc from smzl_make inner jo' +
+        'in smddss on smddss.codebar=smzl_make.codebar'
+      
+        ' left join smdd on smdd.ddbh=smddss.ddbh and smdd.gxlb=smddss.gx' +
+        'lb'
+      
+        'where status in ('#39'in'#39','#39'out'#39') and smzl_make.codebar in (select co' +
+        'debar from smddss where ddbh like'#39'%%'#39') and 1=2'
+      'order by smzl_make.ID, smzl_make.status')
+    UpdateObject = UpSMZL_MAKE
+    Left = 208
+    Top = 136
+    object Query1ID: TFloatField
+      FieldName = 'ID'
+    end
+    object Query1CODEBAR: TStringField
+      FieldName = 'CODEBAR'
+      FixedChar = True
+    end
+    object Query1MA_KE: TStringField
+      FieldName = 'MA_KE'
+      FixedChar = True
+      Size = 10
+    end
+    object Query1Qty: TIntegerField
+      FieldName = 'Qty'
+    end
+    object Query1Status: TStringField
+      FieldName = 'Status'
+      FixedChar = True
+      Size = 10
+    end
+    object Query1USERID: TStringField
+      FieldName = 'USERID'
+      FixedChar = True
+      Size = 10
+    end
+    object Query1USERDATE: TDateTimeField
+      FieldName = 'USERDATE'
+    end
+    object Query1DEPNO: TStringField
+      FieldName = 'DEPNO'
+      FixedChar = True
+      Size = 10
+    end
+    object Query1ysbh: TStringField
+      FieldName = 'ysbh'
+      FixedChar = True
+      Size = 15
+    end
+    object Query1xxcc: TStringField
+      FieldName = 'xxcc'
+      FixedChar = True
+      Size = 6
+    end
+  end
+  object DS1: TDataSource
+    DataSet = Query1
+    Left = 248
+    Top = 136
+  end
+  object UpSMZL_MAKE: TUpdateSQL
+    ModifySQL.Strings = (
+      'update SMZL_MAKE'
+      'set'
+      '  MA_KE = :MA_KE,'
+      '  Qty = :Qty'
+      'where'
+      'ID = :ID')
+    Left = 292
+    Top = 136
+  end
+end

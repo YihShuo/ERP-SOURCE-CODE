@@ -1,0 +1,1020 @@
+object BomUsing: TBomUsing
+  Left = 385
+  Top = 170
+  Width = 1447
+  Height = 675
+  Caption = 'Bom Using'
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'MS Sans Serif'
+  Font.Style = []
+  FormStyle = fsMDIChild
+  OldCreateOrder = False
+  Position = poDefault
+  Visible = True
+  WindowState = wsMaximized
+  OnClose = FormClose
+  OnDestroy = FormDestroy
+  PixelsPerInch = 96
+  TextHeight = 13
+  object Panel1: TPanel
+    Left = 0
+    Top = 0
+    Width = 1431
+    Height = 65
+    Align = alTop
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -15
+    Font.Name = 'MS Sans Serif'
+    Font.Style = []
+    ParentFont = False
+    TabOrder = 0
+    object BB2: TBitBtn
+      Left = 57
+      Top = 8
+      Width = 49
+      Height = 49
+      Hint = 'Insert one New Record'
+      Caption = 'Insert'
+      Enabled = False
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -15
+      Font.Name = 'Arial'
+      Font.Style = []
+      ParentFont = False
+      TabOrder = 1
+      Glyph.Data = {
+        76010000424D7601000000000000760000002800000020000000100000000100
+        04000000000000010000130B0000130B00001000000000000000000000000000
+        800000800000008080008000000080008000808000007F7F7F00BFBFBF000000
+        FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00333333333333
+        33333333FF33333333FF333993333333300033377F3333333777333993333333
+        300033F77FFF3333377739999993333333333777777F3333333F399999933333
+        33003777777333333377333993333333330033377F3333333377333993333333
+        3333333773333333333F333333333333330033333333F33333773333333C3333
+        330033333337FF3333773333333CC333333333FFFFF77FFF3FF33CCCCCCCCCC3
+        993337777777777F77F33CCCCCCCCCC3993337777777777377333333333CC333
+        333333333337733333FF3333333C333330003333333733333777333333333333
+        3000333333333333377733333333333333333333333333333333}
+      Layout = blGlyphTop
+      NumGlyphs = 2
+    end
+    object BB3: TBitBtn
+      Left = 106
+      Top = 8
+      Width = 48
+      Height = 49
+      Hint = 'Delete one Record'
+      Caption = 'Delete'
+      Enabled = False
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -15
+      Font.Name = 'Arial'
+      Font.Style = []
+      ParentFont = False
+      TabOrder = 2
+      Glyph.Data = {
+        76010000424D7601000000000000760000002800000020000000100000000100
+        04000000000000010000130B0000130B00001000000000000000000000000000
+        800000800000008080008000000080008000808000007F7F7F00BFBFBF000000
+        FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00333333333333
+        333333333333333333FF33333333333330003333333333333777333333333333
+        300033FFFFFF3333377739999993333333333777777F3333333F399999933333
+        3300377777733333337733333333333333003333333333333377333333333333
+        3333333333333333333F333333333333330033333F33333333773333C3333333
+        330033337F3333333377333CC3333333333333F77FFFFFFF3FF33CCCCCCCCCC3
+        993337777777777F77F33CCCCCCCCCC399333777777777737733333CC3333333
+        333333377F33333333FF3333C333333330003333733333333777333333333333
+        3000333333333333377733333333333333333333333333333333}
+      Layout = blGlyphTop
+      NumGlyphs = 2
+    end
+    object BB4: TBitBtn
+      Left = 154
+      Top = 8
+      Width = 49
+      Height = 49
+      Hint = 'Modify Current'
+      Caption = 'Modify'
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -15
+      Font.Name = 'Arial'
+      Font.Style = []
+      ParentFont = False
+      TabOrder = 3
+      OnClick = BB4Click
+      Glyph.Data = {
+        76010000424D7601000000000000760000002800000020000000100000000100
+        04000000000000010000120B0000120B00001000000000000000000000000000
+        800000800000008080008000000080008000808000007F7F7F00BFBFBF000000
+        FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00500005000555
+        555557777F777555F55500000000555055557777777755F75555005500055055
+        555577F5777F57555555005550055555555577FF577F5FF55555500550050055
+        5555577FF77577FF555555005050110555555577F757777FF555555505099910
+        555555FF75777777FF555005550999910555577F5F77777775F5500505509990
+        3055577F75F77777575F55005055090B030555775755777575755555555550B0
+        B03055555F555757575755550555550B0B335555755555757555555555555550
+        BBB35555F55555575F555550555555550BBB55575555555575F5555555555555
+        50BB555555555555575F555555555555550B5555555555555575}
+      Layout = blGlyphTop
+      NumGlyphs = 2
+    end
+    object BB5: TBitBtn
+      Left = 203
+      Top = 8
+      Width = 49
+      Height = 49
+      Hint = 'Save Current'
+      Caption = 'Save'
+      Enabled = False
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -15
+      Font.Name = 'Arial'
+      Font.Style = []
+      ParentFont = False
+      TabOrder = 4
+      OnClick = BB5Click
+      Glyph.Data = {
+        76010000424D7601000000000000760000002800000020000000100000000100
+        04000000000000010000120B0000120B00001000000000000000000000000000
+        800000800000008080008000000080008000808000007F7F7F00BFBFBF000000
+        FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00555555555555
+        555555555555555555555555555555555555555555FF55555555555559055555
+        55555555577FF5555555555599905555555555557777F5555555555599905555
+        555555557777FF5555555559999905555555555777777F555555559999990555
+        5555557777777FF5555557990599905555555777757777F55555790555599055
+        55557775555777FF5555555555599905555555555557777F5555555555559905
+        555555555555777FF5555555555559905555555555555777FF55555555555579
+        05555555555555777FF5555555555557905555555555555777FF555555555555
+        5990555555555555577755555555555555555555555555555555}
+      Layout = blGlyphTop
+      NumGlyphs = 2
+    end
+    object BB6: TBitBtn
+      Left = 252
+      Top = 8
+      Width = 49
+      Height = 49
+      Hint = 'Cancel'
+      Caption = 'Cancel'
+      Enabled = False
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -15
+      Font.Name = 'Arial'
+      Font.Style = []
+      ParentFont = False
+      TabOrder = 5
+      Glyph.Data = {
+        76010000424D7601000000000000760000002800000020000000100000000100
+        04000000000000010000130B0000130B00001000000000000000000000000000
+        800000800000008080008000000080008000808000007F7F7F00BFBFBF000000
+        FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00333333333333
+        333333333333333333333333333333333333333FFF33FF333FFF339993370733
+        999333777FF37FF377733339993000399933333777F777F77733333399970799
+        93333333777F7377733333333999399933333333377737773333333333990993
+        3333333333737F73333333333331013333333333333777FF3333333333910193
+        333333333337773FF3333333399000993333333337377737FF33333399900099
+        93333333773777377FF333399930003999333337773777F777FF339993370733
+        9993337773337333777333333333333333333333333333333333333333333333
+        3333333333333333333333333333333333333333333333333333}
+      Layout = blGlyphTop
+      NumGlyphs = 2
+    end
+    object BB7: TBitBtn
+      Left = 301
+      Top = 8
+      Width = 50
+      Height = 49
+      Hint = 'Exit Current Form'
+      Caption = 'Exit'
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -15
+      Font.Name = 'Arial'
+      Font.Style = []
+      ParentFont = False
+      TabOrder = 6
+      Glyph.Data = {
+        76010000424D7601000000000000760000002800000020000000100000000100
+        04000000000000010000120B0000120B00001000000000000000000000000000
+        800000800000008080008000000080008000808000007F7F7F00BFBFBF000000
+        FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF0033BBBBBBBBBB
+        BB33337777777777777F33BB00BBBBBBBB33337F77333333F37F33BB0BBBBBB0
+        BB33337F73F33337FF7F33BBB0BBBB000B33337F37FF3377737F33BBB00BB00B
+        BB33337F377F3773337F33BBBB0B00BBBB33337F337F7733337F33BBBB000BBB
+        BB33337F33777F33337F33EEEE000EEEEE33337F3F777FFF337F33EE0E80000E
+        EE33337F73F77773337F33EEE0800EEEEE33337F37377F33337F33EEEE000EEE
+        EE33337F33777F33337F33EEEEE00EEEEE33337F33377FF3337F33EEEEEE00EE
+        EE33337F333377F3337F33EEEEEE00EEEE33337F33337733337F33EEEEEEEEEE
+        EE33337FFFFFFFFFFF7F33EEEEEEEEEEEE333377777777777773}
+      Layout = blGlyphTop
+      NumGlyphs = 2
+    end
+    object BB1: TBitBtn
+      Left = 8
+      Top = 8
+      Width = 49
+      Height = 49
+      Caption = 'Query'
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -15
+      Font.Name = 'Arial'
+      Font.Style = []
+      ParentFont = False
+      TabOrder = 0
+      Glyph.Data = {
+        76010000424D7601000000000000760000002800000020000000100000000100
+        04000000000000010000130B0000130B00001000000000000000000000000000
+        800000800000008080008000000080008000808000007F7F7F00BFBFBF000000
+        FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00333333333333
+        333333333333333FF3FF3333333333CC30003333333333773777333333333C33
+        3000333FF33337F33777339933333C3333333377F33337F3333F339933333C33
+        33003377333337F33377333333333C333300333F333337F33377339333333C33
+        3333337FF3333733333F33993333C33333003377FF33733333773339933C3333
+        330033377FF73F33337733339933C33333333FF377F373F3333F993399333C33
+        330077F377F337F33377993399333C33330077FF773337F33377399993333C33
+        33333777733337F333FF333333333C33300033333333373FF7773333333333CC
+        3000333333333377377733333333333333333333333333333333}
+      Layout = blGlyphTop
+      NumGlyphs = 2
+    end
+    object bbt6: TBitBtn
+      Left = 370
+      Top = 8
+      Width = 49
+      Height = 49
+      Hint = 'Modify Current'
+      Caption = 'Excel'
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -15
+      Font.Name = 'Arial'
+      Font.Style = []
+      ParentFont = False
+      TabOrder = 7
+      OnClick = bbt6Click
+      Glyph.Data = {
+        76010000424D7601000000000000760000002800000020000000100000000100
+        04000000000000010000130B0000130B00001000000000000000000000000000
+        800000800000008080008000000080008000808000007F7F7F00BFBFBF000000
+        FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF0033333333B333
+        333B33FF33337F3333F73BB3777BB7777BB3377FFFF77FFFF77333B000000000
+        0B3333777777777777333330FFFFFFFF07333337F33333337F333330FFFFFFFF
+        07333337F3FF3FFF7F333330F00F000F07333337F77377737F333330FFFFFFFF
+        07333FF7F3FFFF3F7FFFBBB0F0000F0F0BB37777F7777373777F3BB0FFFFFFFF
+        0BBB3777F3FF3FFF77773330F00F000003333337F773777773333330FFFF0FF0
+        33333337F3FF7F37F3333330F08F0F0B33333337F7737F77FF333330FFFF003B
+        B3333337FFFF77377FF333B000000333BB33337777777F3377FF3BB3333BB333
+        3BB33773333773333773B333333B3333333B7333333733333337}
+      Layout = blGlyphTop
+      NumGlyphs = 2
+    end
+    object Button1: TButton
+      Left = 424
+      Top = 8
+      Width = 49
+      Height = 49
+      Caption = 'Import'
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -15
+      Font.Name = 'Arial'
+      Font.Style = []
+      ParentFont = False
+      TabOrder = 8
+      Visible = False
+    end
+  end
+  object PC1: TPageControl
+    Left = 0
+    Top = 65
+    Width = 1431
+    Height = 571
+    ActivePage = TabSheet1
+    Align = alClient
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -15
+    Font.Name = 'MS Sans Serif'
+    Font.Style = []
+    ParentFont = False
+    TabOrder = 1
+    object TS1: TTabSheet
+      Caption = 'BOM'
+      ImageIndex = 1
+      object DBGrid1: TDBGridEh
+        Left = 0
+        Top = 49
+        Width = 1423
+        Height = 491
+        Align = alClient
+        DataSource = DS1
+        Flat = False
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -15
+        Font.Name = 'MS Sans Serif'
+        Font.Style = []
+        FooterColor = clWindow
+        FooterFont.Charset = DEFAULT_CHARSET
+        FooterFont.Color = clWindowText
+        FooterFont.Height = -12
+        FooterFont.Name = 'MS Sans Serif'
+        FooterFont.Style = []
+        FooterRowCount = 1
+        FrozenCols = 4
+        OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghMultiSortMarking, dghDialogFind]
+        ParentFont = False
+        SumList.Active = True
+        TabOrder = 0
+        TitleFont.Charset = DEFAULT_CHARSET
+        TitleFont.Color = clWindowText
+        TitleFont.Height = -15
+        TitleFont.Name = 'MS Sans Serif'
+        TitleFont.Style = []
+        UseMultiTitle = True
+        OnGetCellParams = DBGrid1GetCellParams
+        Columns = <
+          item
+            EditButtons = <>
+            FieldName = 'ARTICLE'
+            Footers = <>
+          end
+          item
+            EditButtons = <>
+            FieldName = 'XH'
+            Footer.ValueType = fvtCount
+            Footers = <>
+            Title.Caption = 'XH|'#24207#34399
+            Width = 26
+          end
+          item
+            EditButtons = <>
+            FieldName = 'BWBH'
+            Footers = <>
+            Title.Caption = 'Part|'#37096#20301#32232#34399
+            Title.TitleButton = True
+            Width = 68
+          end
+          item
+            EditButtons = <>
+            FieldName = 'BWMC'
+            Footers = <>
+            Title.Caption = 'PartName|'#37096#20301#21517#31281
+            Width = 140
+          end
+          item
+            EditButtons = <>
+            FieldName = 'DType'
+            Footers = <>
+            Visible = False
+          end
+          item
+            EditButtons = <>
+            FieldName = 'CLBH'
+            Footers = <>
+            Title.Caption = 'Material|'#26448#26009#32232#34399
+            Title.TitleButton = True
+            Width = 107
+          end
+          item
+            EditButtons = <>
+            FieldName = 'CLMC'
+            Footers = <>
+            Title.Caption = 'Material|'#26448#26009#21517#31281
+            Width = 376
+          end
+          item
+            EditButtons = <>
+            FieldName = 'DWBH'
+            Footers = <>
+            Title.Caption = 'Unit|'#21934#20301
+            Width = 47
+          end
+          item
+            EditButtons = <>
+            FieldName = 'LYCC'
+            Footers = <>
+            Title.Caption = 'CC|'#21015#21360#23610#23544
+            Width = 60
+          end
+          item
+            EditButtons = <>
+            FieldName = 'CLSL'
+            Footers = <>
+            Title.Caption = 'Usage|'#29992#37327
+            Width = 59
+          end
+          item
+            EditButtons = <>
+            FieldName = 'Qty'
+            Footers = <>
+          end
+          item
+            Color = clYellow
+            EditButtons = <>
+            FieldName = 'Formula'
+            Footers = <>
+            Width = 120
+          end
+          item
+            EditButtons = <>
+            FieldName = 'DIFF'
+            Footers = <>
+            Title.Caption = 'DIFF|'#29992#37327#24046#24322
+          end
+          item
+            DisplayFormat = '0%'
+            EditButtons = <>
+            FieldName = 'Variance'
+            Footers = <>
+          end
+          item
+            EditButtons = <>
+            FieldName = 'LOSS'
+            Footers = <>
+            Width = 47
+          end
+          item
+            EditButtons = <>
+            FieldName = 'CCQQ'
+            Footers = <>
+            Title.Caption = 'SizeRange|'#23610#23544#36215
+            Width = 50
+          end
+          item
+            EditButtons = <>
+            FieldName = 'CCQZ'
+            Footers = <>
+            Title.Caption = 'SizeRange|'#23610#23544#36804
+            Width = 58
+          end
+          item
+            EditButtons = <>
+            FieldName = 'BWLB'
+            Footers = <>
+            Title.Caption = 'UnitClass|'#37096#20301#39006#21029
+            Width = 68
+          end
+          item
+            EditButtons = <>
+            FieldName = 'ZSYWJC'
+            Footers = <>
+            Title.Caption = 'Supplier|'#24288#21830#21517#31281
+            Title.TitleButton = True
+            Width = 102
+          end
+          item
+            EditButtons = <>
+            FieldName = 'CLZMLB'
+            Footers = <>
+            Title.Caption = 'Material Class|'#26448#26009#23376#27597#39006#21029
+            Width = 90
+          end
+          item
+            EditButtons = <>
+            FieldName = 'BWZW'
+            Footers = <>
+            Title.Caption = 'UnitName|'#37096#20301#20013#25991#35498#26126
+            Width = 100
+          end
+          item
+            EditButtons = <>
+            FieldName = 'CLZW'
+            Footers = <>
+            Title.Caption = 'MaterialName|'#26448#26009#20013#25991
+            Width = 312
+          end
+          item
+            EditButtons = <>
+            FieldName = 'userdate'
+            Footers = <>
+            Title.Caption = #30064#21205#26085#26399'|UserDate'
+            Width = 72
+          end
+          item
+            Alignment = taCenter
+            EditButtons = <>
+            FieldName = 'Size_Goc'
+            Footers = <>
+            Title.Caption = 'StandardSize|'#27161#28310#23610#23544
+            Width = 100
+          end
+          item
+            EditButtons = <>
+            FieldName = 'Costing_Size'
+            Footers = <>
+            Width = 100
+          end>
+      end
+      object Panel2: TPanel
+        Left = 0
+        Top = 0
+        Width = 1423
+        Height = 49
+        Align = alTop
+        TabOrder = 1
+        object Label5: TLabel
+          Left = 183
+          Top = 10
+          Width = 69
+          Height = 16
+          Alignment = taRightJustify
+          AutoSize = False
+          Caption = 'BWBH:'
+        end
+        object Label1: TLabel
+          Left = 24
+          Top = 8
+          Width = 40
+          Height = 16
+          Caption = 'Article:'
+        end
+        object BWBH: TEdit
+          Left = 263
+          Top = 8
+          Width = 134
+          Height = 24
+          CharCase = ecUpperCase
+          Color = clYellow
+          TabOrder = 0
+        end
+        object Button2: TButton
+          Left = 424
+          Top = 6
+          Width = 74
+          Height = 33
+          Caption = 'QUERY'
+          TabOrder = 1
+          OnClick = Button2Click
+        end
+        object Edit1: TEdit
+          Left = 72
+          Top = 8
+          Width = 121
+          Height = 24
+          Color = clYellow
+          TabOrder = 2
+        end
+      end
+    end
+    object TabSheet1: TTabSheet
+      Caption = 'Season VN FOB'
+      ImageIndex = 1
+      object Panel3: TPanel
+        Left = 0
+        Top = 0
+        Width = 1423
+        Height = 49
+        Align = alTop
+        TabOrder = 0
+        object Label2: TLabel
+          Left = 200
+          Top = 10
+          Width = 52
+          Height = 16
+          Alignment = taRightJustify
+          AutoSize = False
+          Caption = 'CLBH:'
+        end
+        object Label3: TLabel
+          Left = 24
+          Top = 8
+          Width = 40
+          Height = 16
+          Caption = 'Article:'
+        end
+        object Label4: TLabel
+          Left = 416
+          Top = 16
+          Width = 41
+          Height = 16
+          Caption = 'Ty gia:'
+        end
+        object Edit2: TEdit
+          Left = 263
+          Top = 8
+          Width = 134
+          Height = 24
+          CharCase = ecUpperCase
+          Color = clYellow
+          TabOrder = 0
+        end
+        object Button3: TButton
+          Left = 664
+          Top = 6
+          Width = 74
+          Height = 33
+          Caption = 'QUERY'
+          TabOrder = 1
+          OnClick = Button3Click
+        end
+        object Edit3: TEdit
+          Left = 72
+          Top = 8
+          Width = 121
+          Height = 24
+          Color = clYellow
+          TabOrder = 2
+        end
+        object Excel: TButton
+          Left = 752
+          Top = 6
+          Width = 74
+          Height = 33
+          Caption = 'Excel'
+          TabOrder = 3
+          OnClick = ExcelClick
+        end
+        object Edit4: TEdit
+          Left = 464
+          Top = 8
+          Width = 121
+          Height = 24
+          TabOrder = 4
+        end
+      end
+      object DBGridEh1: TDBGridEh
+        Left = 0
+        Top = 49
+        Width = 1423
+        Height = 491
+        Align = alClient
+        DataSource = DS2
+        Flat = False
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -15
+        Font.Name = 'MS Sans Serif'
+        Font.Style = []
+        FooterColor = clWindow
+        FooterFont.Charset = DEFAULT_CHARSET
+        FooterFont.Color = clWindowText
+        FooterFont.Height = -12
+        FooterFont.Name = 'MS Sans Serif'
+        FooterFont.Style = []
+        FooterRowCount = 1
+        OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghMultiSortMarking, dghDialogFind]
+        ParentFont = False
+        SumList.Active = True
+        TabOrder = 1
+        TitleFont.Charset = DEFAULT_CHARSET
+        TitleFont.Color = clWindowText
+        TitleFont.Height = -15
+        TitleFont.Name = 'MS Sans Serif'
+        TitleFont.Style = []
+        UseMultiTitle = True
+        OnGetCellParams = DBGrid1GetCellParams
+        Columns = <
+          item
+            EditButtons = <>
+            FieldName = 'CLBH'
+            Footer.ValueType = fvtCount
+            Footers = <>
+            Width = 150
+          end
+          item
+            EditButtons = <>
+            FieldName = 'DWBH'
+            Footers = <>
+          end
+          item
+            EditButtons = <>
+            FieldName = 'ZWPM'
+            Footers = <>
+            Width = 500
+          end
+          item
+            EditButtons = <>
+            FieldName = 'USPrice_Calculated'
+            Footer.ValueType = fvtSum
+            Footers = <>
+            Width = 150
+          end
+          item
+            EditButtons = <>
+            FieldName = 'DanhSachMaCon'
+            Footers = <>
+            Width = 400
+          end>
+      end
+    end
+  end
+  object DS1: TDataSource
+    DataSet = XXZLS
+    Left = 92
+    Top = 296
+  end
+  object XXZLS: TQuery
+    DatabaseName = 'DB'
+    SQL.Strings = (
+      'WITH BASE AS ('
+      '    SELECT '
+      
+        '        xxzl.ARTICLE, xxzl.XieXing, xxzl.SheHao, xxzl.gender, xx' +
+        'zl.bzcc,'
+      '        Costing_Size = '
+      '        CASE '
+      '            WHEN xxzl.gender IN ('#39'Men'#39','#39'M'#39') THEN '#39'10'#39
+      '            WHEN xxzl.gender IN ('#39'Women'#39','#39'W'#39') THEN '#39'08'#39
+      '            WHEN xxzl.gender IN ('#39'Unisex'#39','#39'U'#39') THEN '#39'09'#39
+      '            WHEN xxzl.gender IN ('#39'Youth'#39','#39'Y'#39') THEN '#39'05.5'#39
+      
+        '            WHEN xxzl.gender IN ('#39'Kid'#39','#39'K'#39','#39'Children'#39') THEN '#39' 13' +
+        '.5'#39
+      '            ELSE xxzl.bzcc'
+      '        END'
+      '    FROM xxzl'
+      ')'
+      'SELECT DISTINCT '
+      
+        '       xxzl.ARTICLE, XXZLS.XH, XXZLS.BWBH, BWZL.ywsm AS BWMC, XX' +
+        'ZLS.CLBH,'
+      '       CLZL.YWPM AS CLMC, CLZL.ZWPM AS CLZW,'
+      '       CLZL.DWBH, CLZL.LYCC, '
+      '       XTBWYL.CLSL AS CLSL,'
+      '       Round(MaterialCBD_BomUsing.Qty, 4) AS Qty, '
+      '       MaterialCBD_BomUsing.Formula,'
+      
+        '       Round(MaterialCBD_BomUsing.Qty - ISNULL(XTBWYL.CLSL, XXZL' +
+        'S.CLSL), 4) AS DIFF,'
+      '       XXZLS.LOSS, ZSZL.ZSYWJC, CLZL.CLZMLB,'
+      '       XXZLS.CCQQ, XXZLS.CCQZ, XXZLS.userdate, XXZLS.BWLB,'
+      
+        '       XXZLS.USERID, XXZLS.USERDATE, '#39'Assembly'#39' AS DType, BWZL.z' +
+        'wsm AS BWZW, LBZLS.BZ,'
+      '       xxzl.bzcc AS Size_Goc, '
+      '       xxzl.Costing_Size, '
+      '       CASE'
+      
+        '         WHEN MaterialCBD_BomUsing.Qty IS NULL OR MaterialCBD_Bo' +
+        'mUsing.Qty = 0 THEN NULL'
+      
+        '         WHEN ISNULL(XTBWYL.CLSL, XXZLS.CLSL) IS NULL OR ISNULL(' +
+        'XTBWYL.CLSL, XXZLS.CLSL) = 0 THEN NULL'
+      
+        '         ELSE ((MaterialCBD_BomUsing.Qty - ISNULL(XTBWYL.CLSL, X' +
+        'XZLS.CLSL)) / ISNULL(XTBWYL.CLSL, XXZLS.CLSL)) * 100'
+      '       END AS Variance'
+      'FROM XXZLS'
+      
+        'LEFT JOIN BASE xxzl ON xxzl.XieXing = xxzls.XieXing AND xxzl.She' +
+        'Hao = xxzls.SheHao'
+      'LEFT JOIN BWZL ON XXZLS.BWBH = BWZL.bwdh'
+      'LEFT JOIN CLZL ON XXZLS.CLBH = CLZL.cldh'
+      
+        'LEFT JOIN LBZLS ON SUBSTRING(XXZLS.CLBH, 1, 1) = LBZLS.lbdh AND ' +
+        'LBZLS.LB = '#39'13'#39
+      'LEFT JOIN ZSZL ON ZSZL.ZSDH = XXZLS.CSBH'
+      'LEFT JOIN MaterialCBD_BomUsing'
+      '  ON MaterialCBD_BomUsing.BWBH = XXZLS.BWBH'
+      ' AND MaterialCBD_BomUsing.ARTICLE ='
+      '     CASE'
+      '       WHEN CHARINDEX('#39'-'#39', XXZL.ARTICLE) > 0'
+      
+        '         THEN LEFT(XXZL.ARTICLE, CHARINDEX('#39'-'#39', XXZL.ARTICLE) - ' +
+        '1)'
+      '       ELSE XXZL.ARTICLE'
+      '     END'
+      'LEFT JOIN XTBWYL '
+      '       ON XTBWYL.XieXing = xxzl.XieXing '
+      '      AND XTBWYL.SheHao = xxzl.SheHao '
+      '      AND XTBWYL.BWBH = XXZLS.BWBH '
+      '      AND CAST('
+      '            SUBSTRING('
+      '                XTBWYL.XTCC,'
+      '                PATINDEX('#39'%[0-9]%'#39', XTBWYL.XTCC),  '
+      '                PATINDEX('#39'%[^0-9.]%'#39', '
+      
+        '                    SUBSTRING(XTBWYL.XTCC, PATINDEX('#39'%[0-9]%'#39', X' +
+        'TBWYL.XTCC), 20) + '#39'X'#39
+      '                ) - 1'
+      '            )'
+      
+        '            AS DECIMAL(10,1)) = CAST(CASE WHEN ISNUMERIC(xxzl.Co' +
+        'sting_Size) = 1 THEN xxzl.Costing_Size ELSE '#39'0'#39' END AS DECIMAL(1' +
+        '0,1))'
+      
+        'WHERE XXZL.ARTICLE LIKE '#39'%1180810-BBNB%'#39' AND xxzls.BWBH LIKE '#39'%%' +
+        #39
+      '  AND ('
+      '      XXZLS.CCQQ IS NULL OR '
+      '      ('
+      
+        '          CAST(CASE WHEN ISNUMERIC(xxzl.Costing_Size) = 1 THEN x' +
+        'xzl.Costing_Size ELSE '#39'0'#39' END AS DECIMAL(10,2)) >= CAST(XXZLS.CC' +
+        'QQ AS DECIMAL(10,2))'
+      
+        '          AND CAST(CASE WHEN ISNUMERIC(xxzl.Costing_Size) = 1 TH' +
+        'EN xxzl.Costing_Size ELSE '#39'0'#39' END AS DECIMAL(10,2)) <= CAST(XXZL' +
+        'S.CCQZ AS DECIMAL(10,2))'
+      '      )'
+      '  )'
+      'ORDER BY XXZLS.BWBH'
+      '')
+    UpdateObject = UpXXZLS
+    Left = 92
+    Top = 264
+    object XXZLSARTICLE: TStringField
+      FieldName = 'ARTICLE'
+      FixedChar = True
+    end
+    object XXZLSXH: TStringField
+      FieldName = 'XH'
+      FixedChar = True
+      Size = 3
+    end
+    object XXZLSBWBH: TStringField
+      FieldName = 'BWBH'
+      FixedChar = True
+      Size = 4
+    end
+    object XXZLSBWMC: TStringField
+      FieldName = 'BWMC'
+      FixedChar = True
+      Size = 40
+    end
+    object XXZLSCLBH: TStringField
+      FieldName = 'CLBH'
+      FixedChar = True
+      Size = 15
+    end
+    object XXZLSCLMC: TStringField
+      FieldName = 'CLMC'
+      FixedChar = True
+      Size = 200
+    end
+    object XXZLSCLZW: TStringField
+      FieldName = 'CLZW'
+      FixedChar = True
+      Size = 200
+    end
+    object XXZLSDWBH: TStringField
+      FieldName = 'DWBH'
+      FixedChar = True
+      Size = 4
+    end
+    object XXZLSLYCC: TStringField
+      FieldName = 'LYCC'
+      FixedChar = True
+      Size = 1
+    end
+    object XXZLSCLSL: TFloatField
+      FieldName = 'CLSL'
+      DisplayFormat = '##,#0.0000'
+    end
+    object XXZLSQty: TFloatField
+      FieldName = 'Qty'
+    end
+    object XXZLSFormula: TStringField
+      FieldName = 'Formula'
+      FixedChar = True
+      Size = 50
+    end
+    object XXZLSDIFF: TFloatField
+      FieldName = 'DIFF'
+    end
+    object XXZLSLOSS: TFloatField
+      FieldName = 'LOSS'
+      DisplayFormat = '##,#0'
+    end
+    object XXZLSBZ: TStringField
+      FieldName = 'BZ'
+      FixedChar = True
+    end
+    object XXZLSBWLB: TStringField
+      FieldName = 'BWLB'
+      FixedChar = True
+      Size = 1
+    end
+    object XXZLSZSYWJC: TStringField
+      FieldName = 'ZSYWJC'
+      FixedChar = True
+    end
+    object XXZLSCCQQ: TStringField
+      FieldName = 'CCQQ'
+      FixedChar = True
+      Size = 6
+    end
+    object XXZLSCCQZ: TStringField
+      FieldName = 'CCQZ'
+      FixedChar = True
+      Size = 6
+    end
+    object XXZLSCLZMLB: TStringField
+      FieldName = 'CLZMLB'
+      FixedChar = True
+      Size = 1
+    end
+    object XXZLSuserdate: TDateTimeField
+      FieldName = 'userdate'
+    end
+    object XXZLSuserid: TStringField
+      FieldName = 'userid'
+      FixedChar = True
+      Size = 15
+    end
+    object XXZLSDType: TStringField
+      FieldName = 'DType'
+      FixedChar = True
+      Size = 8
+    end
+    object XXZLSBWZW: TStringField
+      FieldName = 'BWZW'
+      FixedChar = True
+      Size = 40
+    end
+    object XXZLSVariance: TFloatField
+      FieldName = 'Variance'
+    end
+    object XXZLSSize_Goc: TStringField
+      FieldName = 'Size_Goc'
+      FixedChar = True
+      Size = 6
+    end
+    object XXZLSCosting_Size: TStringField
+      FieldName = 'Costing_Size'
+      FixedChar = True
+      Size = 6
+    end
+  end
+  object UpXXZLS: TUpdateSQL
+    ModifySQL.Strings = (
+      'update MaterialCBD_BomUsing'
+      'set'
+      '  Formula = :Formula,'
+      '  Qty = :Qty,'
+      '  USERID = :USERID,'
+      '  USERDATE = GETDATE()'
+      'where'
+      '  BWBH = :OLD_BWBH and'
+      '  article ='
+      '  CASE'
+      
+        '    WHEN CHARINDEX('#39'-'#39', :Article) > 0 THEN LEFT(:Article, CHARIN' +
+        'DEX('#39'-'#39', :Article) - 1)'
+      '    ELSE :Article'
+      '  END'
+      '')
+    Left = 92
+    Top = 340
+  end
+  object temp: TQuery
+    DatabaseName = 'DB'
+    Left = 172
+    Top = 260
+  end
+  object DS2: TDataSource
+    DataSet = FOB
+    Left = 356
+    Top = 308
+  end
+  object UpdateSQL1: TUpdateSQL
+    Left = 356
+    Top = 340
+  end
+  object FOB: TQuery
+    DatabaseName = 'DB'
+    SQL.Strings = (
+      'SELECT '
+      '    CAST('#39#39' AS NVARCHAR(20)) AS CLBH, '
+      '    CAST('#39#39' AS NVARCHAR(100)) AS ZWPM, '
+      '    CAST('#39#39' AS NVARCHAR(10)) AS DWBH, '
+      '    CAST(0 AS DECIMAL(18, 4)) AS USPrice_Calculated,'
+      '    CAST('#39#39' AS NVARCHAR(100)) AS DanhSachMaCon'
+      'WHERE 1 = 0;')
+    Left = 356
+    Top = 268
+    object FOBCLBH: TStringField
+      FieldName = 'CLBH'
+      FixedChar = True
+      Size = 40
+    end
+    object FOBZWPM: TStringField
+      FieldName = 'ZWPM'
+      FixedChar = True
+      Size = 200
+    end
+    object FOBDWBH: TStringField
+      FieldName = 'DWBH'
+      FixedChar = True
+    end
+    object FOBUSPrice_Calculated: TFloatField
+      FieldName = 'USPrice_Calculated'
+    end
+    object FOBDanhSachMaCon: TStringField
+      FieldName = 'DanhSachMaCon'
+      FixedChar = True
+      Size = 200
+    end
+  end
+end

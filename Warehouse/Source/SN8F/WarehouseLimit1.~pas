@@ -1,0 +1,145 @@
+unit WarehouseLimit1;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, ExtCtrls, DB, DBTables, StdCtrls, GridsEh, DBGridEh, Buttons;
+
+type
+  Twarehouselimit = class(TForm)
+    Query1: TQuery;
+    Panel1: TPanel;
+    BB4: TBitBtn;
+    BB5: TBitBtn;
+    BB6: TBitBtn;
+    BB7: TBitBtn;
+    bbt6: TBitBtn;
+    DataSource1: TDataSource;
+    Button1: TButton;
+    Edit1: TEdit;
+    Label1: TLabel;
+    Query1ID: TFloatField;
+    Query1MAKE: TStringField;
+    Query1NAME: TStringField;
+    Query1DONVI: TStringField;
+    Query1Limit: TFloatField;
+    Query1Userid: TStringField;
+    Query1Userdate: TDateTimeField;
+    DBGridEh: TDBGridEh;
+    UpdateSQL1: TUpdateSQL;
+    Query2: TQuery;
+    procedure FormDestroy(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure Button1Click(Sender: TObject);
+    procedure BB4Click(Sender: TObject);
+    procedure BB6Click(Sender: TObject);
+    procedure BB5Click(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  warehouselimit: Twarehouselimit;
+
+implementation
+
+uses main1;
+
+{$R *.dfm}
+
+procedure Twarehouselimit.FormDestroy(Sender: TObject);
+begin
+  warehouselimit:=nil;
+end;
+
+procedure Twarehouselimit.FormClose(Sender: TObject;
+  var Action: TCloseAction);
+begin
+  action:=cafree;
+end;
+
+procedure Twarehouselimit.Button1Click(Sender: TObject);
+begin
+  with  query1 do
+    begin
+      active:=false;
+      sql.Clear;
+      sql.Add(' select * from MAKE where DONVI=''KVT'' ');
+      sql.Add('and Make like ''%'+edit1.text+'%''');
+      active:=true;
+    end;
+      bb4.enabled:=true;
+end;
+
+procedure Twarehouselimit.BB4Click(Sender: TObject);
+begin
+  with query1 do
+  begin
+    cachedupdates:=true;
+    requestlive:=true;
+    query1.edit;
+  end;
+  bb5.enabled:=true;
+  bb6.enabled:=true;
+end;
+
+procedure Twarehouselimit.BB6Click(Sender: TObject);
+begin
+  with query1 do
+  begin
+    active:=false;
+    cachedupdates:=false;
+    requestlive:=false;
+    active:=true;
+  end;
+  bb5.enabled:=false;
+  bb6.enabled:=false;
+end;
+
+procedure Twarehouselimit.BB5Click(Sender: TObject);
+var
+  NDate: TDate;
+  i: integer;
+begin
+ { with query2 do
+  begin
+    Active := false;
+    SQL.Clear;
+    SQL.Add('SELECT GETDATE() AS NDate');
+    Active := true;
+
+    NDate := FieldByName('NDate').Value;
+    Active := false;
+  end; }
+
+  try
+    Query1.First;
+    for i := 1 to Query1.RecordCount do
+    begin
+      case Query1.UpdateStatus of
+        usModified:
+        begin
+            Query1.Edit;
+            Query1.FieldByName('USERID').Value := main.Edit1.text;
+            //Query1.FieldByName('USERDATE').Value := NDate;
+            UpdateSQL1.Apply(ukModify);
+         end;
+      end;
+
+      Query1.Next;
+    end;
+    Query1.Active := false;
+    Query1.CachedUpdates := false;
+    Query1.RequestLive := false;
+    Query1.Active := true;
+    BB5.Enabled := false;
+    BB6.Enabled := false;
+  except
+    MessageDlg('Have wrong, can not save data!', mtWarning, [mbyes], 0);
+  end;
+
+end;
+end.

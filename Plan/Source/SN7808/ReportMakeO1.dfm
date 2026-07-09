@@ -1,0 +1,318 @@
+object ReportMaKeO: TReportMaKeO
+  Left = 151
+  Top = 129
+  Width = 1648
+  Height = 675
+  Caption = 'Report Ma Ke Kho De'
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'MS Sans Serif'
+  Font.Style = []
+  FormStyle = fsMDIChild
+  OldCreateOrder = False
+  Position = poDefault
+  Visible = True
+  WindowState = wsMaximized
+  OnClose = FormClose
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  PixelsPerInch = 96
+  TextHeight = 13
+  object Panel1: TPanel
+    Left = 0
+    Top = 0
+    Width = 1632
+    Height = 74
+    Align = alTop
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -13
+    Font.Name = 'MS Sans Serif'
+    Font.Style = []
+    ParentFont = False
+    TabOrder = 0
+    object Label2: TLabel
+      Left = 123
+      Top = 33
+      Width = 32
+      Height = 16
+      Alignment = taCenter
+      Caption = 'Date:'
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -13
+      Font.Name = 'MS Sans Serif'
+      Font.Style = []
+      ParentFont = False
+    end
+    object Label1: TLabel
+      Left = 8
+      Top = 15
+      Width = 113
+      Height = 20
+      AutoSize = False
+      Caption = #29983#29986#26178#27841#34920
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -16
+      Font.Name = 'MS Sans Serif'
+      Font.Style = [fsBold]
+      ParentFont = False
+    end
+    object Label3: TLabel
+      Left = 117
+      Top = 16
+      Width = 41
+      Height = 16
+      Alignment = taCenter
+      AutoSize = False
+      Caption = #26085#26399':'
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -13
+      Font.Name = 'MS Sans Serif'
+      Font.Style = []
+      ParentFont = False
+    end
+    object Label5: TLabel
+      Left = 1176
+      Top = 16
+      Width = 45
+      Height = 16
+      Caption = 'DDBH: '
+    end
+    object Button1: TButton
+      Left = 328
+      Top = 21
+      Width = 113
+      Height = 33
+      Hint = #39023#31034#26597#35426
+      Caption = 'QUERY'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -13
+      Font.Name = 'MS Sans Serif'
+      Font.Style = [fsBold]
+      ParentFont = False
+      TabOrder = 1
+      OnClick = Button1Click
+    end
+    object DTP1: TDateTimePicker
+      Left = 160
+      Top = 16
+      Width = 89
+      Height = 24
+      Date = 39219.000000000000000000
+      Format = 'yyyy-MM-dd'
+      Time = 39219.000000000000000000
+      DateMode = dmUpDown
+      ImeName = 'Chinese (Traditional) - New Phonetic'
+      TabOrder = 0
+    end
+    object DTP2: TDateTimePicker
+      Left = 250
+      Top = 16
+      Width = 73
+      Height = 24
+      Date = 39219.000000000000000000
+      Format = 'HH:mm:ss'
+      Time = 39219.000000000000000000
+      ImeName = 'Chinese (Traditional) - New Phonetic'
+      Kind = dtkTime
+      TabOrder = 2
+    end
+    object DTP3: TDateTimePicker
+      Left = 160
+      Top = 40
+      Width = 89
+      Height = 24
+      Date = 39219.000000000000000000
+      Format = 'yyyy-MM-dd'
+      Time = 39219.000000000000000000
+      DateMode = dmUpDown
+      ImeName = 'Chinese (Traditional) - New Phonetic'
+      TabOrder = 3
+    end
+    object DTP4: TDateTimePicker
+      Left = 250
+      Top = 40
+      Width = 73
+      Height = 24
+      Date = 39219.999988425930000000
+      Format = 'HH:mm:ss'
+      Time = 39219.999988425930000000
+      ImeName = 'Chinese (Traditional) - New Phonetic'
+      Kind = dtkTime
+      TabOrder = 4
+    end
+    object Button2: TButton
+      Left = 448
+      Top = 21
+      Width = 113
+      Height = 33
+      Hint = #39023#31034#26597#35426
+      Caption = 'Excel'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -13
+      Font.Name = 'MS Sans Serif'
+      Font.Style = [fsBold]
+      ParentFont = False
+      TabOrder = 5
+      OnClick = Button2Click
+    end
+    object CheckBox1: TCheckBox
+      Left = 568
+      Top = 40
+      Width = 153
+      Height = 17
+      Caption = 'kiem tra ton <0'
+      TabOrder = 6
+    end
+    object Button3: TButton
+      Left = 1464
+      Top = 16
+      Width = 153
+      Height = 33
+      Caption = 'Modify '
+      TabOrder = 7
+      Visible = False
+      OnClick = Button3Click
+    end
+    object Edit1: TEdit
+      Left = 712
+      Top = 8
+      Width = 321
+      Height = 54
+      Color = clYellow
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -40
+      Font.Name = 'MS Sans Serif'
+      Font.Style = []
+      ParentFont = False
+      TabOrder = 8
+      OnKeyPress = Edit1KeyPress
+    end
+    object Edit2: TEdit
+      Left = 1240
+      Top = 8
+      Width = 201
+      Height = 24
+      ReadOnly = True
+      TabOrder = 9
+    end
+  end
+  object DBGridEh1: TDBGridEh
+    Left = 0
+    Top = 74
+    Width = 625
+    Height = 562
+    Align = alLeft
+    DataSource = DS1
+    EvenRowColor = clYellow
+    Flat = False
+    FooterColor = clWindow
+    FooterFont.Charset = DEFAULT_CHARSET
+    FooterFont.Color = clWindowText
+    FooterFont.Height = -11
+    FooterFont.Name = 'MS Sans Serif'
+    FooterFont.Style = []
+    FooterRowCount = 1
+    OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghMultiSortMarking, dghDialogFind]
+    SumList.Active = True
+    TabOrder = 1
+    TitleFont.Charset = DEFAULT_CHARSET
+    TitleFont.Color = clWindowText
+    TitleFont.Height = -11
+    TitleFont.Name = 'MS Sans Serif'
+    TitleFont.Style = []
+  end
+  object DBGridEh2: TDBGridEh
+    Left = 625
+    Top = 74
+    Width = 624
+    Height = 562
+    Align = alLeft
+    DataSource = DS2
+    EvenRowColor = clYellow
+    Flat = False
+    FooterColor = clWindow
+    FooterFont.Charset = DEFAULT_CHARSET
+    FooterFont.Color = clWindowText
+    FooterFont.Height = -11
+    FooterFont.Name = 'MS Sans Serif'
+    FooterFont.Style = []
+    FooterRowCount = 1
+    OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghMultiSortMarking, dghDialogFind]
+    SumList.Active = True
+    TabOrder = 2
+    TitleFont.Charset = DEFAULT_CHARSET
+    TitleFont.Color = clWindowText
+    TitleFont.Height = -11
+    TitleFont.Name = 'MS Sans Serif'
+    TitleFont.Style = []
+  end
+  object DBGridEh3: TDBGridEh
+    Left = 1249
+    Top = 74
+    Width = 383
+    Height = 562
+    Align = alClient
+    DataSource = DS3
+    EvenRowColor = clYellow
+    Flat = False
+    FooterColor = clWindow
+    FooterFont.Charset = DEFAULT_CHARSET
+    FooterFont.Color = clWindowText
+    FooterFont.Height = -11
+    FooterFont.Name = 'MS Sans Serif'
+    FooterFont.Style = []
+    FooterRowCount = 1
+    OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghMultiSortMarking, dghDialogFind]
+    SumList.Active = True
+    TabOrder = 3
+    TitleFont.Charset = DEFAULT_CHARSET
+    TitleFont.Color = clWindowText
+    TitleFont.Height = -11
+    TitleFont.Name = 'MS Sans Serif'
+    TitleFont.Style = []
+  end
+  object Query1: TQuery
+    DatabaseName = 'DB'
+    Left = 208
+    Top = 136
+  end
+  object DS1: TDataSource
+    DataSet = Query1
+    Left = 248
+    Top = 136
+  end
+  object Qtemp: TQuery
+    DatabaseName = 'DB'
+    Left = 296
+    Top = 136
+  end
+  object DS2: TDataSource
+    DataSet = Query2
+    Left = 768
+    Top = 192
+  end
+  object Query2: TQuery
+    DatabaseName = 'DB'
+    Left = 728
+    Top = 184
+  end
+  object Query3: TQuery
+    DatabaseName = 'DB'
+    Left = 1328
+    Top = 216
+  end
+  object DS3: TDataSource
+    DataSet = Query3
+    Left = 1368
+    Top = 224
+  end
+end

@@ -1,0 +1,120 @@
+object PrintHC_CT: TPrintHC_CT
+  Left = 457
+  Top = 289
+  AutoScroll = False
+  Caption = 'PrintHC_CT'
+  ClientHeight = 264
+  ClientWidth = 169
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'MS Sans Serif'
+  Font.Style = []
+  OldCreateOrder = False
+  OnClose = FormClose
+  OnDestroy = FormDestroy
+  PixelsPerInch = 96
+  TextHeight = 13
+  object Panel2: TPanel
+    Left = 0
+    Top = 0
+    Width = 169
+    Height = 257
+    Align = alTop
+    BevelOuter = bvNone
+    Color = clWhite
+    TabOrder = 0
+    object PaintBox1: TPaintBox
+      Left = 26
+      Top = 48
+      Width = 119
+      Height = 113
+      Align = alCustom
+      OnPaint = PaintBox1Paint
+    end
+    object Label2: TLabel
+      Left = 0
+      Top = 229
+      Width = 57
+      Height = 27
+      Align = alCustom
+      Alignment = taCenter
+      AutoSize = False
+      Caption = 'QTY:'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -21
+      Font.Name = 'Microsoft YaHei'
+      Font.Style = [fsBold]
+      ParentFont = False
+      Layout = tlCenter
+    end
+    object LB_DATE: TLabel
+      Left = 0
+      Top = 0
+      Width = 169
+      Height = 49
+      Align = alTop
+      Alignment = taCenter
+      AutoSize = False
+      Caption = 'Date'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -16
+      Font.Name = 'Microsoft YaHei'
+      Font.Style = []
+      ParentFont = False
+    end
+    object LB_ORDER: TLabel
+      Left = 8
+      Top = 176
+      Width = 153
+      Height = 56
+      Alignment = taCenter
+      AutoSize = False
+      Caption = 'ORDER'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -13
+      Font.Name = 'Microsoft YaHei'
+      Font.Style = [fsBold]
+      ParentFont = False
+      Layout = tlCenter
+      WordWrap = True
+    end
+    object LB_QTY: TLabel
+      Left = 56
+      Top = 229
+      Width = 109
+      Height = 27
+      Align = alCustom
+      Alignment = taCenter
+      AutoSize = False
+      Caption = 'QTY'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -21
+      Font.Name = 'Microsoft YaHei'
+      Font.Style = [fsBold]
+      ParentFont = False
+      Layout = tlCenter
+    end
+    object Shape1: TShape
+      Left = 2
+      Top = 230
+      Width = 161
+      Height = 2
+      Align = alCustom
+      Pen.Width = 2
+    end
+    object Dep: TLabel
+      Left = 16
+      Top = 160
+      Width = 65
+      Height = 17
+      AutoSize = False
+      Caption = 'Dep'
+    end
+  end
+end

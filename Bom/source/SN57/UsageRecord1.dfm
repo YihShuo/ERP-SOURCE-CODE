@@ -1,0 +1,637 @@
+object UsageRecord: TUsageRecord
+  Left = 219
+  Top = 283
+  Width = 1643
+  Height = 638
+  Caption = 'UsageRecord'
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'MS Sans Serif'
+  Font.Style = []
+  FormStyle = fsMDIChild
+  OldCreateOrder = False
+  Position = poDefault
+  Visible = True
+  WindowState = wsMaximized
+  OnClose = FormClose
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  PixelsPerInch = 96
+  TextHeight = 13
+  object dbgrdh_XTBWYL_Record: TDBGridEh
+    Left = 0
+    Top = 130
+    Width = 1627
+    Height = 469
+    Align = alClient
+    DataSource = ds_XTBWYL_Record
+    Flat = False
+    FooterColor = clWindow
+    FooterFont.Charset = DEFAULT_CHARSET
+    FooterFont.Color = clWindowText
+    FooterFont.Height = -11
+    FooterFont.Name = 'MS Sans Serif'
+    FooterFont.Style = []
+    FooterRowCount = 1
+    SumList.Active = True
+    TabOrder = 1
+    TitleFont.Charset = DEFAULT_CHARSET
+    TitleFont.Color = clWindowText
+    TitleFont.Height = -11
+    TitleFont.Name = 'MS Sans Serif'
+    TitleFont.Style = []
+    UseMultiTitle = True
+    OnDrawColumnCell = dbgrdh_XTBWYL_RecordDrawColumnCell
+    Columns = <
+      item
+        EditButtons = <>
+        FieldName = 'Version'
+        Footer.ValueType = fvtCount
+        Footers = <>
+      end
+      item
+        EditButtons = <>
+        FieldName = 'XieXing'
+        Footers = <>
+      end
+      item
+        EditButtons = <>
+        FieldName = 'SheHao'
+        Footers = <>
+        Width = 57
+      end
+      item
+        EditButtons = <>
+        FieldName = 'BWBH'
+        Footers = <>
+        Width = 43
+      end
+      item
+        EditButtons = <>
+        FieldName = 'XTCC'
+        Footers = <>
+      end
+      item
+        EditButtons = <>
+        FieldName = 'CLSL'
+        Footers = <>
+      end
+      item
+        EditButtons = <>
+        FieldName = 'USERID'
+        Footers = <>
+      end
+      item
+        EditButtons = <>
+        FieldName = 'USERDATE'
+        Footers = <>
+      end
+      item
+        EditButtons = <>
+        FieldName = 'Remark'
+        Footers = <>
+        Width = 600
+      end>
+  end
+  object pnl: TPanel
+    Left = 0
+    Top = 0
+    Width = 1627
+    Height = 65
+    Align = alTop
+    TabOrder = 0
+    object btnQuery: TBitBtn
+      Left = 8
+      Top = 10
+      Width = 49
+      Height = 49
+      Caption = 'Query'
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -13
+      Font.Name = 'Arial'
+      Font.Style = []
+      ParentFont = False
+      TabOrder = 0
+      OnClick = btnQueryClick
+      Glyph.Data = {
+        76010000424D7601000000000000760000002800000020000000100000000100
+        04000000000000010000130B0000130B00001000000000000000000000000000
+        800000800000008080008000000080008000808000007F7F7F00BFBFBF000000
+        FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00333333333333
+        333333333333333FF3FF3333333333CC30003333333333773777333333333C33
+        3000333FF33337F33777339933333C3333333377F33337F3333F339933333C33
+        33003377333337F33377333333333C333300333F333337F33377339333333C33
+        3333337FF3333733333F33993333C33333003377FF33733333773339933C3333
+        330033377FF73F33337733339933C33333333FF377F373F3333F993399333C33
+        330077F377F337F33377993399333C33330077FF773337F33377399993333C33
+        33333777733337F333FF333333333C33300033333333373FF7773333333333CC
+        3000333333333377377733333333333333333333333333333333}
+      Layout = blGlyphTop
+      NumGlyphs = 2
+    end
+    object btnModify: TBitBtn
+      Left = 56
+      Top = 10
+      Width = 49
+      Height = 49
+      Hint = 'Modify Current'
+      Caption = 'Modify'
+      Enabled = False
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -13
+      Font.Name = 'Arial'
+      Font.Style = []
+      ParentFont = False
+      TabOrder = 1
+      OnClick = btnModifyClick
+      Glyph.Data = {
+        76010000424D7601000000000000760000002800000020000000100000000100
+        04000000000000010000120B0000120B00001000000000000000000000000000
+        800000800000008080008000000080008000808000007F7F7F00BFBFBF000000
+        FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00500005000555
+        555557777F777555F55500000000555055557777777755F75555005500055055
+        555577F5777F57555555005550055555555577FF577F5FF55555500550050055
+        5555577FF77577FF555555005050110555555577F757777FF555555505099910
+        555555FF75777777FF555005550999910555577F5F77777775F5500505509990
+        3055577F75F77777575F55005055090B030555775755777575755555555550B0
+        B03055555F555757575755550555550B0B335555755555757555555555555550
+        BBB35555F55555575F555550555555550BBB55575555555575F5555555555555
+        50BB555555555555575F555555555555550B5555555555555575}
+      Layout = blGlyphTop
+      NumGlyphs = 2
+    end
+    object btnSave: TBitBtn
+      Left = 104
+      Top = 10
+      Width = 49
+      Height = 49
+      Hint = 'Save Current'
+      Caption = 'Save'
+      Enabled = False
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -13
+      Font.Name = 'Arial'
+      Font.Style = []
+      ParentFont = False
+      TabOrder = 2
+      OnClick = btnSaveClick
+      Glyph.Data = {
+        76010000424D7601000000000000760000002800000020000000100000000100
+        04000000000000010000120B0000120B00001000000000000000000000000000
+        800000800000008080008000000080008000808000007F7F7F00BFBFBF000000
+        FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00555555555555
+        555555555555555555555555555555555555555555FF55555555555559055555
+        55555555577FF5555555555599905555555555557777F5555555555599905555
+        555555557777FF5555555559999905555555555777777F555555559999990555
+        5555557777777FF5555557990599905555555777757777F55555790555599055
+        55557775555777FF5555555555599905555555555557777F5555555555559905
+        555555555555777FF5555555555559905555555555555777FF55555555555579
+        05555555555555777FF5555555555557905555555555555777FF555555555555
+        5990555555555555577755555555555555555555555555555555}
+      Layout = blGlyphTop
+      NumGlyphs = 2
+    end
+    object btnCancel: TBitBtn
+      Left = 152
+      Top = 10
+      Width = 49
+      Height = 49
+      Hint = 'Cancel'
+      Caption = 'Cancel'
+      Enabled = False
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -13
+      Font.Name = 'Arial'
+      Font.Style = []
+      ParentFont = False
+      TabOrder = 3
+      OnClick = btnCancelClick
+      Glyph.Data = {
+        76010000424D7601000000000000760000002800000020000000100000000100
+        04000000000000010000130B0000130B00001000000000000000000000000000
+        800000800000008080008000000080008000808000007F7F7F00BFBFBF000000
+        FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00333333333333
+        333333333333333333333333333333333333333FFF33FF333FFF339993370733
+        999333777FF37FF377733339993000399933333777F777F77733333399970799
+        93333333777F7377733333333999399933333333377737773333333333990993
+        3333333333737F73333333333331013333333333333777FF3333333333910193
+        333333333337773FF3333333399000993333333337377737FF33333399900099
+        93333333773777377FF333399930003999333337773777F777FF339993370733
+        9993337773337333777333333333333333333333333333333333333333333333
+        3333333333333333333333333333333333333333333333333333}
+      Layout = blGlyphTop
+      NumGlyphs = 2
+    end
+    object btnExit: TBitBtn
+      Left = 200
+      Top = 10
+      Width = 49
+      Height = 49
+      Hint = 'Exit Current Form'
+      Caption = 'Exit'
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -13
+      Font.Name = 'Arial'
+      Font.Style = []
+      ParentFont = False
+      TabOrder = 4
+      OnClick = btnExitClick
+      Glyph.Data = {
+        76010000424D7601000000000000760000002800000020000000100000000100
+        04000000000000010000120B0000120B00001000000000000000000000000000
+        800000800000008080008000000080008000808000007F7F7F00BFBFBF000000
+        FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF0033BBBBBBBBBB
+        BB33337777777777777F33BB00BBBBBBBB33337F77333333F37F33BB0BBBBBB0
+        BB33337F73F33337FF7F33BBB0BBBB000B33337F37FF3377737F33BBB00BB00B
+        BB33337F377F3773337F33BBBB0B00BBBB33337F337F7733337F33BBBB000BBB
+        BB33337F33777F33337F33EEEE000EEEEE33337F3F777FFF337F33EE0E80000E
+        EE33337F73F77773337F33EEE0800EEEEE33337F37377F33337F33EEEE000EEE
+        EE33337F33777F33337F33EEEEE00EEEEE33337F33377FF3337F33EEEEEE00EE
+        EE33337F333377F3337F33EEEEEE00EEEE33337F33337733337F33EEEEEEEEEE
+        EE33337FFFFFFFFFFF7F33EEEEEEEEEEEE333377777777777773}
+      Layout = blGlyphTop
+      NumGlyphs = 2
+    end
+    object btnDownloadSample: TButton
+      Left = 310
+      Top = 10
+      Width = 50
+      Height = 49
+      Caption = 'Sample'
+      TabOrder = 5
+      OnClick = btnDownloadSampleClick
+    end
+    object btnImport: TButton
+      Left = 404
+      Top = 10
+      Width = 50
+      Height = 49
+      Caption = 'Import'
+      TabOrder = 6
+      OnClick = btnImportClick
+    end
+    object btnExportExcel: TBitBtn
+      Left = 360
+      Top = 10
+      Width = 50
+      Height = 49
+      Hint = 'Modify Current'
+      Caption = 'Excel'
+      Enabled = False
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -13
+      Font.Name = 'Arial'
+      Font.Style = []
+      ParentFont = False
+      TabOrder = 7
+      OnClick = btnExportExcelClick
+      Glyph.Data = {
+        76010000424D7601000000000000760000002800000020000000100000000100
+        04000000000000010000130B0000130B00001000000000000000000000000000
+        800000800000008080008000000080008000808000007F7F7F00BFBFBF000000
+        FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF0033333333B333
+        333B33FF33337F3333F73BB3777BB7777BB3377FFFF77FFFF77333B000000000
+        0B3333777777777777333330FFFFFFFF07333337F33333337F333330FFFFFFFF
+        07333337F3FF3FFF7F333330F00F000F07333337F77377737F333330FFFFFFFF
+        07333FF7F3FFFF3F7FFFBBB0F0000F0F0BB37777F7777373777F3BB0FFFFFFFF
+        0BBB3777F3FF3FFF77773330F00F000003333337F773777773333330FFFF0FF0
+        33333337F3FF7F37F3333330F08F0F0B33333337F7737F77FF333330FFFF003B
+        B3333337FFFF77377FF333B000000333BB33337777777F3377FF3BB3333BB333
+        3BB33773333773333773B333333B3333333B7333333733333337}
+      Layout = blGlyphTop
+      NumGlyphs = 2
+    end
+    object Button1: TButton
+      Left = 636
+      Top = 8
+      Width = 61
+      Height = 49
+      Caption = 'Import TT'
+      TabOrder = 8
+      OnClick = Button1Click
+    end
+  end
+  object progressBar: TProgressBar
+    Left = 462
+    Top = 23
+    Width = 150
+    Height = 17
+    TabOrder = 2
+    Visible = False
+  end
+  object Panel1: TPanel
+    Left = 0
+    Top = 65
+    Width = 1627
+    Height = 65
+    Align = alTop
+    TabOrder = 3
+    Visible = False
+    object lbl_XieXing: TLabel
+      Left = 13
+      Top = 32
+      Width = 39
+      Height = 13
+      Caption = 'Xie Xing'
+    end
+    object lbl_SheHao: TLabel
+      Left = 181
+      Top = 32
+      Width = 42
+      Height = 13
+      Caption = 'She Hao'
+    end
+    object lbl_From: TLabel
+      Left = 371
+      Top = 29
+      Width = 34
+      Height = 18
+      Alignment = taRightJustify
+      AutoSize = False
+      Caption = 'From:'
+    end
+    object lbl_To: TLabel
+      Left = 501
+      Top = 30
+      Width = 29
+      Height = 16
+      Alignment = taRightJustify
+      AutoSize = False
+      Caption = 'To:'
+    end
+    object edt_XieXing: TEdit
+      Left = 56
+      Top = 28
+      Width = 121
+      Height = 21
+      TabOrder = 0
+    end
+    object edt_SheHao: TEdit
+      Left = 227
+      Top = 28
+      Width = 121
+      Height = 21
+      TabOrder = 1
+    end
+    object btn_Qry: TButton
+      Left = 651
+      Top = 26
+      Width = 75
+      Height = 25
+      Caption = 'Query'
+      TabOrder = 2
+      OnClick = btn_QryClick
+    end
+    object dtpDTP1: TDateTimePicker
+      Left = 407
+      Top = 26
+      Width = 97
+      Height = 24
+      Date = 39255.000000000000000000
+      Format = 'yyyy/MM/dd'
+      Time = 39255.000000000000000000
+      TabOrder = 3
+    end
+    object dtpDTP2: TDateTimePicker
+      Left = 531
+      Top = 26
+      Width = 97
+      Height = 24
+      Date = 39255.000000000000000000
+      Format = 'yyyy/MM/dd'
+      Time = 39255.000000000000000000
+      TabOrder = 4
+    end
+    object chk_Date: TCheckBox
+      Left = 354
+      Top = 30
+      Width = 17
+      Height = 17
+      Checked = True
+      State = cbChecked
+      TabOrder = 5
+    end
+  end
+  object qry_XTBWYL_Record: TQuery
+    DatabaseName = 'dB'
+    SQL.Strings = (
+      'select max(xxzl.XieMing)           as XieMing,'
+      '       xtbwyl_record.XieXing,'
+      '       max(xxzl.daomh)             as DaoMH,'
+      '       Version,'
+      '       xtbwyl_record.BWBH,'
+      '       xtbwyl_record.SheHao,'
+      '       xtbwyl_record.XTCC,'
+      '       max(xtbwyl_record.clsl)     as CLSL,'
+      '       max(xtbwyl_record.USERID)   as UserId,'
+      '       max(xtbwyl_record.USERDATE) as UserDate,'
+      '       max(xtbwyl_record.YN)       as YN,'
+      '       max(xtbwyl_record.remark)   as Remark,'
+      '       max(bwzl.ywsm)              as YWSM,'
+      '       max(CLZL.cldh)              as CLDH,'
+      '       max(CLZL.ywpm)              as YWPM,'
+      '       max(clzl.dwbh)              as DWBH,'
+      '       max(BWZL.YWSM)              as Description,'
+      '       max(CLZL.cldh)              as Material,'
+      '       max(CLZL.YWPM)              as MaterialDescription,'
+      '       max(CLZL.dwbh)              as Unit,'
+      '       max(xxzl.ARTICLE)           as ArticleNO'
+      'from xtbwyl_record'
+      
+        '         left join xxzl on xxzl.XieXing = xtbwyl_record.XieXing ' +
+        'and xxzl.SheHao = xtbwyl_record.SheHao'
+      
+        '         left join xxzls on xxzls.XieXing = xxzl.XieXing and xxz' +
+        'ls.SheHao = xxzl.SheHao and xxzls.BWBH = xtbwyl_record.BWBH'
+      '         left join bwzl on bwzl.bwdh = xxzls.bwbh'
+      '         left join clzl on clzl.cldh = xxzls.CLBH'
+      'where xxzls.bwbh = '#39'A004'#39
+      
+        'group by xtbwyl_record.BWBH, Version, xtbwyl_record.XieXing, xtb' +
+        'wyl_record.SheHao, xtbwyl_record.XTCC'
+      'order by version desc')
+    UpdateObject = updtsql_XTBWYL_Record
+    Left = 85
+    Top = 184
+    object strngfld_XTBWYL_RecordVersion: TStringField
+      FieldName = 'Version'
+      Origin = 'DB.xtbwyl_record.Version'
+      FixedChar = True
+      Size = 15
+    end
+    object strngfld_XTBWYL_RecordXieXing: TStringField
+      FieldName = 'XieXing'
+      Origin = 'DB.xtbwyl_record.XieXing'
+      FixedChar = True
+      Size = 15
+    end
+    object strngfld_XTBWYL_RecordSheHao: TStringField
+      FieldName = 'SheHao'
+      Origin = 'DB.xtbwyl_record.SheHao'
+      FixedChar = True
+      Size = 5
+    end
+    object strngfld_XTBWYL_RecordBWBH: TStringField
+      FieldName = 'BWBH'
+      Origin = 'DB.xtbwyl_record.BWBH'
+      FixedChar = True
+      Size = 4
+    end
+    object strngfld_XTBWYL_RecordXTCC: TStringField
+      FieldName = 'XTCC'
+      Origin = 'DB.xtbwyl_record.XTCC'
+      FixedChar = True
+      Size = 6
+    end
+    object fltfld_XTBWYL_RecordCLSL: TFloatField
+      FieldName = 'CLSL'
+      Origin = 'DB.xtbwyl_record.CLSL'
+    end
+    object strngfld_XTBWYL_RecordUSERID: TStringField
+      FieldName = 'USERID'
+      Origin = 'DB.xtbwyl_record.USERID'
+      FixedChar = True
+    end
+    object dtmfld_XTBWYL_RecordUSERDATE: TDateTimeField
+      FieldName = 'USERDATE'
+      Origin = 'DB.xtbwyl_record.USERDATE'
+    end
+    object strngfld_XTBWYL_RecordRemark: TStringField
+      FieldName = 'Remark'
+      Origin = 'DB.xtbwyl_record.Remark'
+      FixedChar = True
+      Size = 200
+    end
+    object strngfld_XTBWYL_RecordYN: TStringField
+      FieldName = 'YN'
+      Origin = 'DB.xtbwyl_record.YN'
+      FixedChar = True
+      Size = 1
+    end
+    object strngfld_XTBWYL_RecordXieMing: TStringField
+      FieldName = 'XieMing'
+      FixedChar = True
+      Size = 50
+    end
+    object strngfld_XTBWYL_RecordDaoMH: TStringField
+      FieldName = 'DaoMH'
+      FixedChar = True
+      Size = 30
+    end
+    object strngfld_XTBWYL_RecordYWSM: TStringField
+      FieldName = 'YWSM'
+      FixedChar = True
+      Size = 40
+    end
+    object strngfld_XTBWYL_RecordCLDH: TStringField
+      FieldName = 'CLDH'
+      FixedChar = True
+      Size = 10
+    end
+    object strngfld_XTBWYL_RecordYWPM: TStringField
+      FieldName = 'YWPM'
+      FixedChar = True
+      Size = 200
+    end
+    object strngfld_XTBWYL_RecordDWBH: TStringField
+      FieldName = 'DWBH'
+      FixedChar = True
+      Size = 4
+    end
+    object strngfld_XTBWYL_RecordDescription: TStringField
+      FieldName = 'Description'
+      FixedChar = True
+      Size = 40
+    end
+    object strngfld_XTBWYL_RecordMaterial: TStringField
+      FieldName = 'Material'
+      FixedChar = True
+      Size = 10
+    end
+    object strngfld_XTBWYL_RecordMaterialDescription: TStringField
+      FieldName = 'MaterialDescription'
+      FixedChar = True
+      Size = 200
+    end
+    object strngfld_XTBWYL_RecordUnit: TStringField
+      FieldName = 'Unit'
+      FixedChar = True
+      Size = 4
+    end
+    object strngfld_XTBWYL_RecordArticleNO: TStringField
+      FieldName = 'ArticleNO'
+      FixedChar = True
+    end
+  end
+  object updtsql_XTBWYL_Record: TUpdateSQL
+    ModifySQL.Strings = (
+      'update XTBWYL_Record'
+      'set'
+      '  Version = :Version,'
+      '  XieXing = :XieXing,'
+      '  SheHao = :SheHao,'
+      '  BWBH = :BWBH,'
+      '  XTCC = :XTCC,'
+      '  CLSL = :CLSL,'
+      '  USERID = :USERID,'
+      '  USERDATE = :USERDATE,'
+      '  Remark = :Remark,'
+      '  YN = :YN'
+      'where'
+      '  Version = :OLD_Version and'
+      '  XieXing = :OLD_XieXing and'
+      '  SheHao = :OLD_SheHao and'
+      '  BWBH = :OLD_BWBH and'
+      '  XTCC = :OLD_XTCC')
+    InsertSQL.Strings = (
+      'insert into XTBWYL_Record'
+      
+        '  (Version, XieXing, SheHao, BWBH, XTCC, CLSL, USERID, USERDATE,' +
+        ' Remark, '
+      '   YN)'
+      'values'
+      
+        '  (:Version, :XieXing, :SheHao, :BWBH, :XTCC, :CLSL, :USERID, :U' +
+        'SERDATE, '
+      '   :Remark, :YN)')
+    DeleteSQL.Strings = (
+      'delete from XTBWYL_Record'
+      'where'
+      '  Version = :OLD_Version and'
+      '  XieXing = :OLD_XieXing and'
+      '  SheHao = :OLD_SheHao and'
+      '  BWBH = :OLD_BWBH and'
+      '  XTCC = :OLD_XTCC')
+    Left = 117
+    Top = 184
+  end
+  object ds_XTBWYL_Record: TDataSource
+    DataSet = qry_XTBWYL_Record
+    Left = 154
+    Top = 184
+  end
+  object dlgOpen1: TOpenDialog
+    Left = 214
+    Top = 194
+  end
+  object qry_Temp: TQuery
+    DatabaseName = 'DB'
+    Left = 276
+    Top = 191
+  end
+  object qry_ExportRecordUsage: TQuery
+    DatabaseName = 'dB'
+    SQL.Strings = (
+      'SELECT * FROM XTBWYL_Record;')
+    Left = 86
+    Top = 226
+  end
+end

@@ -1,0 +1,105 @@
+select DDZL.DDBH,isnull(Sum(Qty_C),0) as Qty_C,isnull(Sum(Qty_S),0) as Qty_S,isnull(sum(Qty_A),0) as Qty_A,isnull(sum(Qty_F),0) as Qty_F 
+ from DDZL  
+ left join (  select YSBH,isnull(sum(SMDDSS.Qty*SMDDSS.okCTS),0) as Qty_C 
+              from SMDDSS  left join SMDD 
+              on SMDDSS.DDBH=SMDD.DDBH and SMDDSS.GXLB=SMDD.GXLB 
+              where SMDDSS.DDBH like 'JHS2509-246%'
+              and SMDDSS.gxlb = 'C'
+              and xxcc='11'
+              group by YSBH) SMDDSS_C on SMDDSS_C.YSBH=DDZL.DDBH 
+ left join (  select YSBH,isnull(sum(SMDDSS.Qty*SMDDSS.okCTS),0) as Qty_S 
+              from SMDDSS  left join SMDD 
+              on SMDDSS.DDBH=SMDD.DDBH and SMDDSS.GXLB=SMDD.GXLB 
+              where SMDDSS.DDBH like 'JHS2509-246%'
+              and SMDDSS.gxlb = 'S'
+              and xxcc='11'
+              group by YSBH) SMDDSS_S on SMDDSS_S.YSBH=DDZL.DDBH  
+ left join (  select YSBH,isnull(sum(SMDDSS.Qty*SMDDSS.okCTS),0) as Qty_A 
+              from SMDDSS  left join SMDD  
+              on SMDDSS.DDBH=SMDD.DDBH and SMDDSS.GXLB=SMDD.GXLB 
+              where SMDDSS.DDBH like 'JHS2509-246%'
+              and SMDDSS.gxlb = 'A'
+              and xxcc='11'
+              group by YSBH) SMDDSS_A on SMDDSS_A.YSBH=DDZL.DDBH 
+ left join (	 select DDZL.DDBH,sum(isnull(YWBZPOS.Qty,0)) as Qty_F 
+              from YWCP 
+              left join YWBZPOS on YWCP.DDBH=YWBZPOS.DDBH and YWCP.XH=YWBZPOS.XH 
+              left join YWDDS on YWDDS.DDBH=YWBZPOS.DDBH and YWDDS.DDCC=YWBZPOS.DDCC 
+              left join YWDD on YWDD.DDBH=YWCP.DDBH 
+              left join DDZL on DDZL.DDBH=YWDD.YSBH 
+              where  YWCP.InDate is not null 
+              and YWDD.YSBH like 'JHS2509-246%'
+              and ywbzpos.ddcc='11'
+              group by DDZL.DDBH ) SMDDSS_F on SMDDSS_F.DDBH=DDZL.DDBH 
+ where DDZL.DDBH like 'JHS2509-246%'
+ group by DDZL.DDBH
+select DDZL.DDBH,isnull(Sum(Qty_C),0) as Qty_C,isnull(Sum(Qty_S),0) as Qty_S,isnull(sum(Qty_A),0) as Qty_A,isnull(sum(Qty_F),0) as Qty_F 
+ from DDZL  
+ left join (  select YSBH,isnull(sum(SMDDSS.Qty*SMDDSS.okCTS),0) as Qty_C 
+              from SMDDSS  left join SMDD 
+              on SMDDSS.DDBH=SMDD.DDBH and SMDDSS.GXLB=SMDD.GXLB 
+              where SMDDSS.DDBH like 'JHS2605-312%'
+              and SMDDSS.gxlb = 'C'
+              and xxcc='07.5'
+              group by YSBH) SMDDSS_C on SMDDSS_C.YSBH=DDZL.DDBH 
+ left join (  select YSBH,isnull(sum(SMDDSS.Qty*SMDDSS.okCTS),0) as Qty_S 
+              from SMDDSS  left join SMDD 
+              on SMDDSS.DDBH=SMDD.DDBH and SMDDSS.GXLB=SMDD.GXLB 
+              where SMDDSS.DDBH like 'JHS2605-312%'
+              and SMDDSS.gxlb = 'S'
+              and xxcc='07.5'
+              group by YSBH) SMDDSS_S on SMDDSS_S.YSBH=DDZL.DDBH  
+ left join (  select YSBH,isnull(sum(SMDDSS.Qty*SMDDSS.okCTS),0) as Qty_A 
+              from SMDDSS  left join SMDD  
+              on SMDDSS.DDBH=SMDD.DDBH and SMDDSS.GXLB=SMDD.GXLB 
+              where SMDDSS.DDBH like 'JHS2605-312%'
+              and SMDDSS.gxlb = 'A'
+              and xxcc='07.5'
+              group by YSBH) SMDDSS_A on SMDDSS_A.YSBH=DDZL.DDBH 
+ left join (	 select DDZL.DDBH,sum(isnull(YWBZPOS.Qty,0)) as Qty_F 
+              from YWCP 
+              left join YWBZPOS on YWCP.DDBH=YWBZPOS.DDBH and YWCP.XH=YWBZPOS.XH 
+              left join YWDDS on YWDDS.DDBH=YWBZPOS.DDBH and YWDDS.DDCC=YWBZPOS.DDCC 
+              left join YWDD on YWDD.DDBH=YWCP.DDBH 
+              left join DDZL on DDZL.DDBH=YWDD.YSBH 
+              where  YWCP.InDate is not null 
+              and YWDD.YSBH like 'JHS2605-312%'
+              and ywbzpos.ddcc='07.5'
+              group by DDZL.DDBH ) SMDDSS_F on SMDDSS_F.DDBH=DDZL.DDBH 
+ where DDZL.DDBH like 'JHS2605-312%'
+ group by DDZL.DDBH
+select DDZL.DDBH,isnull(Sum(Qty_C),0) as Qty_C,isnull(Sum(Qty_S),0) as Qty_S,isnull(sum(Qty_A),0) as Qty_A,isnull(sum(Qty_F),0) as Qty_F 
+ from DDZL  
+ left join (  select YSBH,isnull(sum(SMDDSS.Qty*SMDDSS.okCTS),0) as Qty_C 
+              from SMDDSS  left join SMDD 
+              on SMDDSS.DDBH=SMDD.DDBH and SMDDSS.GXLB=SMDD.GXLB 
+              where SMDDSS.DDBH like 'JHS2605-312%'
+              and SMDDSS.gxlb = 'C'
+              and xxcc='07.5'
+              group by YSBH) SMDDSS_C on SMDDSS_C.YSBH=DDZL.DDBH 
+ left join (  select YSBH,isnull(sum(SMDDSS.Qty*SMDDSS.okCTS),0) as Qty_S 
+              from SMDDSS  left join SMDD 
+              on SMDDSS.DDBH=SMDD.DDBH and SMDDSS.GXLB=SMDD.GXLB 
+              where SMDDSS.DDBH like 'JHS2605-312%'
+              and SMDDSS.gxlb = 'S'
+              and xxcc='07.5'
+              group by YSBH) SMDDSS_S on SMDDSS_S.YSBH=DDZL.DDBH  
+ left join (  select YSBH,isnull(sum(SMDDSS.Qty*SMDDSS.okCTS),0) as Qty_A 
+              from SMDDSS  left join SMDD  
+              on SMDDSS.DDBH=SMDD.DDBH and SMDDSS.GXLB=SMDD.GXLB 
+              where SMDDSS.DDBH like 'JHS2605-312%'
+              and SMDDSS.gxlb = 'A'
+              and xxcc='07.5'
+              group by YSBH) SMDDSS_A on SMDDSS_A.YSBH=DDZL.DDBH 
+ left join (	 select DDZL.DDBH,sum(isnull(YWBZPOS.Qty,0)) as Qty_F 
+              from YWCP 
+              left join YWBZPOS on YWCP.DDBH=YWBZPOS.DDBH and YWCP.XH=YWBZPOS.XH 
+              left join YWDDS on YWDDS.DDBH=YWBZPOS.DDBH and YWDDS.DDCC=YWBZPOS.DDCC 
+              left join YWDD on YWDD.DDBH=YWCP.DDBH 
+              left join DDZL on DDZL.DDBH=YWDD.YSBH 
+              where  YWCP.InDate is not null 
+              and YWDD.YSBH like 'JHS2605-312%'
+              and ywbzpos.ddcc='07.5'
+              group by DDZL.DDBH ) SMDDSS_F on SMDDSS_F.DDBH=DDZL.DDBH 
+ where DDZL.DDBH like 'JHS2605-312%'
+ group by DDZL.DDBH

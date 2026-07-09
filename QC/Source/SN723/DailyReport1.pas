@@ -1,0 +1,806 @@
+unit DailyReport1;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, GridsEh, DBGridEh, ComCtrls, ExtCtrls, StdCtrls, Buttons, DB,
+  DBTables, Menus,comobj,ShellAPI,ZLib,DBGridEhImpExp,Mask, DBCtrls, jpeg,
+  StrUtils, iniFiles;
+
+type
+  TDailyReport = class(TForm)
+    PageControl1: TPageControl;
+    TabSheet1: TTabSheet;
+    DBGrid1: TDBGridEh;
+    qry_DR: TQuery;
+    qry_DRCLBH: TStringField;
+    qry_DRDateInput: TDateTimeField;
+    qry_DRZSBH: TStringField;
+    qry_DRQTY: TCurrencyField;
+    qry_DRMaterialName: TStringField;
+    qry_DRSupplierName: TStringField;
+    qry_DRDWBH: TStringField;
+    qry_DRCGNO: TStringField;
+    qry_DRNo_ID: TAutoIncField;
+    DS_DR: TDataSource;
+    Panel1: TPanel;
+    Label4: TLabel;
+    edtSupp: TEdit;
+    Label5: TLabel;
+    edtMatID: TEdit;
+    Label8: TLabel;
+    edtArticle: TEdit;
+    Label6: TLabel;
+    edtRY: TEdit;
+    chkStore: TCheckBox;
+    Label7: TLabel;
+    edtMatName: TEdit;
+    DTP3: TDateTimePicker;
+    Label9: TLabel;
+    DTP4: TDateTimePicker;
+    btnQ: TBitBtn;
+    Edit3: TEdit;
+    Upd_DR: TUpdateSQL;
+    Pop_DR: TPopupMenu;
+    btnEGrading: TBitBtn;
+    qry_DRQC_Check: TStringField;
+    qry_DRQC_Reason: TStringField;
+    qry_DRDefectName: TStringField;
+    qry_DRRandomQty: TCurrencyField;
+    qry_DRDefectQty: TCurrencyField;
+    qry_DRPer_Defect: TFloatField;
+    qry_DRQC_Date: TDateTimeField;
+    qry_DRQC_UserID: TStringField;
+    qry_DRLab_Check: TStringField;
+    qry_DRSampleSent: TBooleanField;
+    qry_DRTracking: TStringField;
+    qry_DRQC_FinishDate: TDateTimeField;
+    qry_DRFile_Name: TStringField;
+    qry_DRUSERDATE: TDateTimeField;
+    UploadReportGL1: TMenuItem;
+    DownloadReportGL1: TMenuItem;
+    DeleteReportGL1: TMenuItem;
+    SaveDialog1: TSaveDialog;
+    OpenDialog1: TOpenDialog;
+    Query1: TQuery;
+    Label1: TLabel;
+    Edit1: TEdit;
+    qry_DRSettlement: TStringField;
+    qry_DRFinal_Status: TStringField;
+    TabSheet2: TTabSheet;
+    Panel2: TPanel;
+    GroupBox1: TGroupBox;
+    chkInspection: TCheckBox;
+    chkNotesting: TCheckBox;
+    chkpass: TCheckBox;
+    chkFail: TCheckBox;
+    btnFeedBack: TBitBtn;
+    qry_DRHours: TStringField;
+    Panel7: TPanel;
+    Insert1: TBitBtn;
+    Modify1: TBitBtn;
+    Delete1: TBitBtn;
+    save1: TBitBtn;
+    cancel1: TBitBtn;
+    Label2: TLabel;
+    DBMemo1: TDBMemo;
+    qry_DRRemark: TStringField;
+    qry_DRRKNO: TStringField;
+    PageControl2: TPageControl;
+    TabSheet3: TTabSheet;
+    TabSheet4: TTabSheet;
+    Image1: TImage;
+    Image2: TImage;
+    Image3: TImage;
+    Image4: TImage;
+    qry_DRRY: TStringField;
+    qry_DRArticle: TStringField;
+    qry_DRCustPO: TStringField;
+    Label3: TLabel;
+    EdRKNO: TEdit;
+    Label10: TLabel;
+    EdSID: TEdit;
+    Label11: TLabel;
+    edtDefects: TEdit;
+    ckSettle: TCheckBox;
+    OpenReportLab1: TMenuItem;
+    qry_DRFile_Name_Lab: TStringField;
+    DownloadReportLab1: TMenuItem;
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure FormDestroy(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure qry_DRRYGetText(Sender: TField; var Text: String;
+      DisplayText: Boolean);
+    procedure btnQClick(Sender: TObject);
+    procedure Modify1Click(Sender: TObject);
+    procedure Save1Click(Sender: TObject);
+    procedure Cancel1Click(Sender: TObject);
+    procedure DBGrid1DrawColumnCell(Sender: TObject; const Rect: TRect;
+      DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
+    procedure DBGrid1Columns13EditButtonClick(Sender: TObject;
+      var Handled: Boolean);
+    procedure btnEGradingClick(Sender: TObject);
+    procedure UploadReportGL1Click(Sender: TObject);
+    procedure DownloadReportGL1Click(Sender: TObject);
+    procedure DeleteReportGL1Click(Sender: TObject);
+    procedure btnFeedBackClick(Sender: TObject);
+    procedure qry_DRAfterOpen(DataSet: TDataSet);
+    procedure OpenReportLab1Click(Sender: TObject);
+    procedure DownloadReportLab1Click(Sender: TObject);
+  private
+    QCN723_ISO:String;
+    { Private declarations }
+  public
+    { Public declarations }
+    procedure ReadIni();
+  end;
+
+var
+  DailyReport: TDailyReport;
+  NDate:TDate;
+
+implementation
+
+uses Main1, QC_MatDefect1,ClsReport, FileTransClient1, FunUnit;
+
+{$R *.dfm}
+procedure TDailyReport.ReadIni();
+var MyIni :Tinifile;
+    AppDir:string;
+begin
+  QCN723_ISO:='A-KCS-QP014-01D';
+  AppDir:=ExtractFilePath(Application.ExeName);
+  if FileExists(AppDir+'\ComName.ini')=true then
+  begin
+    try
+      MyIni := Tinifile.Create(AppDir+'\ComName.ini');
+      QCN723_ISO:=MyIni.ReadString('ERP','QCN723_ISO','A-KCS-QP014-01D');
+    finally
+      MyIni.Free;
+    end;
+  end;
+end;
+
+procedure TDailyReport.FormClose(Sender: TObject;
+  var Action: TCloseAction);
+begin
+    Action:=cafree;
+end;
+
+procedure TDailyReport.FormDestroy(Sender: TObject);
+begin
+    DailyReport:=nil;
+end;
+
+procedure TDailyReport.FormCreate(Sender: TObject);
+begin
+  DTP3.Date:=date-1;
+  DTP4.Date:=date;
+  ReadIni();
+end;
+
+procedure TDailyReport.qry_DRRYGetText(Sender: TField;
+  var Text: String; DisplayText: Boolean);
+begin
+  Text := Copy(qry_DRRY.AsString, 1, 8000);
+end;
+
+procedure TDailyReport.btnQClick(Sender: TObject);
+begin
+    //
+    with query1 do
+    begin
+      active:=false;
+      sql.Clear;
+      sql.add('select getdate() as NDate ');
+      active:=true;
+      NDate:=fieldbyname('NDate').Value;
+      active:=false;
+      sql.Clear;
+    end;
+
+    with qry_DR do
+    begin
+        active:=false;
+        sql.Clear;
+        sql.Add('select mc.CLBH,DateInput,ZSBH,CGNO,mc.No_ID,QTY,clzl.YWPM as MaterialName,ZSZL.ZSYWJC as SupplierName,clzl.DWBH,Remark,RY,Article,CustPO ');
+        sql.Add('		,QC_Check,QC_Reason,DefectName,S.RandomQty,DefectQty,convert(numeric(18,2),isnull(DefectQty,0)/isnull(S.RandomQty,1)*100) as Per_Defect');
+        sql.Add('   ,QC_Date,QC_UserID,Lab_Check,SampleSent,Tracking,QC_FinishDate,[File_Name],mc.File_Name_Lab,mc.USERDATE,Settlement,ZSYWJC,YWPM,Hours,Final_Status,mc.RKNO');
+        sql.Add('from MaterialQCcheck mc ');
+        sql.add('left join clzl on clzl.CLDH = mc.CLBH');
+        sql.Add('left Join ZSZL on ZSZL.ZSDH =mc.ZSBH');
+        SQL.Add('LEFT JOIN (');
+        SQL.Add('    SELECT');
+        SQL.Add('        CLBH, No_ID, CONVERT(numeric(18,2),');
+        SQL.Add('        CASE');
+        SQL.Add('            WHEN Qty >= 2     AND Qty <= 8       THEN 2');
+        SQL.Add('            WHEN Qty > 8      AND Qty <= 15      THEN 3');
+        SQL.Add('            WHEN Qty > 15     AND Qty <= 25      THEN 5');
+        SQL.Add('            WHEN Qty > 25     AND Qty <= 50      THEN 8');
+        SQL.Add('            WHEN Qty > 50     AND Qty <= 90      THEN 13');
+        SQL.Add('            WHEN Qty > 90     AND Qty <= 150     THEN 20');
+        SQL.Add('            WHEN Qty > 150    AND Qty <= 280     THEN 32');
+        SQL.Add('            WHEN Qty > 280    AND Qty <= 500     THEN 50');
+        SQL.Add('            WHEN Qty > 500    AND Qty <= 1200    THEN 80');
+        SQL.Add('            WHEN Qty > 1200   AND Qty <= 3200    THEN 125');
+        SQL.Add('            WHEN Qty > 3200   AND Qty <= 10000   THEN 200');
+        SQL.Add('            WHEN Qty > 10000  AND Qty <= 35000   THEN 315');
+        SQL.Add('            WHEN Qty > 35000  AND Qty <= 70000   THEN 500');
+        SQL.Add('            WHEN Qty > 70000  AND Qty <= 120000  THEN 800');
+        SQL.Add('            WHEN Qty > 120000 AND Qty <= 170000  THEN 1250');
+        SQL.Add('            WHEN Qty > 170000 AND Qty <= 250000  THEN 2000');
+        SQL.Add('            WHEN Qty > 250000                    THEN 2000');
+        SQL.Add('            ELSE Qty');
+        SQL.Add('        END) AS RandomQty');
+        SQL.Add('    FROM MaterialQCcheck');
+        SQL.Add(') AS S ON S.CLBH = mc.CLBH and S.No_ID = mc.No_ID');
+        //sql.Add('where mc.GSBH = '''+main.Edit2.Text+''' and  left(mc.CLBH,1) not in (''F'',''W'')  ');
+        sql.Add(' where mc.GSBH = '''+main.Edit2.Text+''' and  ((mc.ZSBH = ''VA97'' and left(mc.CLBH,1) <> ''W'') or (mc.ZSBH <> ''VA97'' and left(mc.CLBH,1) not in (''F'',''W'')))  ');
+        if chkStore.Checked then
+        begin
+            sql.Add(' and CAST(DateInput AS DATE) between');
+            sql.add(' '''+formatdatetime('yyyy/MM/dd',DTP3.date)+''''+' and '+''''+formatdatetime('yyyy/MM/dd',DTP4.date)+''' ');
+        end;
+
+        if edtDefects.Text <> '' then
+          SQL.Add(' and mc.QC_Reason like ''%'+edtDefects.Text+'%'' ');
+        if edtMatID.Text <> '' then
+            sql.Add('       and mc.CLBH like ''%'+edtMatID.Text+'%'' ');
+        if edtSupp.Text <> '' then
+            sql.Add('       and ZSYWJC like ''%'+edtSupp.Text+'%'' ');
+        if edtArticle.Text <> '' then
+            sql.Add('       and Article like ''%'+edtArticle.Text+'%'' ');
+        if edtRY.Text <> '' then
+            sql.Add('       and RY like ''%'+edtRY.Text+'%'' ');
+        if edtMatName.Text <> '' then
+            sql.Add('       and YWPM like ''%'+edtMatName.Text+'%'' ');
+        if Edit3.Text <> '' then
+            sql.Add('       and YWPM like ''%'+Edit3.Text+'%'' ');
+
+        sql.Add('       and mc.RKNO like ''%'+EdRKNO.Text+'%'' ');
+        sql.Add('       and CGNO like ''%'+Edit1.Text+'%'' ');
+        sql.Add('       and mc.No_ID like ''%'+EdSID.Text+'%'' ');
+
+        if chkNotesting.Checked then
+            sql.Add('   and isnull(Lab_Check,'''') = '''' ');
+        if ckSettle.Checked then
+            SQL.Add('and mc.Settlement is null ');
+        if chkInspection.Checked or chkpass.Checked or chkFail.Checked then
+        begin
+            sql.Add('   and (1=2');
+            if chkInspection.Checked then
+               sql.Add('   or isnull(Final_Status,'''') ='''' ');
+            if chkpass.Checked then
+               sql.Add('   or Final_Status=''Pass'' ');
+            if chkFail.Checked then
+               sql.Add('   or Final_Status=''Fail'' ');
+            sql.Add(')');
+        end;
+
+        SQL.Add('order by DateInput');
+
+        //funcObj.WriteErrorLog(sql.Text);
+        active:=true;
+    end;
+
+end;
+
+procedure TDailyReport.Modify1Click(Sender: TObject);
+begin
+    
+    if qry_DR.FieldByName('USERDATE').Value + 30 < date then
+    begin
+      Messagedlg('You can not modify after 30 days!!!',mtwarning,[mbyes],0);
+      abort;
+    end;
+
+    with qry_DR do
+    begin
+        RequestLive:=true;
+        CachedUpdates:=true;
+        edit;
+    end;
+    Modify1.Enabled:=false;
+    Save1.Enabled:=true;
+    Cancel1.Enabled:=true;
+    DBGrid1.FieldColumns['QC_Reason'].ButtonStyle:=  cbsEllipsis;
+    DBGrid1.FieldColumns['QC_Check'].ButtonStyle:=  cbsAuto;
+    DBGrid1.FieldColumns['QC_FinishDate'].ButtonStyle:=  cbsAuto;
+    DBGrid1.FieldColumns['Settlement'].ButtonStyle:=  cbsAuto;
+end;
+
+procedure TDailyReport.Save1Click(Sender: TObject);
+var i:integer;
+begin
+  try
+    qry_DR.first;
+    for i:=1 to qry_DR.RecordCount do
+      begin
+        case qry_DR.updatestatus of
+          usmodified:
+          begin
+              if (not qry_DR.FieldByName('QC_UserID').IsNull) and (qry_DR.FieldByName('QC_UserID').AsString <> main.Edit1.Text) then
+              begin
+                  Messagedlg('It is not yours, you can not modify!',mtwarning,[mbyes],0);
+                  exit;
+              end
+              else
+              begin
+                  qry_DR.Edit;
+                  qry_DR.FieldByName('QC_UserID').Value:=main.edit1.text;
+                  Upd_DR.apply(ukmodify);
+
+              end;
+          end;
+        end;
+        qry_DR.next;
+      end;
+      
+
+  except
+      Messagedlg('Error, can not save data!',mtwarning,[mbyes],0);
+      Abort;
+  end;
+
+  qry_DR.active:=false;
+  qry_DR.cachedupdates:=false;
+  qry_DR.requestlive:=false;
+  qry_DR.active:=true;
+
+  Modify1.Enabled:=true;
+  Save1.Enabled:=false;
+  Cancel1.Enabled:=false;
+  DBGrid1.FieldColumns['QC_Reason'].ButtonStyle:=  cbsNone;
+  DBGrid1.FieldColumns['QC_Check'].ButtonStyle:=  cbsNone;
+  DBGrid1.FieldColumns['QC_FinishDate'].ButtonStyle:=  cbsNone;
+  DBGrid1.FieldColumns['Settlement'].ButtonStyle:=  cbsNone;
+
+  
+end;
+
+procedure TDailyReport.Cancel1Click(Sender: TObject);
+begin
+   with qry_DR do
+    begin
+        active:=false;
+        RequestLive:=false;
+        CachedUpdates:=false;
+        active:=true;
+    end;
+    Modify1.Enabled:=true;
+    Save1.Enabled:=false;
+    Cancel1.Enabled:=false;
+    DBGrid1.FieldColumns['QC_Reason'].ButtonStyle :=  cbsNone;
+    DBGrid1.FieldColumns['QC_Check'].ButtonStyle :=  cbsNone;
+    DBGrid1.FieldColumns['QC_FinishDate'].ButtonStyle:=  cbsNone;
+    DBGrid1.FieldColumns['Settlement'].ButtonStyle:=  cbsNone;
+end;
+
+procedure TDailyReport.DBGrid1DrawColumnCell(Sender: TObject;
+  const Rect: TRect; DataCol: Integer; Column: TColumnEh;
+  State: TGridDrawState);
+begin
+    if (column.FieldName='QC_Check') and (qry_DR.FieldByName('QC_Check').AsString='Fail') or
+     (column.FieldName='Settlement') and (qry_DR.FieldByName('Settlement').AsString='Rejected') or
+     (column.FieldName='Lab_Check') and (qry_DR.FieldByName('Lab_Check').AsString='Fail') or
+     (column.FieldName='Final_Status') and (qry_DR.FieldByName('Final_Status').AsString='Fail') then
+    begin
+        DBGrid1.canvas.Font.color:=clred;
+    end;
+
+   if (column.FieldName='QC_Check') and (qry_DR.FieldByName('QC_Check').AsString='Pass') or
+      (column.FieldName='Settlement') and (qry_DR.FieldByName('Settlement').AsString='Released') or
+      (column.FieldName='Lab_Check') and (qry_DR.FieldByName('Lab_Check').AsString='Pass') or
+      (column.FieldName='Final_Status') and (qry_DR.FieldByName('Final_Status').AsString='Pass') then
+    begin
+        DBGrid1.canvas.Font.color:=clblue;
+    end;
+
+    if (column.FieldName='Settlement') and (qry_DR.FieldByName('Settlement').AsString='Limited Release') then
+    begin
+        DBGrid1.canvas.Font.color:=clgreen;
+    end;
+
+    if (column.FieldName='Settlement') and (qry_DR.FieldByName('Settlement').AsString='Limited Rejected') then
+    begin
+        DBGrid1.canvas.Font.color:=clFuchsia;
+    end;
+
+    if (column.FieldName='RY') or (column.FieldName='CGNO') or (column.FieldName='Article') or (column.FieldName='CustPO') then
+    begin
+        if qry_DR.FieldByName('Final_Status').AsString='Pass' then
+            DBGrid1.canvas.Brush.Color:= clLime
+        else if qry_DR.FieldByName('Final_Status').AsString='Fail' then
+            DBGrid1.canvas.Brush.Color:= clRed
+        else
+            DBGrid1.canvas.Brush.Color:= clAqua;
+    end;
+
+     DBGrid1.DefaultDrawColumnCell(rect,DataCol,column,state);
+end;
+
+procedure TDailyReport.DBGrid1Columns13EditButtonClick(Sender: TObject;
+  var Handled: Boolean);
+begin
+  QC_MatDefect:=TQC_MatDefect.create(self);
+  QC_MatDefect.Show;
+end;
+
+procedure TDailyReport.btnEGradingClick(Sender: TObject);
+begin
+  ClsReport.DailyReport(qry_DR, DBGrid1, true, QCN723_ISO);
+end;
+
+procedure CompressIt(var CompressedStream: TMemoryStream; const CompressionLevel: TCompressionLevel);
+var
+   SourceStream: TCompressionStream;
+   DestStream: TMemoryStream;
+   Count: int64;
+begin
+   Count := CompressedStream.Size;
+   DestStream := TMemoryStream.Create;
+   SourceStream := TCompressionStream.Create(CompressionLevel, DestStream);
+   try
+      CompressedStream.SaveToStream(SourceStream);
+      SourceStream.Free;
+      CompressedStream.Clear;
+      CompressedStream.WriteBuffer(Count, SizeOf(Count));
+      CompressedStream.CopyFrom(DestStream, 0);
+   finally
+      DestStream.Free;
+   end;
+end;
+
+procedure UnCompressit(const CompressedStream: TMemoryStream; var UnCompressedStream: TMemoryStream);
+var
+   SourceStream: TDecompressionStream;
+   DestStream: TMemoryStream;
+   Buffer: PChar;
+   Count: int64;
+begin
+   CompressedStream.ReadBuffer(Count, SizeOf(Count));
+   GetMem(Buffer, Count);
+   DestStream := TMemoryStream.Create;
+   SourceStream := TDecompressionStream.Create(CompressedStream);
+   try
+      SourceStream.ReadBuffer(Buffer^, Count);
+      DestStream.WriteBuffer(Buffer^, Count);
+      DestStream.Position := 0;
+      UnCompressedStream.LoadFromStream(DestStream);
+   finally
+      FreeMem(Buffer);
+      DestStream.Free;
+   end;
+end;
+
+procedure TDailyReport.UploadReportGL1Click(Sender: TObject);
+var
+  SaveFN, SourceFile, DestDir, DestFile: string;
+begin
+  if not qry_DR.Active then Exit;
+
+  if not OpenDialog1.Execute then Exit;
+  if OpenDialog1.FileName = '' then Exit;
+
+  SourceFile := OpenDialog1.FileName;
+  SaveFN := ExtractFileName(SourceFile);
+
+  // duong dan dich
+  DestDir := '\\192.168.71.11\upload-QC\' + main.Edit2.Text + '\N723\';
+  DestFile := DestDir + SaveFN;
+
+  // kiem tra thu muc ton tai
+  if not DirectoryExists(DestDir) then
+  begin
+    ShowMessage('Khong tim thay thu muc');
+    Exit;
+  end;
+
+  // kiem tra file da ton tai
+  if FileExists(DestFile) then
+  begin
+    if MessageDlg('File da ton tai. Ghi de?', mtConfirmation, [mbYes, mbNo], 0) = mrNo then
+      Exit;
+  end;
+
+  // copy file
+  if not CopyFile(PChar(SourceFile), PChar(DestFile), False) then
+  begin
+    ShowMessage('Copy file that bai.');
+    Exit;
+  end;
+
+  // cap nhat database
+  with Query1 do
+  begin
+    Active := False;
+    SQL.Clear;
+    SQL.Add('update MaterialQCCheck ');
+    SQL.Add('set File_Name=''' + SaveFN + ''',');
+    SQL.Add('QC_UserID=''' + main.Edit1.Text + ''',');
+    SQL.Add('QC_Date=GetDate() ');
+    SQL.Add('where No_ID=' + qry_DR.FieldByName('NO_ID').AsString);
+    ExecSQL;
+  end;
+
+  ShowMessage('Upload thanh cong');
+
+  qry_DR.Active := False;
+  qry_DR.Active := True;
+end;
+{var
+   UploadObj: TFileTransClient;
+   SaveFN,Response,FileString:String;
+   IsActionUpload:boolean;
+begin
+  if qry_DR.Active=false then exit;
+  if OpenDialog1.Execute then
+  begin
+    if OpenDialog1.FileName<>'' then
+    begin
+      UploadObj := TFileTransClient.Create();
+      //上傳
+      SaveFN:=ExtractFileName(OpenDialog1.FileName);
+      FileString := UploadObj.List('QC\' + main.Edit2.Text + '\Mat\');
+      IsActionUpload:=true;
+      // check file exists
+      if Pos(SaveFN, FileString) > 0 then
+      begin
+        if MessageDlg('Override Mat File', mtCustom, [mbYes,mbNo], 0) = mrNo then
+        begin
+          IsActionUpload:=false;
+          ShowMessage('File name exists!');
+        end;
+      end;
+      if IsActionUpload=true then
+      begin
+        //先檢查是否擋案存在 先刪除
+        if qry_DR.fieldByName('File_Name').AsString<>'' then
+           Response := UploadObj.delete(qry_DR.fieldByName('File_Name').AsString,'QC\'+main.Edit2.Text+'\Mat\', false);
+
+        Response := UploadObj.put(OpenDialog1.FileName,SaveFN,'QC\'+main.Edit2.Text+'\Mat\', false);
+        if pos(',', Response) > 0 then  //fail
+        begin
+           showmessage(Response);
+        end else
+        begin
+          with Query1 do
+          begin
+            active:=false;
+            sql.Clear;
+            SQL.Add('update MaterialQCCheck set File_Name='''+ExtractFileName(OpenDialog1.FileName)+''' ,QC_UserID='''+main.edit1.text+''',QC_Date=GetDate() ');
+            sql.Add('FROM MaterialQCcheck ');
+            sql.Add('WHERE MaterialQCcheck.No_ID='+qry_DR.fieldByName('NO_ID').AsString+' ');
+            ExecSQL;
+          end;
+          showmessage(Response);
+        end;
+        qry_DR.Active:=FALSE;
+        qry_DR.Active:=TRUE;
+      end;
+      UploadObj.Free;
+    end;
+  end;
+
+end;}
+
+procedure TDailyReport.DownloadReportGL1Click(Sender: TObject);
+var
+  SourceFile, DestFile: string;
+begin
+  if qry_DR.FieldByName('File_Name').IsNull then Exit;
+
+  SaveDialog1.FileName := qry_DR.FieldByName('File_Name').AsString;
+
+  if not SaveDialog1.Execute then Exit;
+
+  SourceFile := '\\192.168.71.11\upload-QC\' + main.Edit2.Text + '\N723\' +
+                qry_DR.FieldByName('File_Name').AsString;
+
+  DestFile := SaveDialog1.FileName;
+
+  // kiem tra file nguon
+  if not FileExists(SourceFile) then
+  begin
+    ShowMessage('Khong tim thay file tren server' + SourceFile);
+    Exit;
+  end;
+
+  // kiem tra file dich
+  if FileExists(DestFile) then
+  begin
+    if MessageDlg('File da ton tai. Ghi de?', mtConfirmation, [mbYes, mbNo], 0) = mrNo then
+      Exit;
+  end;
+
+  // copy file
+  if CopyFile(PChar(SourceFile), PChar(DestFile), False) then
+    ShowMessage('Download file OK')
+  else
+    ShowMessage('Download file error');
+end;
+{  function GetFileName(oFile,sFile:String):string;
+  begin
+    result:=ChangeFileExt(ExtractFileName(sFile),'')+ExtractFileExt(oFile);
+  end;
+var
+   UploadObj: TFileTransClient;
+   ms: TMemoryStream;
+begin
+  if not qry_DR.FieldByName('File_Name').IsNull then
+  begin
+    savedialog1.FileName:=qry_DR.FieldByName('File_Name').AsString;
+    if SaveDialog1.Execute then
+    begin
+        UploadObj := TFileTransClient.Create();
+        ms := TMemoryStream.Create;
+        ms.LoadFromStream(UploadObj.down(qry_DR.fieldByName('File_Name').AsString,'D:\QC\'+main.Edit2.Text+'\Mat\', GetFileName(qry_DR.fieldByName('File_Name').AsString,savedialog1.FileName) ));
+        if ms.Size > 0 then  //fail
+        begin
+           showmessage('Download file OK')
+        end else
+        begin
+          showmessage('Download file error');
+        end;
+        UploadObj.Free;
+        ms.Free;
+    end;
+  end;
+
+end;}
+
+procedure TDailyReport.DeleteReportGL1Click(Sender: TObject);
+var
+  FilePath: string;
+begin
+  if qry_DR.FieldByName('File_Name').IsNull then Exit;
+
+  if MessageDlg('You want to delete guarantee letter?', mtConfirmation, [mbYes, mbNo], 0) <> mrYes then
+    Exit;
+
+  FilePath := '\\192.168.71.11\upload-QC\' + main.Edit2.Text + '\N723\' +
+              qry_DR.FieldByName('File_Name').AsString;
+
+  // kiem tra file ton tai
+  if not FileExists(FilePath) then
+  begin
+    ShowMessage('Khong tim thay file tren server');
+    Exit;
+  end;
+
+  // xoa file
+  if not DeleteFile(PChar(FilePath)) then
+  begin
+    ShowMessage('Delete file error');
+    Exit;
+  end;
+
+  // cap nhat database
+  with Query1 do
+  begin
+    Active := False;
+    SQL.Clear;
+    SQL.Add('update MaterialQCCheck ');
+    SQL.Add('set File_Name=null,');
+    SQL.Add('QC_UserID=''' + main.Edit1.Text + ''',');
+    SQL.Add('QC_Date=GetDate() ');
+    SQL.Add('where No_ID=' + qry_DR.FieldByName('NO_ID').AsString);
+    ExecSQL;
+  end;
+
+  ShowMessage('Delete file OK');
+
+  qry_DR.Active := False;
+  qry_DR.Active := True;
+end;
+{var
+   UploadObj: TFileTransClient;
+   SaveFN,Response:String;
+begin
+     if not qry_DR.FieldByName('File_Name').IsNull then
+     begin
+         if messagedlg('You want to delete guarantee letter?',mtconfirmation,[mbYes,MbNo],0)=mrYes then
+         begin
+            UploadObj := TFileTransClient.Create();
+            //先檢查是否擋案存在 先刪除
+            if qry_DR.fieldByName('File_Name').AsString<>'' then
+               Response := UploadObj.delete(qry_DR.fieldByName('File_Name').AsString,'QC\'+main.Edit2.Text+'\Mat\', false);
+            //刪除
+            if pos(',', Response) > 0 then  //fail
+            begin
+               showmessage(Response);
+            end else
+            begin
+              with query1 do
+              begin
+                active:=false;
+                sql.Clear;
+                SQL.Add('update MaterialQCCheck set File_Name=null ,QC_UserID='''+main.edit1.text+''',QC_Date=GetDate() ');
+                sql.Add('FROM MaterialQCcheck ');
+                sql.Add('WHERE MaterialQCcheck.No_ID='+qry_DR.fieldByName('NO_ID').AsString+' ');
+                ExecSQL;
+              end;
+              showmessage(Response);
+            end;
+            UploadObj.Free;
+            qry_DR.Active:=FALSE;
+            qry_DR.Active:=TRUE;
+         end;
+     end;
+end;}
+
+procedure TDailyReport.btnFeedBackClick(Sender: TObject);
+begin
+    ClsReport.FeedBackReport(qry_DR);
+end;
+
+procedure TDailyReport.qry_DRAfterOpen(DataSet: TDataSet);
+begin
+    
+    if qry_DR.RecordCount > 0 then
+    begin
+        modify1.Enabled:=true;
+        btnEGrading.Enabled:=true;
+        btnFeedBack.Enabled:=true;
+    end;
+end;
+
+procedure TDailyReport.OpenReportLab1Click(Sender: TObject);
+var
+  SourceFile, FileName: string;
+begin
+  if qry_DR.FieldByName('File_Name_Lab').IsNull then Exit;
+
+  FileName := qry_DR.FieldByName('File_Name_Lab').AsString;
+
+  SourceFile := '\\192.168.71.11\upload-QC\' + main.Edit2.Text + '\N724\Lab\' + FileName;
+
+  // kiem tra file nguon
+  if not FileExists(SourceFile) then
+  begin
+    ShowMessage('Khong tim thay file tren server');
+    Exit;
+  end;
+
+  // mo file truc tiep
+  ShellExecute(0, 'open', PChar(SourceFile), nil, nil, SW_SHOWNORMAL);
+end;
+
+procedure TDailyReport.DownloadReportLab1Click(Sender: TObject);
+var
+  SourceFile, DestFile: string;
+begin
+  if qry_DR.FieldByName('File_Name_Lab').IsNull then Exit;
+
+  SaveDialog1.FileName := qry_DR.FieldByName('File_Name_Lab').AsString;
+
+  if not SaveDialog1.Execute then Exit;
+
+  SourceFile := '\\192.168.71.11\upload-QC\' + main.Edit2.Text + '\N724\Lab\' +
+                qry_DR.FieldByName('File_Name_Lab').AsString;
+
+  DestFile := SaveDialog1.FileName;
+
+  // kiem tra file nguon
+  if not FileExists(SourceFile) then
+  begin
+    ShowMessage('Khong tim thay file tren server' + SourceFile);
+    Exit;
+  end;
+
+  // kiem tra file dich
+  if FileExists(DestFile) then
+  begin
+    if MessageDlg('File da ton tai. Ghi de?', mtConfirmation, [mbYes, mbNo], 0) = mrNo then
+      Exit;
+  end;
+
+  // copy file
+  if CopyFile(PChar(SourceFile), PChar(DestFile), False) then
+    ShowMessage('Download file OK')
+  else
+    ShowMessage('Download file error');
+end;
+
+end.

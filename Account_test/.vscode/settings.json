@@ -1,0 +1,5 @@
+{
+  // 解決一開啟檔案中文字變亂碼的問題
+  "files.encoding": "UTF-8",
+  "files.encoding": "Big5"
+}

@@ -1,0 +1,129 @@
+unit CGZL1;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, DB, DBTables, GridsEh, DBGridEh, StdCtrls, ExtCtrls;
+
+type
+  TCGZL = class(TForm)
+    Panel1: TPanel;
+    Label1: TLabel;
+    Label2: TLabel;
+    Edit1: TEdit;
+    Button1: TButton;
+    Edit2: TEdit;
+    DBGridEh2: TDBGridEh;
+    Query1: TQuery;
+    DS1: TDataSource;
+    Label3: TLabel;
+    Edit3: TEdit;
+    Query1No_ID: TIntegerField;
+    Query1GSBH: TStringField;
+    Query1CLBH: TStringField;
+    Query1CGNO: TStringField;
+    Query1RKNO: TStringField;
+    Query1DateInput: TDateTimeField;
+    Query1Hours: TStringField;
+    Query1LB: TIntegerField;
+    Query1ZSBH: TStringField;
+    Query1RY: TStringField;
+    Query1Article: TStringField;
+    Query1CustPO: TStringField;
+    Query1Qty: TCurrencyField;
+    Query1Remark: TStringField;
+    Query1Tracking: TStringField;
+    Query1SampleSent: TBooleanField;
+    Query1QC_Check: TStringField;
+    Query1RandomQty: TCurrencyField;
+    Query1DefectQty: TCurrencyField;
+    Query1Per_Defect: TBooleanField;
+    Query1QC_Reason: TStringField;
+    Query1Settlement: TStringField;
+    Query1DefectName: TStringField;
+    Query1QC_FinishDate: TDateTimeField;
+    Query1QC_UserID: TStringField;
+    Query1QC_Date: TDateTimeField;
+    Query1File_Name: TStringField;
+    Query1Lab_Check: TStringField;
+    Query1Lab_Reason: TStringField;
+    Query1Lab_Result: TStringField;
+    Query1Lab_Date: TDateTimeField;
+    Query1Lab_UserID: TStringField;
+    Query1Lab_Num: TStringField;
+    Query1T2Test_Result: TStringField;
+    Query1Comparision: TStringField;
+    Query1Lab_FinishDate: TDateTimeField;
+    Query1File_Name_Lab: TStringField;
+    Query1Lab_PDM_ID: TStringField;
+    Query1Lab_PDM_IDT2: TStringField;
+    Query1PDM_File_Name: TStringField;
+    Query1Receducing_TLSP: TStringField;
+    Query1Lab_ConfirmDate: TDateTimeField;
+    Query1Lab_DateRemark: TDateTimeField;
+    Query1Final_Status: TStringField;
+    Query1Final_Remark: TStringField;
+    Query1ManagerCheck: TBooleanField;
+    Query1ManagerID: TStringField;
+    Query1ManagerCFMDate: TDateTimeField;
+    Query1UserDate: TDateTimeField;
+    Query1UserID: TStringField;
+    Query1YN: TStringField;
+    procedure Button1Click(Sender: TObject);
+    procedure DBGridEh2DblClick(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure FormDestroy(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  CGZL: TCGZL;
+
+implementation
+
+uses ScanQREntry1;
+
+{$R *.dfm}
+
+procedure TCGZL.Button1Click(Sender: TObject);
+begin
+ with query1 do
+  begin
+    active:=false;
+    sql.clear;
+    sql.Add('select * from MaterialQCcheck where 1=1 ');
+    sql.add('      and CGNO like '+''''+edit1.Text+'%'+'''');
+    sql.add('      and CLBH like '+''''+'%'+edit2.Text+'%'+'''');
+    sql.add('      and rkno like '+''''+'%'+edit3.Text+'%'+'''');
+    sql.add('order by No_ID desc');
+    active:=true;
+  end;
+end;
+
+procedure TCGZL.FormDestroy(Sender: TObject);
+begin
+  CGZL := nil;
+end;
+
+procedure TCGZL.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+  Action := caFree;
+end;
+
+procedure TCGZL.DBGridEh2DblClick(Sender: TObject);
+begin
+  if Query1.RecordCount > 0 then
+  begin
+    // Gan truc tiep gia tri No_ID tu Query1 vao Edit3 cua form chinh
+    ScanQREntry.Edit3.Text := Query1.FieldByName('RKNO').AsString;
+    
+    // Dong form CGZL ngay lap tuc sau khi gan
+    Close;
+  end;
+end;
+
+end. // Ket thuc unit

@@ -1,0 +1,246 @@
+unit exportkcll;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, StdCtrls, ComCtrls, DB, DBTables, ExtCtrls, GridsEh, DBGridEh, ComObj;
+
+type
+  Texportkcll1 = class(TForm)
+    DBGridEh1: TDBGridEh;
+    Panel1: TPanel;
+    Query1: TQuery;
+    DataSource1: TDataSource;
+    Button1: TButton;
+    DateTimePicker1: TDateTimePicker;
+    DateTimePicker2: TDateTimePicker;
+    Label1: TLabel;
+    Label2: TLabel;
+    Button2: TButton;
+    procedure Button2Click(Sender: TObject);
+    procedure Button1Click(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  exportkcll1: Texportkcll1;
+
+implementation
+
+{$R *.dfm}
+
+procedure Texportkcll1.Button1Click(Sender: TObject);
+var
+  strFromNo, strToNo: string;
+begin
+  // Format DateTimePicker to 'YYYYMM' + min/max sequence
+  // VD: 2025/12/01 -> '20251200001'
+  strFromNo := FormatDateTime('yyyymm', DateTimePicker1.Date) + '00001';
+  strToNo   := FormatDateTime('yyyymm', DateTimePicker2.Date) + '99999';
+
+  with Query1 do
+  begin
+    Close;
+    SQL.Clear;
+    
+    // Original SQL
+    SQL.Add('select a.LLNO, a.GSBH, a.CKBH, a.USERID, a.USERDATE, a.CFMID, a.CFMDate, ');
+    SQL.Add('       c.ywpm, d.ID, d.DepName, a.flowflag, b.* ');
+    SQL.Add('from kcll a ');
+    SQL.Add('left join kclls b on a.LLNO = b.LLNO ');
+    SQL.Add('left join clzl c on c.cldh = b.CLBH ');
+    SQL.Add('left join BDepartment d on d.ID = a.DepID ');
+    
+    // Replace hardcoded values with parameters
+    SQL.Add('where (a.LLNO between :FromNo and :ToNo) ');
+    
+    // Add condition: Ignore sequence > 50000 in any month
+    SQL.Add('  and CAST(RIGHT(a.LLNO, 5) AS INT) <= 50000 ');
+    
+    SQL.Add('order by a.LLNO');
+
+    // Pass parameters safely
+    ParamByName('FromNo').AsString := strFromNo;
+    ParamByName('ToNo').AsString := strToNo;
+    
+    Open;
+  end;
+
+  if Query1.RecordCount = 0 then
+    Application.MessageBox('No data found for this period!', 'Info', MB_OK + MB_ICONINFORMATION);
+end;
+
+procedure Texportkcll1.Button2Click(Sender: TObject);
+var
+  excelApp, workbook, excelSheet, dataArray: Variant;
+  col, row, sheetCount, totalRows: Integer;
+  strFromNo, strToNo, currentMonth, recordMonth: string;
+  qryTemp: TQuery;
+  i, j: Integer;
+  bk: TBookmark; // Dùng d? dánh d?u v? trí con tr? d? li?u
+begin
+  if not Query1.Active or (Query1.RecordCount = 0) then
+  begin
+    Application.MessageBox('Please click Query button first!', 'Warning', MB_OK + MB_ICONWARNING);
+    Exit;
+  end;
+
+  Screen.Cursor := crHourGlass;
+  try
+    strFromNo := FormatDateTime('yyyymm', DateTimePicker1.Date) + '00001';
+    strToNo   := FormatDateTime('yyyymm', DateTimePicker2.Date) + '99999';
+
+    try
+      excelApp := CreateOleObject('Excel.Application');
+      excelApp.Visible := False;
+      excelApp.DisplayAlerts := False;
+      workbook := excelApp.Workbooks.Add(1);
+    except
+      Screen.Cursor := crDefault;
+      Application.MessageBox('Microsoft Excel is not installed!', 'Error', MB_OK + MB_ICONERROR);
+      Exit;
+    end;
+
+    qryTemp := TQuery.Create(nil);
+    try
+      qryTemp.DatabaseName := Query1.DatabaseName;
+
+      // ====================================================================
+      // PART 1: EXPORT KCLL (FIXED ARRAY OUT OF BOUNDS)
+      // ====================================================================
+      Query1.DisableControls;
+      Query1.First;
+      
+      currentMonth := '';
+      sheetCount := 0;
+
+      while not Query1.Eof do
+      begin
+        recordMonth := Copy(Query1.FieldByName('LLNO').AsString, 1, 6);
+
+        if recordMonth <> currentMonth then
+        begin
+          currentMonth := recordMonth;
+          Inc(sheetCount);
+
+          if sheetCount = 1 then
+            excelSheet := workbook.Sheets[1]
+          else
+            excelSheet := workbook.Sheets.Add(After:=workbook.Sheets[sheetCount - 1]);
+
+          excelSheet.Name := currentMonth;
+
+          // FIX BUG: Count exact rows for current month directly from Query1
+          totalRows := 0;
+          bk := Query1.GetBookmark; // Save current position
+          try
+            while (not Query1.Eof) and (Copy(Query1.FieldByName('LLNO').AsString, 1, 6) = currentMonth) do
+            begin
+              Inc(totalRows);
+              Query1.Next;
+            end;
+          finally
+            Query1.GotoBookmark(bk); // Return to saved position
+            Query1.FreeBookmark(bk);
+          end;
+
+          // Only proceed if there is data
+          if totalRows > 0 then
+          begin
+            // Create Variant Array with EXACT actual rows
+            dataArray := VarArrayCreate([1, totalRows, 1, Query1.FieldCount], varVariant);
+
+            // Fill the Headers
+            for j := 0 to Query1.FieldCount - 1 do
+            begin
+              excelSheet.Cells[1, j + 1].Value := Query1.Fields[j].FieldName;
+              excelSheet.Cells[1, j + 1].Font.Bold := True;
+            end;
+
+            // Fill the Array with data for this month
+            i := 1;
+            while (not Query1.Eof) and (Copy(Query1.FieldByName('LLNO').AsString, 1, 6) = currentMonth) do
+            begin
+              for j := 0 to Query1.FieldCount - 1 do
+              begin
+                if Query1.Fields[j].DataType in [ftString, ftWideString] then
+                  dataArray[i, j + 1] := '''' + Query1.Fields[j].AsString
+                else
+                  dataArray[i, j + 1] := Query1.Fields[j].Value;
+              end;
+              Inc(i);
+              Query1.Next;
+            end;
+
+            // Dump array to Excel
+            excelSheet.Range[excelSheet.Cells[2, 1], excelSheet.Cells[totalRows + 1, Query1.FieldCount]].Value := dataArray;
+          end;
+          //excelSheet.Columns.AutoFit;
+        end;
+      end;
+      Query1.EnableControls;
+
+      // ====================================================================
+      // PART 2: EXPORT BDELREC (da xoa)
+      // ====================================================================
+      with qryTemp do
+      begin
+        Close;
+        SQL.Clear;
+        SQL.Add('select * from BDelRec where TableName = ''kcll'' and (TNO between :F and :T)');
+        SQL.Add('and CAST(RIGHT(TNO, 5) AS INT) <= 50000');
+        ParamByName('F').AsString := strFromNo;
+        ParamByName('T').AsString := strToNo;
+        Open;
+      end;
+
+      excelSheet := workbook.Sheets.Add(After:=workbook.Sheets[sheetCount]);
+      excelSheet.Name := 'da xoa';
+
+      if qryTemp.RecordCount > 0 then
+      begin
+        dataArray := VarArrayCreate([1, qryTemp.RecordCount, 1, qryTemp.FieldCount], varVariant);
+        
+        for j := 0 to qryTemp.FieldCount - 1 do
+        begin
+          excelSheet.Cells[1, j + 1].Value := qryTemp.Fields[j].FieldName;
+          excelSheet.Cells[1, j + 1].Font.Bold := True;
+        end;
+
+        i := 1;
+        while not qryTemp.Eof do
+        begin
+          for j := 0 to qryTemp.FieldCount - 1 do
+          begin
+             if qryTemp.Fields[j].DataType in [ftString, ftWideString] then
+               dataArray[i, j + 1] := '''' + qryTemp.Fields[j].AsString
+             else
+               dataArray[i, j + 1] := qryTemp.Fields[j].Value;
+          end;
+          Inc(i);
+          qryTemp.Next;
+        end;
+        excelSheet.Range[excelSheet.Cells[2, 1], excelSheet.Cells[qryTemp.RecordCount + 1, qryTemp.FieldCount]].Value := dataArray;
+      end;
+      excelSheet.Columns.AutoFit;
+
+    finally
+      qryTemp.Free;
+    end;
+
+    workbook.Sheets[1].Activate;
+    excelApp.Visible := True;
+    Application.MessageBox('Export completed!', 'Success', MB_OK + MB_ICONINFORMATION);
+
+  finally
+    Screen.Cursor := crDefault;
+    excelApp := Unassigned;
+    dataArray := Unassigned;
+  end;
+end;
+
+end.

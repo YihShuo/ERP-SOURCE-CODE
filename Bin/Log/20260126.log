@@ -1,0 +1,19 @@
+DELETE LTLLSS   
+where LTLLSS.LLNO='LP20260100001'
+       and LTLLSS.CLBH='VD13002609'
+INSERT into LTLLSS   
+select 'LP20260100001',CLBH,'LAST' ,SIZ,'0','0',Qty 
+       ,getdate() 
+       ,'316503'
+       ,'1' 
+       ,'VN'  
+ from #CLZLKC_Last   
+ where #CLZLKC_Last.CLBH='VD13002609'
+UPDATE LTLLS set LLQTY=isnull((select isnull(SUM(QTY),0) AS SQTY 
+                               from LTLLSS WHERE LTLLSS.LLNo=LTLLS.LLNo AND LTLLSS.CLBH=LTLLS.CLBH  
+                                    and LTLLSS.LLNo='LP20260100001' and LTLLSS.CLBH='VD13002609'
+                             GROUP BY LLNo,CLBH),0) 
+where LTLLS.LLNo='LP20260100001' and LTLLS.CLBH='VD13002609'
+DELETE LTLLSS   
+ where LTLLSS.LLNo='LP20260100001'
+       and NOT EXISTS (SELECT LTLLS.LLNo FROM LTLLS WHERE LTLLS.LLNo=LTLLSS.LLNo AND LTLLSS.CLBH=LTLLS.CLBH )

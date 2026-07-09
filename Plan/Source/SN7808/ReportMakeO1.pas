@@ -1,0 +1,343 @@
+unit ReportMakeO1;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, DB, DBTables, GridsEh, DBGridEh, StdCtrls, ComCtrls, ExtCtrls, ComObj;
+
+type
+  TReportMaKeO = class(TForm)
+    Query1: TQuery;
+    DS1: TDataSource;
+    Qtemp: TQuery;
+    Panel1: TPanel;
+    Label2: TLabel;
+    Label1: TLabel;
+    Label3: TLabel;
+    Button1: TButton;
+    DTP1: TDateTimePicker;
+    DTP2: TDateTimePicker;
+    DTP3: TDateTimePicker;
+    DTP4: TDateTimePicker;
+    DBGridEh1: TDBGridEh;
+    DBGridEh2: TDBGridEh;
+    DS2: TDataSource;
+    Query2: TQuery;
+    DBGridEh3: TDBGridEh;
+    Query3: TQuery;
+    DS3: TDataSource;
+    Button2: TButton;
+    CheckBox1: TCheckBox;
+    Button3: TButton;
+    Edit1: TEdit;
+    Label5: TLabel;
+    Edit2: TEdit;
+    procedure FormDestroy(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure Button1Click(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure Button2Click(Sender: TObject);
+    procedure Button3Click(Sender: TObject);
+    procedure Edit1KeyPress(Sender: TObject; var Key: Char);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  ReportMaKeO: TReportMaKeO;
+
+implementation
+
+uses ChangeInfoO1, main1;
+
+{$R *.dfm}
+
+procedure TReportMaKeO.FormDestroy(Sender: TObject);
+begin
+  ReportMaKeO := nil;
+end;
+
+procedure TReportMaKeO.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+  Action := caFree;
+end;
+
+procedure TReportMaKeO.Button1Click(Sender: TObject);
+var
+  sNgayBD, sNgayKT: string;
+begin
+  // 1. Ket hop Ngay (DTP1/DTP3) va Gio (DTP2/DTP4)
+  // sNgayBD lay ngay tu DTP1 va gio phut giay tu DTP2
+  sNgayBD := QuotedStr(FormatDateTime('yyyy/MM/dd', DTP1.Date) + ' ' +
+                       FormatDateTime('HH:mm:ss', DTP2.Time));
+
+  // sNgayKT lay ngay tu DTP3 va gio phut giay tu DTP4
+  sNgayKT := QuotedStr(FormatDateTime('yyyy/MM/dd', DTP3.Date) + ' ' +
+                       FormatDateTime('HH:mm:ss', DTP4.Time));
+
+  // --- QUERY 1: CHI TIET NHAP (IN) ---
+  with Query1 do
+  begin
+    Active := False;
+    SQL.Clear;
+    SQL.Add('SELECT A.codebar, A.ma_ke, B.XXCC, A.Qty, A.userid, A.userdate, C.YSBH ');
+    SQL.Add('FROM smzl_make A WITH (NOLOCK) ');
+    SQL.Add('LEFT JOIN SMDDSS B WITH (NOLOCK) ON A.codebar = B.codebar ');
+    SQL.Add('LEFT JOIN smdd C WITH (NOLOCK) ON B.DDBH = C.DDBH AND B.GXLB = C.GXLB ');
+    SQL.Add('WHERE A.Status = ''IN'' AND A.userdate BETWEEN ' + sNgayBD + ' AND ' + sNgayKT);
+    if trim(edit2.text)<>'' then SQL.add('and c.ysbh='''+edit2.text+''' ');
+    SQL.Add('ORDER BY A.userdate DESC');
+    try
+      Active := True;
+
+      // Cau hinh Footer cho DBGridEh1
+      DBGridEh1.SumList.Active := True;
+      DBGridEh1.FooterRowCount := 1;
+      
+      // Dung FieldColumns de truy cap cot theo ten truong (Field)
+      DBGridEh1.Columns[0].Footer.ValueType := fvtCount; 
+      if DBGridEh1.FieldColumns['Qty'] <> nil then
+      begin
+        DBGridEh1.FieldColumns['Qty'].Footer.ValueType := fvtSum;
+        DBGridEh1.FieldColumns['Qty'].Footer.DisplayFormat := '#,##0';
+      end;
+    except
+      on E: Exception do ShowMessage('Loi Query1 (IN): ' + E.Message);
+    end;
+  end;
+
+  // --- QUERY 2: CHI TIET XUAT (OUT) ---
+  with Query2 do
+  begin
+    Active := False;
+    SQL.Clear;
+    SQL.Add('SELECT A.codebar, A.ma_ke, B.XXCC, A.Qty, A.userid, A.userdate, C.YSBH ');
+    SQL.Add('FROM smzl_make A WITH (NOLOCK) ');
+    SQL.Add('LEFT JOIN SMDDSS B WITH (NOLOCK) ON A.codebar = B.codebar ');
+    SQL.Add('LEFT JOIN smdd C WITH (NOLOCK) ON B.DDBH = C.DDBH AND B.GXLB = C.GXLB ');
+    SQL.Add('WHERE A.Status = ''OUT'' AND A.userdate BETWEEN ' + sNgayBD + ' AND ' + sNgayKT);
+    if trim(edit2.text)<>'' then SQL.add('and c.ysbh='''+edit2.text+''' ');
+    SQL.Add('ORDER BY A.userdate DESC');
+    try
+      Active := True;
+      
+      DBGridEh2.SumList.Active := True;
+      DBGridEh2.FooterRowCount := 1;
+      DBGridEh2.Columns[0].Footer.ValueType := fvtCount;
+      if DBGridEh2.FieldColumns['Qty'] <> nil then
+      begin
+        DBGridEh2.FieldColumns['Qty'].Footer.ValueType := fvtSum;
+        DBGridEh2.FieldColumns['Qty'].Footer.DisplayFormat := '#,##0';
+      end;
+    except
+      on E: Exception do ShowMessage('Loi Query2 (OUT): ' + E.Message);
+    end;
+  end;
+
+  // --- QUERY 3: TONG HOP TON KHO (BALANCE) ---
+  with Query3 do
+  begin
+    Active := False;
+    SQL.Clear;
+    SQL.Add('SELECT A.codebar, A.ma_ke, MAX(C.YSBH) AS DonHang, ');
+    SQL.Add('       SUM(CASE WHEN A.Status = ''IN'' THEN A.Qty ELSE 0 END) AS Tong_IN, ');
+    SQL.Add('       SUM(CASE WHEN A.Status = ''OUT'' THEN A.Qty ELSE 0 END) AS Tong_OUT, ');
+    SQL.Add('       SUM(CASE WHEN A.Status = ''IN'' THEN A.Qty ELSE -A.Qty END) AS Ton_Kho ');
+    SQL.Add('FROM smzl_make A WITH (NOLOCK) ');
+    SQL.Add('LEFT JOIN SMDDSS B WITH (NOLOCK) ON A.codebar = B.codebar ');
+    SQL.Add('LEFT JOIN smdd C WITH (NOLOCK) ON B.DDBH = C.DDBH AND B.GXLB = C.GXLB ');
+    SQL.Add('where a.userdate is not null');
+    if trim(edit2.text)<>'' then SQL.add('and c.ysbh='''+edit2.text+''' ');
+    SQL.Add('GROUP BY A.codebar, A.ma_ke ');
+    //SQL.Add('HAVING SUM(CASE WHEN A.Status = ''IN'' THEN A.Qty ELSE -A.Qty END) > 0');
+    // KIEM TRA CHECKBOX:
+    // Neu chkShowAll KHONG duoc check (Checked = False) thi moi them dieu kien loc Ton > 0
+    if not checkbox1.Checked then
+    begin
+      SQL.Add('HAVING SUM(CASE WHEN A.Status = ''IN'' THEN A.Qty ELSE -A.Qty END) > 0');
+    end;
+    try
+      Active := True;
+
+      DBGridEh3.SumList.Active := True;
+      DBGridEh3.FooterRowCount := 1;
+      DBGridEh3.Columns[0].Footer.ValueType := fvtCount;
+
+      // Gan Footer cho cac cot tong hop
+      if DBGridEh3.FieldColumns['Tong_IN'] <> nil then DBGridEh3.FieldColumns['Tong_IN'].Footer.ValueType := fvtSum;
+      if DBGridEh3.FieldColumns['Tong_OUT'] <> nil then DBGridEh3.FieldColumns['Tong_OUT'].Footer.ValueType := fvtSum;
+      if DBGridEh3.FieldColumns['Ton_Kho'] <> nil then 
+      begin
+        DBGridEh3.FieldColumns['Ton_Kho'].Footer.ValueType := fvtSum;
+        DBGridEh3.FieldColumns['Ton_Kho'].Footer.DisplayFormat := '#,##0';
+      end;
+    except
+      on E: Exception do ShowMessage('Loi Query3 (Tong hop): ' + E.Message);
+    end;
+  end;
+
+  //ShowMessage('Da cap nhat du lieu va Footer thanh cong!');
+end;
+
+
+procedure TReportMaKeO.FormCreate(Sender: TObject);
+begin
+// Gan ngay mac dinh cho DateTimePicker la ngay hom nay
+  DTP1.Date := Date;
+
+  // Neu ban muon cac o gio (DTP2, DTP3...) cung load mac dinh thi bo sung o day:
+   DTP3.Date := Date;
+
+     if ((main.edit1.Text ='316118') or (main.edit1.Text='316503')) then
+  begin
+    Button3.Visible:=true;
+  end;
+end;
+
+procedure TReportMaKeO.Button2Click(Sender: TObject);
+var
+  ExcelApp, Workbook, Sheet: Variant;
+  
+  // Ham noi bo de xuat du lieu tu Query vao Sheet chi dinh
+  procedure ExportQueryToSheet(AQuery: TQuery; ASheet: Variant; AName: string);
+  var
+    f, r: Integer;
+  begin
+    ASheet.Name := AName;
+    if not AQuery.Active or (AQuery.RecordCount = 0) then
+    begin
+      ASheet.Cells[1, 1] := 'Khong co du lieu cho phan nay';
+      Exit;
+    end;
+
+    // 1. Viet tieu de cot (Header)
+    for f := 0 to AQuery.FieldCount - 1 do
+    begin
+      ASheet.Cells[1, f + 1] := AQuery.Fields[f].FieldName;
+      ASheet.Cells[1, f + 1].Font.Bold := True;
+      ASheet.Cells[1, f + 1].Interior.Color := $D9D9D9; // Mau xam nhat
+    end;
+
+    // 2. Viet du lieu (Data)
+    AQuery.DisableControls; // Tang toc do doc du lieu
+    try
+      AQuery.First;
+      r := 2;
+      while not AQuery.Eof do
+      begin
+        for f := 0 to AQuery.FieldCount - 1 do
+          ASheet.Cells[r, f + 1] := AQuery.Fields[f].Value;
+        AQuery.Next;
+        Inc(r);
+      end;
+    finally
+      AQuery.EnableControls;
+    end;
+    
+    ASheet.Columns.AutoFit; // Tu dong can chinh do rong
+  end;
+
+begin
+  // Kiem tra du lieu truoc khi mo Excel
+  if (not Query1.Active) and (not Query2.Active) and (not Query3.Active) then
+  begin
+    ShowMessage('Vui long bam nut Truyen van du lieu truoc!');
+    Exit;
+  end;
+
+  try
+    // Khoi tao ung dung Excel
+    ExcelApp := CreateOleObject('Excel.Application');
+    ExcelApp.Visible := True;
+    Workbook := ExcelApp.Workbooks.Add;
+
+    // Excel mac dinh co the co 1 hoac 3 sheet tuy phien ban, ta se tu them neu thieu
+    while Workbook.Worksheets.Count < 3 do Workbook.Worksheets.Add;
+
+    // Xuat vao Sheet 1: NHAP_IN
+    ExportQueryToSheet(Query1, Workbook.Worksheets[1], 'NHAP_IN');
+
+    // Xuat vao Sheet 2: XUAT_OUT
+    ExportQueryToSheet(Query2, Workbook.Worksheets[2], 'XUAT_OUT');
+
+    // Xuat vao Sheet 3: TON_KHO
+    ExportQueryToSheet(Query3, Workbook.Worksheets[3], 'TON_KHO');
+
+    ShowMessage('Da xuat bao cao 3 Sheet thanh cong!');
+  except
+    on E: Exception do
+      ShowMessage('Loi Excel: ' + E.Message);
+  end;
+end;
+
+procedure TReportMaKeO.Button3Click(Sender: TObject);
+begin
+  // 1. Kiem tra xem Form da duoc tao trong bo nho chua
+  if not Assigned(ChangeInfoO) then
+  begin
+    // 2. Neu chua co thi khoi tao moi
+    ChangeInfoO := TChangeInfoO.Create(Self);
+  end;
+
+  // 3. Hien thi Form len man hinh
+  ChangeInfoO.Show;
+  
+  // Neu ban muon Form nay hien len va bat nguoi dung xu ly xong moi quay lai duoc Form cu
+  // thi dung: ChangeInfoO.ShowModal;
+end;
+
+procedure TReportMaKeO.Edit1KeyPress(Sender: TObject; var Key: Char);
+begin
+  if Key = #13 then // Khi nhan phim Enter
+  begin
+    // 1. Kiem tra neu o nhap dang trong thi thoat
+    if Trim(Edit1.Text) = '' then 
+    begin
+      ShowMessage('Vui long nhap Ma vach!');
+      Exit;
+    end;
+
+    with Qtemp do
+    begin
+      Close;
+      SQL.Clear;
+      // 2. Cau lenh SQL lay YSBH (Ma mau) dua tren Codebar
+      SQL.Add('SELECT TOP 1 d.YSBH ');
+      SQL.Add('FROM smdd d WITH (NOLOCK) ');
+      SQL.Add('LEFT JOIN smddss s WITH (NOLOCK) ON d.ddbh = s.DDBH AND d.GXLB = s.GXLB ');
+      SQL.Add('WHERE s.CODEBAR = ' + QuotedStr(Trim(Edit1.Text)));
+
+      try
+        Open;
+        if not Eof then
+        begin
+          // 3. Gan gia tri tim duoc vao Edit2
+          Edit2.Text := FieldByName('YSBH').AsString;
+
+          // --- GOI LAI BUTTON1CLICK O DAY ---
+          // Self dai dien cho Form hien tai dang chua nut bam do
+          Button1Click(Self);
+          // Chuyen con tro sang nut Bam hoac o tiep theo
+          // Button2.SetFocus;
+        end
+        else
+        begin
+          ShowMessage('Khong tim thay YSBH cho Ma vach nay!');
+          Edit2.Text := '';
+          Edit1.SelectAll;
+        end;
+      except
+        on E: Exception do 
+          ShowMessage('Loi truy van: ' + E.Message);
+      end;
+    end;
+    Edit1.Text := '';
+    // Huy tieng bip mac dinh cua Windows khi nhan Enter
+    Key := #0; 
+  end;
+end;
+
+end.

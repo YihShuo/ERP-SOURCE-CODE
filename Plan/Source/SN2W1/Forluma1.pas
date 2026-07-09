@@ -1,0 +1,180 @@
+unit Forluma1;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, DB, DBTables, GridsEh, DBGridEh, StdCtrls, ExtCtrls;
+
+type
+  TForluma = class(TForm)
+    Panel1: TPanel;
+    Label1: TLabel;
+    Button1: TButton;
+    Edit1: TEdit;
+    Button2: TButton;
+    DBGridEh1: TDBGridEh;
+    Query1: TQuery;
+    DS1: TDataSource;
+    Up: TUpdateSQL;
+    Query1ID: TAutoIncField;
+    Query1HC1: TStringField;
+    Query1HC2: TStringField;
+    Query1HC3: TStringField;
+    Query1TL1: TFloatField;
+    Query1TL2: TFloatField;
+    Query1TL3: TFloatField;
+    Query1Name: TStringField;
+    DBGridEh2: TDBGridEh;
+    Query2: TQuery;
+    DataSource1: TDataSource;
+    UpdateSQL1: TUpdateSQL;
+    Button3: TButton;
+    Label2: TLabel;
+    Edit2: TEdit;
+    Query2id: TStringField;
+    Query2name_vi: TStringField;
+    Query2name_tw: TStringField;
+    Query2type_oil: TBooleanField;
+    Query2Notes: TStringField;
+    Query2TyLe: TFloatField;
+    Query2Type: TStringField;
+    Button4: TButton;
+    Button5: TButton;
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure FormDestroy(Sender: TObject);
+    procedure Button2Click(Sender: TObject);
+    procedure Button1Click(Sender: TObject);
+    procedure Button3Click(Sender: TObject);
+    procedure Button5Click(Sender: TObject);
+    procedure Button4Click(Sender: TObject);
+    procedure DBGridEh1DblClick(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  Forluma: TForluma;
+
+implementation
+
+uses R_Hoachat_dp;
+
+{$R *.dfm}
+
+procedure TForluma.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+    Action := caFree;
+end;
+
+procedure TForluma.FormDestroy(Sender: TObject);
+begin
+   Forluma:=nil;
+end;
+
+procedure TForluma.Button2Click(Sender: TObject);
+var i:integer;
+begin
+  Query1.First;
+  for i:=0 to Query1.RecordCount-1 do
+  begin
+    case Query1.updatestatus of
+      usmodified:
+      begin
+        Query1.Edit;
+        Up.apply(ukmodify);
+      end;
+    end;
+    Query1.Next;
+  end;
+  Query1.active:=false;
+  Query1.cachedupdates:=false;
+  Query1.requestlive:=false;
+  Query1.active:=true;
+end;
+
+procedure TForluma.Button1Click(Sender: TObject);
+begin
+  with query1 do
+  begin
+  active:=false;
+  sql.Clear;
+  sql.Add('select  * from Ch_formula');
+  sql.Add('where  name like ''%'+edit1.Text+'%'' ');
+  active:=true;
+  requestlive:=true;
+  cachedupdates:=true;
+  edit;
+  end;
+end;
+
+procedure TForluma.Button3Click(Sender: TObject);
+begin
+  with query2 do
+  begin
+  active:=false;
+  sql.Clear;
+  sql.Add('select  * from Ch_Inventory_HK');
+  sql.Add('where  name_vi like ''%'+edit2.Text+'%'' ');
+  active:=true;
+  requestlive:=true;
+  cachedupdates:=true;
+  edit;
+  end;
+end;
+
+procedure TForluma.Button5Click(Sender: TObject);
+begin
+  with query2 do
+  begin
+  requestlive:=true;
+  cachedupdates:=true;
+  Insert;
+  end;
+end;
+
+procedure TForluma.Button4Click(Sender: TObject);
+var
+  i: Integer;
+begin
+  Query2.First;
+  for i := 0 to Query2.RecordCount - 1 do
+  begin
+    if Query2.UpdateStatus = usInserted then
+      UpdateSQL1.Apply(ukInsert);
+
+    Query2.Next;
+  end;
+
+  Query2.Active := False;
+  Query2.CachedUpdates := False;
+  Query2.RequestLive := False;
+  Query2.Active := True;
+end;
+
+procedure TForluma.DBGridEh1DblClick(Sender: TObject);
+begin
+  if query1.recordcount>0 then
+  begin
+    //±a¤JDepNO
+      R_hoachat.SetInfo.active:=true;
+      if R_hoachat.SetInfo.Locate('ID',copy(query1.FieldByName('ID').AsString,0,10),[]) then
+      begin
+      R_hoachat.DBEdit1.Text:=query1.fieldbyname('HC1').Value;
+      // KIEM TRA NULL CHO HC2 (Cach dung dung)
+    if not query1.FieldByName('HC2').IsNull then
+       R_hoachat.DBEdit3.Text := query1.FieldByName('HC2').AsString
+    else
+       R_hoachat.DBEdit3.Text := ''; // Neu NULL thi de trong
+      R_hoachat.DBEdit5.Text:=query1.fieldbyname('HC3').Value;
+      R_hoachat.TL.Text:=query1.fieldbyname('TL3').Value;
+      R_hoachat.TL1.Text:=query1.fieldbyname('TL1').Value;
+      end;
+    //
+    close;
+  end;
+end;
+
+end.

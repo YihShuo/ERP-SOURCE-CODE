@@ -1,0 +1,1104 @@
+unit ProduceMatFailure;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, DBTables, DB, GridsEh, DBGridEh, StdCtrls, Mask, DBCtrls,
+  Buttons, ExtCtrls, ComObj, ShellAPI, ComCtrls, DBCtrlsEh, Menus;
+
+type
+  TProducMatFailure = class(TForm)
+    Panel1: TPanel;
+    Label1: TLabel;
+    Label2: TLabel;
+    Label3: TLabel;
+    Label5: TLabel;
+    Label7: TLabel;
+    BB1: TBitBtn;
+    BB2: TBitBtn;
+    BB3: TBitBtn;
+    BB4: TBitBtn;
+    BB5: TBitBtn;
+    BB6: TBitBtn;
+    Button1: TButton;
+    bbt6: TBitBtn;
+    edtDDBH: TEdit;
+    bExcel: TBitBtn;
+    bExF: TBitBtn;
+    cbPDF: TCheckBox;
+    edtZSBH: TEdit;
+    ckUSERDate: TCheckBox;
+    dtpUSERDate: TDateTimePicker;
+    MenuCode: TEdit;
+    edtRID: TEdit;
+    dtpInsDate: TDateTimePicker;
+    edtStyle: TEdit;
+    edtMatID: TEdit;
+    btClear: TButton;
+    ckInsDate: TCheckBox;
+    DBGrid1: TDBGridEh;
+    Query1: TQuery;
+    DS1: TDataSource;
+    UpSQL1: TUpdateSQL;
+    Qtemp: TQuery;
+    OpenDialog1: TOpenDialog;
+    SaveDialog: TSaveDialog;
+    QGetID: TQuery;
+    Query1ReportID: TIntegerField;
+    Query1ArrDate: TDateTimeField;
+    Query1InspecDate: TDateTimeField;
+    Query1Supplier: TStringField;
+    Query1XFDate: TStringField;
+    Query1MatID: TStringField;
+    Query1XieMing: TStringField;
+    Query1Qty: TStringField;
+    Query1DDBH: TStringField;
+    Query1VisualCheck: TStringField;
+    Query1PhysCheck: TStringField;
+    Query1SCFID: TStringField;
+    Query1SCFDate: TDateTimeField;
+    Query1LCFID: TStringField;
+    Query1LCFDate: TDateTimeField;
+    Query1WMSCFID: TStringField;
+    Query1WMSCFDate: TDateTimeField;
+    Query1RefStand: TStringField;
+    Query1MatName: TStringField;
+    Query1USERID: TStringField;
+    Query1USERDate: TDateTimeField;
+    Query1YN: TSmallintField;
+    ckArrDate: TCheckBox;
+    dtpArrDate: TDateTimePicker;
+    Query1PurID: TStringField;
+    Query1PurDate: TDateTimeField;
+    edtRefStand: TDBEdit;
+    Label4: TLabel;
+    Query1InspecID: TStringField;
+    QSig: TQuery;
+    edtImagePath: TEdit;
+    OpenPictureDialog1: TOpenDialog;
+    Image1: TImage;
+    UpImage: TButton;
+    Label6: TLabel;
+    Label8: TLabel;
+    Query1Image: TStringField;
+    Query1Parts: TStringField;
+    PopupMenu1: TPopupMenu;
+    UpImage1: TMenuItem;
+    QUpImage: TQuery;
+    OpenImage1: TMenuItem;
+    DownloadImage1: TMenuItem;
+    SaveDialog1: TSaveDialog;
+    procedure bExFClick(Sender: TObject);
+    procedure Button1Click(Sender: TObject);
+    procedure DBGrid1CellClick(Column: TColumnEh);
+    procedure DBGrid1KeyPress(Sender: TObject; var Key: Char);
+    procedure BB1Click(Sender: TObject);
+    procedure BB5Click(Sender: TObject);
+    procedure Query1AfterOpen(DataSet: TDataSet);
+    procedure BB4Click(Sender: TObject);
+    function NewID: string;
+    function GetUsernameByID(const AID: string): string;
+    procedure BB3Click(Sender: TObject);
+    procedure SetColumnsReadOnly;
+    procedure btClearClick(Sender: TObject);
+    procedure bExcelClick(Sender: TObject);
+    procedure BB6Click(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure FormDestroy(Sender: TObject);
+    procedure DBGrid1GetCellParams(Sender: TObject; Column: TColumnEh;
+      AFont: TFont; var Background: TColor; State: TGridDrawState);
+    procedure UpImageClick(Sender: TObject);
+    procedure InsertImageToExcel(Worksheet: OleVariant; Query: TQuery;
+  const FieldName: string; Row, Column: Integer);
+    procedure BB2Click(Sender: TObject);
+    procedure UpImage1Click(Sender: TObject);
+    procedure OpenImage1Click(Sender: TObject);
+    procedure DownloadImage1Click(Sender: TObject);
+    procedure PrintSign(
+                AWorksheet: OleVariant;
+                AQuery: TQuery;
+                AInsertRow: Integer;
+                const AIDField, ADateField: string;
+                ACol: Integer;
+                UseUserName: Boolean
+              );
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  ProducMatFailure: TProducMatFailure;
+
+implementation
+
+uses main1;
+
+{$R *.dfm}
+
+procedure TProducMatFailure.InsertImageToExcel(Worksheet: OleVariant; Query: TQuery;
+  const FieldName: string; Row, Column: Integer);
+var
+  Pic: OleVariant;
+  Rg: OleVariant;
+  CellLeft, CellTop, CellWidth, CellHeight: Double;
+  origW, origH, newW, newH: Double;
+  ImagePath: string;
+begin
+  // Duong anh trong field
+  ImagePath := Trim('\\192.168.71.11\FileServer\QC-QIP\KHO IMQC\HINHNG\'+ Query.FieldByName(FieldName).AsString);
+
+  // Neu rong thi khong lam gi
+  if ImagePath = '' then
+    Exit;
+
+  // Neu file khong ton tai thi exit
+  if not FileExists(ImagePath) then
+    Exit;
+
+  // Chen anh
+  Pic := Worksheet.Pictures.Insert(ImagePath);
+
+  // Lay vung merge cua o
+  Rg := Worksheet.Cells[Row, Column].MergeArea;
+
+  CellLeft   := Rg.Left;
+  CellTop    := Rg.Top;
+  CellWidth  := Rg.Width;
+  CellHeight := Rg.Height;
+
+  // Kich thuoc goc cua anh
+  origW := Pic.Width;
+  origH := Pic.Height;
+
+  // Scale theo chieu ngang nhu cu
+  newW := CellWidth * 0.95;
+  newH := newW * (origH / origW);
+
+  if newH > CellHeight * 0.95 then
+  begin
+    newH := CellHeight * 0.95;
+    newW := newH * (origW / origH);
+  end;
+
+  // Gioi han anh chi nam trong nua tren cua vung merge
+  if newH > (CellHeight / 2) * 0.95 then
+  begin
+    newH := (CellHeight / 2) * 0.95;
+    newW := newH * (origW / origH);
+  end;
+
+  Pic.Width  := newW;
+  Pic.Height := newH;
+
+  // Canh giua theo chieu ngang
+  Pic.Left := CellLeft + (CellWidth - Pic.Width) / 2;
+
+  // Canh giua trong nua tren
+  Pic.Top := CellTop + ((CellHeight / 2) - Pic.Height) / 2;
+end;
+
+procedure TProducMatFailure.PrintSign(
+  AWorksheet: OleVariant;
+  AQuery: TQuery;
+  AInsertRow: Integer;
+  const AIDField, ADateField: string;
+  ACol: Integer;
+  UseUserName: Boolean
+);
+var
+  s, SignFile: string;
+  Cell, MergeCell: OleVariant;
+  CellLeft, CellTop, CellWidth, CellHeight: Double;
+  PicWidth, PicHeight: Double;
+begin
+  if AQuery.FieldByName(AIDField).IsNull
+     or (Trim(AQuery.FieldByName(AIDField).AsString) = '') then
+    Exit;
+
+  Cell := AWorksheet.Cells[17, ACol];
+  MergeCell := Cell.MergeArea;
+
+  MergeCell.WrapText := True;
+  MergeCell.HorizontalAlignment := -4108; // xlCenter
+  MergeCell.VerticalAlignment := -4108;   // xlCenter
+
+  s := AQuery.FieldByName(AIDField).AsString;
+  s := StringReplace(s, '_', Chr(10), [rfReplaceAll]);
+
+  if UseUserName then
+  begin
+    Cell.Value :=
+      Chr(10) + Chr(10) + Chr(10) +
+      GetUsernameByID(AQuery.FieldByName(AIDField).AsString)
+      + Chr(10)
+      + FormatDateTime(
+          'dd-mm-yyyy',
+          AQuery.FieldByName(ADateField).AsDateTime
+        );
+
+    SignFile := ExtractFilePath(Application.ExeName) +
+                'Signatures\' +
+                Trim(AQuery.FieldByName(AIDField).AsString) +
+                '.bmp';
+
+    if FileExists(SignFile) then
+    begin
+      CellLeft   := MergeCell.Left;
+      CellTop    := MergeCell.Top;
+      CellWidth  := MergeCell.Width;
+      CellHeight := MergeCell.Height;
+
+      PicWidth  := CellWidth * 0.4;
+      PicHeight := CellHeight * 0.45;
+
+      AWorksheet.Shapes.AddPicture(
+        SignFile,
+        False,
+        True,
+        CellLeft + (CellWidth - PicWidth) / 2, // can giua ngang
+        CellTop + (CellHeight * 0.1),          // phia tren
+        PicWidth,
+        PicHeight
+      );
+    end;
+  end
+  else
+    Cell.Value := s;
+end;
+
+function TProducMatFailure.GetUsernameByID(const AID: string): string;
+begin
+  Result := '';
+  if AID = '' then Exit;
+
+  with QSig do
+  begin
+    Active := False;
+    SQL.Clear;
+    SQL.Add('select USERNAME from Busers where USERID = :USERID');
+    ParamByName('USERID').AsString := AID;
+    Active := True;
+
+    if not EOF then
+      Result := FieldByName('USERNAME').AsString;
+  end;
+end;
+
+function TProducMatFailure.NewID: string;
+var
+  Prefix, LastID: string;
+  Seq: Integer;
+begin
+  Prefix := FormatDateTime('yymm', Date);
+
+  with QGetID do
+  begin
+    Active := false;
+    SQL.Clear;
+    SQL.Add(
+      'select top 1 ReportID ' +
+      'from QC_ProMatFail ' +
+      'where left(ReportID, 4) = :P ' +
+      'order by ReportID desc');
+    ParamByName('P').AsString := Prefix;
+    Active := true;
+  end;
+
+  if QGetID.IsEmpty then
+    Seq := 1
+  else
+  begin
+    LastID := QGetID.FieldByName('ReportID').AsString;
+    Seq := StrToInt(Copy(LastID, 5, 4)) + 1;
+  end;
+
+  Result := Prefix + FormatFloat('0000', Seq);
+end;
+
+procedure TProducMatFailure.SetColumnsReadOnly;
+begin
+  if MenuCode.Text = 'N961' then
+  begin
+    DBGrid1.FieldColumns['ReportID'].ReadOnly     := True;
+    DBGrid1.FieldColumns['SCFID'].ReadOnly        := True;
+    DBGrid1.FieldColumns['SCFDate'].ReadOnly      := True;
+    DBGrid1.FieldColumns['LCFID'].ReadOnly        := True;
+    DBGrid1.FieldColumns['LCFDate'].ReadOnly      := True;
+    DBGrid1.FieldColumns['WMSCFID'].ReadOnly      := True;
+    DBGrid1.FieldColumns['WMSCFDate'].ReadOnly    := True;
+    DBGrid1.FieldColumns['RefStand'].ReadOnly     := True;
+    DBGrid1.FieldColumns['USERID'].ReadOnly       := True;
+    DBGrid1.FieldColumns['USERDate'].ReadOnly     := True;
+    DBGrid1.FieldColumns['YN'].ReadOnly           := True;
+  end;
+
+  if MenuCode.Text = 'N962' then
+  begin
+    DBGrid1.FieldColumns['ReportID'].ReadOnly     := True;
+    DBGrid1.FieldColumns['ArrDate'].ReadOnly      := True;
+    DBGrid1.FieldColumns['InspecDate'].ReadOnly   := True;
+    DBGrid1.FieldColumns['Supplier'].ReadOnly     := True;
+    DBGrid1.FieldColumns['XFDate'].ReadOnly       := True;
+    DBGrid1.FieldColumns['MatID'].ReadOnly        := True;
+    DBGrid1.FieldColumns['MatName'].ReadOnly      := True;
+    DBGrid1.FieldColumns['XieMing'].ReadOnly      := True;
+    DBGrid1.FieldColumns['Qty'].ReadOnly          := True;
+    DBGrid1.FieldColumns['DDBH'].ReadOnly         := True;
+    DBGrid1.FieldColumns['VisualCheck'].ReadOnly  := True;
+    DBGrid1.FieldColumns['PhysCheck'].ReadOnly    := True;
+    DBGrid1.FieldColumns['SCFID'].ReadOnly        := True;
+    DBGrid1.FieldColumns['LCFID'].ReadOnly        := True;
+    DBGrid1.FieldColumns['WMSCFID'].ReadOnly      := True;
+    DBGrid1.FieldColumns['USERID'].ReadOnly       := True;
+    DBGrid1.FieldColumns['USERDate'].ReadOnly     := True;
+    DBGrid1.FieldColumns['YN'].ReadOnly           := True;
+    DBGrid1.FieldColumns['InspecID'].ReadOnly     := True;
+  end;
+  if MenuCode.Text = 'N963' then
+  begin
+    DBGrid1.FieldColumns['ReportID'].ReadOnly     := True;
+    DBGrid1.FieldColumns['ArrDate'].ReadOnly      := True;
+    DBGrid1.FieldColumns['InspecDate'].ReadOnly   := True;
+    DBGrid1.FieldColumns['Supplier'].ReadOnly     := True;
+    DBGrid1.FieldColumns['XFDate'].ReadOnly       := True;
+    DBGrid1.FieldColumns['MatID'].ReadOnly        := True;
+    DBGrid1.FieldColumns['MatName'].ReadOnly      := True;
+    DBGrid1.FieldColumns['XieMing'].ReadOnly      := True;
+    DBGrid1.FieldColumns['Qty'].ReadOnly          := True;
+    DBGrid1.FieldColumns['DDBH'].ReadOnly         := True;
+    DBGrid1.FieldColumns['VisualCheck'].ReadOnly  := True;
+    DBGrid1.FieldColumns['PhysCheck'].ReadOnly    := True;
+    DBGrid1.FieldColumns['LCFID'].ReadOnly        := True;
+    DBGrid1.FieldColumns['LCFDate'].ReadOnly      := True;
+    DBGrid1.FieldColumns['WMSCFID'].ReadOnly      := True;
+    DBGrid1.FieldColumns['RefStand'].ReadOnly     := True;
+    DBGrid1.FieldColumns['USERID'].ReadOnly       := True;
+    DBGrid1.FieldColumns['YN'].ReadOnly           := True;
+    DBGrid1.FieldColumns['InspecID'].ReadOnly     := True;
+  end;
+  if MenuCode.Text = 'N964' then
+  begin
+    DBGrid1.FieldColumns['ReportID'].ReadOnly     := True;
+    DBGrid1.FieldColumns['ArrDate'].ReadOnly      := True;
+    DBGrid1.FieldColumns['InspecDate'].ReadOnly   := True;
+    DBGrid1.FieldColumns['Supplier'].ReadOnly     := True;
+    DBGrid1.FieldColumns['XFDate'].ReadOnly       := True;
+    DBGrid1.FieldColumns['MatID'].ReadOnly        := True;
+    DBGrid1.FieldColumns['MatName'].ReadOnly      := True;
+    DBGrid1.FieldColumns['XieMing'].ReadOnly      := True;
+    DBGrid1.FieldColumns['Qty'].ReadOnly          := True;
+    DBGrid1.FieldColumns['DDBH'].ReadOnly         := True;
+    DBGrid1.FieldColumns['VisualCheck'].ReadOnly  := True;
+    DBGrid1.FieldColumns['PhysCheck'].ReadOnly    := True;
+    DBGrid1.FieldColumns['SCFID'].ReadOnly        := True;
+    DBGrid1.FieldColumns['RefStand'].ReadOnly     := True;
+    DBGrid1.FieldColumns['USERID'].ReadOnly       := True;
+    DBGrid1.FieldColumns['USERDate'].ReadOnly     := True;
+    DBGrid1.FieldColumns['YN'].ReadOnly           := True;
+    DBGrid1.FieldColumns['InspecID'].ReadOnly     := True;
+  end;
+  if MenuCode.Text = 'N965' then
+  begin
+    DBGrid1.FieldColumns['ReportID'].ReadOnly     := True;
+    DBGrid1.FieldColumns['ArrDate'].ReadOnly      := True;
+    DBGrid1.FieldColumns['InspecDate'].ReadOnly   := True;
+    DBGrid1.FieldColumns['Supplier'].ReadOnly     := True;
+    DBGrid1.FieldColumns['XFDate'].ReadOnly       := True;
+    DBGrid1.FieldColumns['MatID'].ReadOnly        := True;
+    DBGrid1.FieldColumns['MatName'].ReadOnly      := True;
+    DBGrid1.FieldColumns['XieMing'].ReadOnly      := True;
+    DBGrid1.FieldColumns['Qty'].ReadOnly          := True;
+    DBGrid1.FieldColumns['DDBH'].ReadOnly         := True;
+    DBGrid1.FieldColumns['VisualCheck'].ReadOnly  := True;
+    DBGrid1.FieldColumns['PhysCheck'].ReadOnly    := True;
+    DBGrid1.FieldColumns['SCFID'].ReadOnly        := True;
+    DBGrid1.FieldColumns['LCFID'].ReadOnly        := True;
+    DBGrid1.FieldColumns['WMSCFID'].ReadOnly      := True;
+    DBGrid1.FieldColumns['RefStand'].ReadOnly     := True;
+    DBGrid1.FieldColumns['USERID'].ReadOnly       := True;
+    DBGrid1.FieldColumns['USERDate'].ReadOnly     := True;
+    DBGrid1.FieldColumns['YN'].ReadOnly           := True;
+    DBGrid1.FieldColumns['InspecID'].ReadOnly     := True;
+  end;
+end;
+
+procedure TProducMatFailure.bExFClick(Sender: TObject);
+var
+  ExcelApp, Workbook, Worksheet, borderRange, Pic, Rg, TB: OleVariant;
+  StartRow, InsertRow: Integer;
+  DuongDanFile, SaveFile, AppDir, SrcFile, DstFile: string;
+  SigS, SigWMS, SigL, SigI: Boolean;
+  s: WideString;
+  i, p: Integer;
+  r: array[0..11] of Integer;
+  c: array[0..11] of Integer;
+  v: array[0..11] of WideString;
+  cur: WideString;
+begin
+  AppDir := ExtractFilePath(Application.ExeName);
+
+  if not DirectoryExists(AppDir) then
+    ForceDirectories(AppDir);
+
+  SrcFile := '\\192.168.71.4\erp\lys_erp\A-QIP-WS001-07D.xlsx';
+  DstFile := IncludeTrailingPathDelimiter(AppDir) + 'A-QIP-WS001-07D.xlsx';
+
+  if not CopyFile(PChar(SrcFile), PChar(DstFile), False) then
+    ShowMessage('Copy file that bai');
+
+  DuongDanFile := ExtractFilePath(ParamStr(0)) + 'A-QIP-WS001-07D.xlsx';
+  SaveDialog := TSaveDialog.Create(nil);
+  try
+    if not cbPDF.Checked then
+    begin
+      SaveDialog.Filter := 'Excel Files (*.xlsx)|*.xlsx';
+      SaveDialog.DefaultExt := 'xlsx';
+      SaveDialog.FileName := 'A-QIP-WS001-07D_' + FormatDateTime('yyyy-mm-dd_hh-nn-ss', Now) + '.xlsx';
+      SaveDialog.Title := 'Chon noi luu file Excel moi';
+    end else
+    begin
+      SaveDialog.Filter := 'PDF (*.pdf)|*.pdf';
+      SaveDialog.DefaultExt := 'pdf';
+      SaveDialog.FileName := 'A-QIP-WS001-07D_' + FormatDateTime('yyyy-mm-dd_hh-nn-ss', Now) + '.pdf';
+      SaveDialog.Title := 'Chon noi luu file PDF moi';
+    end;
+
+    if not SaveDialog.Execute then
+      Exit;
+
+    SaveFile := SaveDialog.FileName;
+  finally
+    SaveDialog.Free;
+  end;
+
+  ExcelApp := CreateOleObject('Excel.Application');
+
+  Workbook := ExcelApp.Workbooks.Open(DuongDanFile);
+  Worksheet := Workbook.WorkSheets[1];
+
+  r[0]:=2;  c[0]:=2;
+  r[1]:=3;  c[1]:=3;
+  r[2]:=3;  c[2]:=7;
+  r[3]:=4;  c[3]:=3;
+  r[4]:=4;  c[4]:=7;
+  r[5]:=5;  c[5]:=3;
+  r[6]:=5;  c[6]:=7;
+  r[7]:=6;  c[7]:=3;
+  r[8]:=6;  c[8]:=7;
+  r[9]:=7; c[9]:=3;
+  r[10]:=12; c[10]:=6;
+  r[11]:=21; c[11]:=6;
+  if Query1.RecordCount = 0 then Exit;
+
+  v[1] := FormatDateTime('dd/mm/yyyy', dtpArrDate.Date);
+  v[2] := edtZSBH.Text;
+  v[3] := FormatDateTime('dd/mm/yyyy', dtpInsDate.Date);
+  v[4] := Query1.FieldByName('XFDate').AsString;
+  v[5] := edtMatID.Text;
+  v[6] := Query1.FieldByName('XieMing').AsString;
+  v[7] := Query1.FieldByName('MatName').AsString;
+  v[8] := Query1.FieldByName('Qty').AsString;
+  v[9] := Query1.FieldByName('Parts').AsString;
+  v[10]:= Query1.FieldByName('PhysCheck').AsString;
+  v[11]:= edtRefStand.Text;
+
+  for i := 0 to 11 do
+  begin
+    //chen hinh Visual Inspection
+    if i = 0 then
+      begin
+        if (Query1.FieldByName('Image').Value <> '') or not Query1.FieldByName('Image').IsNull then
+          InsertImageToExcel(Worksheet, Query1, 'Image', 12, 1);
+
+        //ghi noi dung textbox
+        TB := Worksheet.Shapes.Item('TextBox 3');
+        TB.TextFrame.Characters.Text := StringReplace(Query1.FieldByName('VisualCheck').AsString, ';', #13#10, [rfReplaceAll]);
+      end;
+
+    cur := Trim(Worksheet.Cells[r[i], c[i]].Value);
+    if cur = '' then
+      Worksheet.Cells[r[i], c[i]].Value := v[i]
+    else
+      Worksheet.Cells[r[i], c[i]].Value := cur + ' ' + v[i];
+  end;
+
+
+  //dien PO, xuong dong neu gap _
+  begin
+    s := edtDDBH.Text;
+    s := StringReplace(s, '_', Chr(10), [rfReplaceAll]);
+    Worksheet.Cells[8, 3].WrapText := True;
+    Worksheet.Cells[8, 3].Value := s;
+  end;
+
+
+  PrintSign(Worksheet, Query1, InsertRow, 'SCFID', 'SCFDate', 5, True);
+  PrintSign(Worksheet, Query1, InsertRow, 'WMSCFID', 'WMSCFDate', 1, True);
+  PrintSign(Worksheet, Query1, InsertRow, 'LCFID', 'LCFDate', 6, True);
+  PrintSign(Worksheet, Query1, InsertRow, 'InspecID', '', 8, False);
+
+  //Kiem tra ky KCS Super
+  {Query1.First;
+  SigS := false;
+  while not Query1.Eof do
+  begin
+    if (Query1.FieldByName('SCFID').AsString = '') or Query1.FieldByName('SCFID').IsNull then
+      SigS := true;
+  Query1.Next
+  end;
+
+  if SigS = false then
+  begin
+    Worksheet.Cells[17, 5].WrapText := True;
+    Worksheet.Cells[17, 5].Value := GetUsernameByID(Query1.FieldByName('SCFID').AsString)
+    + Chr(10) + FormatDateTime('dd-mm-yyyy', Query1.FieldByName('SCFDate').AsDateTime);
+  end;
+
+  //Kiem tra ky Warehouse Super
+  Query1.First;
+  SigWMS := false;
+  while not Query1.Eof do
+  begin
+    if (Query1.FieldByName('WMSCFID').AsString = '') or Query1.FieldByName('WMSCFID').IsNull then
+      SigWMS := true;
+  Query1.Next
+  end;
+
+  if SigWMS = false then
+  begin
+    Worksheet.Cells[17, 1].WrapText := True;
+    Worksheet.Cells[17, 1].Value := GetUsernameByID(Query1.FieldByName('WMSCFID').AsString)
+    + Chr(10) + FormatDateTime('dd-mm-yyyy', Query1.FieldByName('WMSCFDate').AsDateTime);
+  end;
+
+  //Kiem tra ky KCS Leader
+  Query1.First;
+  SigL := false;
+  while not Query1.Eof do
+  begin
+    if (Query1.FieldByName('LCFID').AsString = '') or Query1.FieldByName('LCFID').IsNull then
+      SigL := true;
+  Query1.Next
+  end;
+
+  if SigL = false then
+  begin
+    Worksheet.Cells[17, 6].WrapText := True;
+    Worksheet.Cells[17, 6].Value := GetUsernameByID(Query1.FieldByName('LCFID').AsString)
+    + Chr(10) + FormatDateTime('dd-mm-yyyy', Query1.FieldByName('LCFDate').AsDateTime);
+  end;
+
+  //kiem tra InspecID
+  Query1.First;
+  SigI := false;
+  while not Query1.Eof do
+  begin
+    if (Query1.FieldByName('InspecID').AsString = '') or Query1.FieldByName('InspecID').IsNull then
+      SigI := true;
+  Query1.Next
+  end;
+
+  if SigI = false then
+  begin
+    Worksheet.Cells[17, 8].WrapText := True;
+    Worksheet.Cells[17, 8].Value := Query1.FieldByName('InspecID').AsString;
+  end;}
+    
+  //dinh dang header
+  if cbPDF.Checked then
+  begin
+    Worksheet.PageSetup.RightHeader := '&P / &N';
+    Workbook.ExportAsFixedFormat(0, SaveFile);
+    ShowMessage('Duong dan PDF: ' + SaveFile);
+    ShellExecute(0, 'open', PChar(SaveFile), nil, nil, SW_SHOWNORMAL);
+  end
+  else
+  begin
+    Worksheet.PageSetup.RightHeader := '&P / &N';
+    Workbook.SaveAs(SaveFile);
+    ShowMessage('Duong dan Excel: ' + SaveFile);
+    ExcelApp.Visible := True;
+  end;
+
+  ExcelApp := Unassigned;
+  Workbook := Unassigned;
+  Worksheet := Unassigned;
+
+end;
+
+procedure TProducMatFailure.Button1Click(Sender: TObject);
+begin
+ SetColumnsReadOnly;
+ with Query1 do
+ begin
+  Active:=false;
+  SQL.Clear;
+  SQL.Add('select * from QC_ProMatFail ');
+  SQL.Add('where DDBH like '''+edtDDBH.Text+'%'' and YN <> 0 ');
+
+  if edtRID.Text <> '' then
+    SQL.Add('and ReportID like '''+edtRID.Text+'%'' ');
+  if edtStyle.Text <> '' then
+    SQL.Add('and XieMing like '''+edtStyle.Text+'%'' ');
+  if edtMatID.Text <> '' then
+    SQL.Add('and MatID like '''+edtMatID.Text+'%'' ');
+  if edtZSBH.Text <> '' then
+    SQL.Add('and Supplier like '''+edtZSBH.Text+'%'' ');
+  if ckInsDate.Checked then
+    SQL.Add('and CAST(InspecDate as DATE) = '''+FormatDateTime('yyyy-mm-dd', dtpInsDate.Date)+''' ');
+  if ckArrDate.Checked then
+    SQL.Add('and CAST(ArrDate as DATE) = '''+FormatDateTime('yyyy-mm-dd', dtpArrDate.Date)+''' ');
+  if ckUSERDate.Checked then
+    SQL.Add('and CAST(QC_ProMatFail.USERDate as DATE) = '''+FormatDateTime('yyyy-mm-dd', dtpUSERDate.Date)+''' ');
+
+  SQL.Add('order by ReportID');
+  Active:=true;
+ end;
+end;
+
+procedure TProducMatFailure.DBGrid1CellClick(Column: TColumnEh);
+begin
+if not Query1.Active then exit;
+if Query1.RecordCount = 0 then exit;
+if (Query1.RecordCount > 0)  and not Query1.CachedUpdates then
+  begin
+    dtpInsDate.Date := Query1.FieldByName('InspecDate').AsDateTime;
+    edtStyle.Text := Query1.FieldByName('XieMing').AsString;
+    edtRID.Text := Query1.FieldByName('ReportID').AsString;
+    edtDDBH.Text := Query1.FieldByName('DDBH').AsString;
+    edtMatID.Text := Query1.FieldByName('MatID').AsString;
+    edtZSBH.Text := Query1.FieldByName('Supplier').AsString;
+    dtpUSERDate.Date := Query1.FieldByName('USERDate').AsDateTime;
+    dtpArrDate.Date := Query1.FieldByName('ArrDate').AsDateTime;
+    edtImagePath.Text := Trim(Query1.FieldByName('Image').AsString);
+      if FileExists('\\192.168.71.11\FileServer\QC-QIP\KHO IMQC\HINHNG\' + edtImagePath.Text) then
+      begin
+        //Image1.Picture.LoadFromFile(edtImagePath.Text);
+        Image1.Picture.LoadFromFile('\\192.168.71.11\FileServer\QC-QIP\KHO IMQC\HINHNG\' + edtImagePath.Text)
+      end
+      else
+      begin
+        Image1.Picture := nil; // neu khong co file thi xoa anh
+      end;
+  end;
+end;
+
+procedure TProducMatFailure.DBGrid1KeyPress(Sender: TObject;
+  var Key: Char);
+begin
+  // Neu nhan Enter
+  if Key = #13 then
+  begin
+
+    if (DBGrid1.SelectedField.FieldName = 'SCFID') and (MenuCode.Text = 'N963') and Query1.CachedUpdates then
+    begin
+      Query1.Edit;
+      Query1.FieldByName('SCFID').AsString := main.Edit1.Text;
+      Query1.FieldByName('SCFDate').AsString := FormatDateTime('yyyy-mm-dd', Now);
+      Query1.Post;
+    end;
+
+    if (DBGrid1.SelectedField.FieldName = 'LCFID') and (MenuCode.Text = 'N964') and Query1.CachedUpdates then
+    begin
+      Query1.Edit;
+      Query1.FieldByName('LCFID').AsString := main.Edit1.Text;
+      Query1.FieldByName('LCFDate').AsString := FormatDateTime('yyyy-mm-dd', Now);
+      Query1.Post;
+    end;
+    if (DBGrid1.SelectedField.FieldName = 'WMSCFID') and (MenuCode.Text = 'N965') and Query1.CachedUpdates then
+    begin
+      Query1.Edit;
+      Query1.FieldByName('WMSCFID').AsString := main.Edit1.Text;
+      Query1.FieldByName('WMSCFDate').AsString := FormatDateTime('yyyy-mm-dd', Now);
+      Query1.Post;
+    end;
+
+    if DBGrid1.SelectedField.FieldName = 'MatID' then
+    begin
+      if Query1.CachedUpdates then
+      begin
+        Qtemp.Close;
+        Qtemp.SQL.Clear;
+        Qtemp.SQL.Add('select ywpm from clzl where cldh = :cldh');
+        Qtemp.ParamByName('cldh').AsString := DBGrid1.SelectedField.AsString;
+        Qtemp.Open;
+
+        if not Qtemp.IsEmpty then
+        begin
+          Query1.Edit;
+          Query1.FieldByName('MatName').AsString := Qtemp.FieldByName('ywpm').AsString;
+        end else
+        begin
+          Query1.Edit;
+          Query1.FieldByName('MatName').AsString := '';
+          Query1.Post;
+        end;
+      end;
+    end;
+  end;
+end;
+
+procedure TProducMatFailure.BB1Click(Sender: TObject);
+begin
+  with query1 do
+  begin
+  RequestLive :=  true;
+  CachedUpdates:= true;
+  Insert;
+  end;
+bb4.enabled:=true;
+bb5.enabled:=true;
+end;
+
+procedure TProducMatFailure.BB5Click(Sender: TObject);
+begin
+  with Query1 do
+  begin
+    CachedUpdates := false;
+    RequestLive := false;
+    BB4.Enabled := false;
+    BB5.Enabled := false;
+    dbgrid1.ReadOnly := false;
+  end;
+end;
+
+procedure TProducMatFailure.Query1AfterOpen(DataSet: TDataSet);
+begin
+  BB1.Enabled:=true;
+  BB2.Enabled:=true;
+  BB3.Enabled:=true;
+  bbt6.Enabled:=true;
+  bExcel.Enabled := true;
+  bExF.Enabled := true;
+end;
+
+procedure TProducMatFailure.BB4Click(Sender: TObject);
+var i: integer;
+begin
+  if not QGetID.Active then QGetID.Active;
+  try
+    query1.first;
+    for i:=1 to query1.RecordCount do
+      begin
+        case query1.updatestatus of
+          usinserted:
+            begin
+              if Query1.FieldByName('MatName').IsNull then
+              begin
+                query1.delete;
+              end else
+              begin
+                Query1.Edit;
+                Query1.FieldByName('ReportID').Value := NewID;
+                Query1.FieldByName('USERID').Value := main.Edit1.Text;
+                Query1.FieldByName('USERDate').Value := FormatDateTime('yyyy-mm-dd', Now);
+                Query1.FieldByName('YN').Value := 1;
+                upsql1.apply(ukinsert);
+              end;
+            end;
+          usmodified:
+             begin
+               if query1.FieldByName('YN').value='0' then
+                 begin
+                   if messagedlg('Are you sure you want to delete?',mtconfirmation,[mbYes,mbNo],0)=mrYes then
+                   begin
+                    Query1.Edit;
+                    Query1.FieldByName('USERID').Value := main.Edit1.Text;
+                    UpSQL1.Apply(ukdelete)
+                   end;
+                 end else
+                 begin
+                  Query1.Edit;
+                  if MenuCode.Text = 'N961' then
+                    begin
+                      Query1.FieldByName('USERID').Value := main.Edit1.Text;
+                      Query1.FieldByName('USERDate').Value := FormatDateTime('yyyy-mm-dd', Now);
+                    end;
+                  if MenuCode.Text = 'N962' then
+                    begin
+                      Query1.FieldByName('PurID').Value := main.Edit1.Text;
+                      Query1.FieldByName('PurDate').Value := FormatDateTime('yyyy-mm-dd', Now);
+                    end;
+                  if MenuCode.Text = 'N963' then
+                    begin
+                      Query1.FieldByName('SCFDate').Value := FormatDateTime('yyyy-mm-dd', Query1.FieldByName('SCFDate').Value);
+                    end;
+                  if MenuCode.Text = 'N964' then
+                    begin
+                      Query1.FieldByName('LCFDate').Value := FormatDateTime('yyyy-mm-dd', Query1.FieldByName('LCFDate').Value);
+                    end;
+                  if MenuCode.Text = 'N965' then
+                    begin
+                      Query1.FieldByName('WMSCFDate').Value := FormatDateTime('yyyy-mm-dd', Query1.FieldByName('WMSCFDate').Value);
+                    end;
+                  upsql1.apply(ukmodify);
+                 end;
+              end;
+        end;
+        query1.next;
+      end;
+    query1.active:=false;
+    query1.cachedupdates:=false;
+    query1.requestlive:=false;
+    query1.active:=true;
+    bb4.enabled:=false;
+    bb5.enabled:=false;
+    dbgrid1.ReadOnly := false;
+  except
+   Messagedlg('Have wrong, can not save data!',mtwarning,[mbyes],0);
+  end;
+end;
+
+procedure TProducMatFailure.BB3Click(Sender: TObject);
+begin
+with query1 do
+  begin
+    cachedupdates:=true;
+    requestlive:=true;
+    query1.edit;
+  end;
+bb4.enabled:=true;
+bb5.enabled:=true;
+//DBGrid1.SetFocus;
+//DBGrid1.SelectedIndex := DBGrid1.FieldColumns['SCFID'].Index;
+end;
+
+procedure TProducMatFailure.btClearClick(Sender: TObject);
+begin
+  edtMatID.Clear;
+  edtDDBH.Clear;
+  edtZSBH.Clear;
+  edtRID.Clear;
+  edtStyle.Clear;
+  edtImagePath.Clear;
+end;
+
+procedure TProducMatFailure.bExcelClick(Sender: TObject);
+var
+  ExcelApp, Workbook, Worksheet: OleVariant;
+  Row, Col: Integer;
+begin
+  ExcelApp := CreateOleObject('Excel.Application');
+  ExcelApp.Visible := True;
+
+  Workbook := ExcelApp.Workbooks.Add;
+  Worksheet := Workbook.Worksheets[1];
+
+  for Col := 0 to Query1.FieldCount - 1 do
+    Worksheet.Cells[1, Col + 1] := Query1.Fields[Col].FieldName;
+
+  Row := 2;
+  Query1.First;
+  while not Query1.Eof do
+  begin
+    for Col := 0 to Query1.FieldCount - 1 do
+      Worksheet.Cells[Row, Col + 1] := Query1.Fields[Col].AsString;
+    Inc(Row);
+    Query1.Next;
+  end;
+  Worksheet.Columns.AutoFit;
+end;
+
+procedure TProducMatFailure.BB6Click(Sender: TObject);
+begin
+  Close;
+end;
+
+procedure TProducMatFailure.FormClose(Sender: TObject;
+  var Action: TCloseAction);
+begin
+if query1.requestlive then
+  begin
+    messagedlg('You have to save data first.',mtwarning,[mbyes],0);
+    action:=canone;
+  end
+  else
+   action:=Cafree;
+end;
+
+procedure TProducMatFailure.FormDestroy(Sender: TObject);
+begin
+  ProducMatFailure := nil;
+end;
+
+procedure TProducMatFailure.DBGrid1GetCellParams(Sender: TObject;
+  Column: TColumnEh; AFont: TFont; var Background: TColor;
+  State: TGridDrawState);
+begin
+  if Query1.FieldByName('YN').Value = '0' then
+    DBGrid1.Canvas.Font.Color := clRed;
+end;
+
+
+procedure TProducMatFailure.UpImageClick(Sender: TObject);
+var
+  SourceFile, DestFile: string;
+begin
+   OpenPictureDialog1.Filter :=
+    'JPEG Images (*.jpg;*.jpeg)|*.jpg;*.jpeg|' +
+    'PNG Images (*.png)|*.png|' +
+    'Bitmap Images (*.bmp)|*.bmp|' +
+    'GIF Images (*.gif)|*.gif|' +
+    'All Pictures (*.jpg;*.jpeg;*.png;*.bmp;*.gif)|*.jpg;*.jpeg;*.png;*.bmp;*.gif';
+
+  if OpenPictureDialog1.Execute then
+  begin
+    SourceFile := OpenPictureDialog1.FileName;
+    
+    // Tao duong dan den o mang
+    DestFile := '\\192.168.71.11\FileServer\QC-QIP\KHO IMQC\HINHNG\' + ExtractFileName(SourceFile);
+
+    try
+      // Copy file len o mang, ghi de neu da ton tai
+      CopyFile(PChar(SourceFile), PChar(DestFile), False);
+
+      // Update TEdit va TImage
+      edtImagePath.Text := ExtractFileName(SourceFile);
+      Image1.Picture.LoadFromFile(DestFile);
+
+      ShowMessage('Upload thanh cong: ' + ExtractFileName(SourceFile));
+    except
+      on E: Exception do
+        ShowMessage('Loi khi upload: ' + E.Message);
+    end;
+  end;
+end;
+
+procedure TProducMatFailure.BB2Click(Sender: TObject);
+begin
+if messagedlg('Are you sure you want to delete?',mtconfirmation,[mbYes,mbNo],0)<>mrYes then
+  begin
+    abort;
+  end;
+with query1 do
+  begin
+    cachedupdates:=true;
+    requestlive:=true;
+    edit;
+    fieldbyname('YN').Value:=0;
+  end;
+bb4.enabled:=true;
+bb5.enabled:=true;
+end;
+
+procedure TProducMatFailure.UpImage1Click(Sender: TObject);
+var
+  SaveFN, BasePath, DestFile: string;
+  CopyResult: Boolean;
+begin
+   OpenPictureDialog1.Filter :=
+    'JPEG Images (*.jpg;*.jpeg)|*.jpg;*.jpeg|' +
+    'PNG Images (*.png)|*.png|' +
+    'Bitmap Images (*.bmp)|*.bmp|' +
+    'GIF Images (*.gif)|*.gif|' +
+    'All Pictures (*.jpg;*.jpeg;*.png;*.bmp;*.gif)|*.jpg;*.jpeg;*.png;*.bmp;*.gif';
+    
+  if Query1.Active = False then Exit;
+
+  if not OpenPictureDialog1.Execute then Exit;
+  if OpenPictureDialog1.FileName = '' then Exit;
+
+  BasePath := '\\192.168.71.11\FileServer\QC-QIP\KHO IMQC\HINHNG\';
+  SaveFN := Trim(ExtractFileName(OpenPictureDialog1.FileName));
+  DestFile := BasePath + SaveFN;
+
+  // check file ton tai
+  if FileExists(DestFile) then
+  begin
+    if MessageDlg('File da ton tai, Ghi de?', mtConfirmation, [mbYes, mbNo], 0) = mrNo then
+      Exit;
+  end;
+
+  try
+    // copy file len server
+    CopyResult := CopyFile(PChar(OpenPictureDialog1.FileName), PChar(DestFile), False);
+
+    if not CopyResult then
+    begin
+      ShowMessage('Upload fail: ' + SysErrorMessage(GetLastError) + ' ');
+      Exit;
+    end;
+
+    // update DB
+    with QUpImage do
+    begin
+      Active := False;
+      SQL.Clear;
+      SQL.Add('UPDATE QC_ProMatFail ');
+      SQL.Add('SET Image = ''' + SaveFN + ''' ');
+      SQL.Add('WHERE ReportID = ' + Query1.FieldByName('ReportID').AsString);
+      ExecSQL;
+    end;
+
+    Query1.Active := False;
+    Query1.Active := True;
+
+    ShowMessage('Upload OK');
+  except
+    on E: Exception do
+      ShowMessage('Upload fail: ' + E.Message);
+  end;
+end;
+
+procedure TProducMatFailure.OpenImage1Click(Sender: TObject);
+var
+  SourceFile, FileName: string;
+begin
+  if Query1.FieldByName('Image').IsNull then Exit;
+
+  FileName := Query1.FieldByName('Image').AsString;
+
+  SourceFile := '\\192.168.71.11\FileServer\QC-QIP\KHO IMQC\HINHNG\' + FileName;
+
+  // kiem tra file nguon
+  if not FileExists(SourceFile) then
+  begin
+    ShowMessage('Khong tim thay file tren server');
+    Exit;
+  end;
+
+  // mo file truc tiep
+  ShellExecute(0, 'open', PChar(SourceFile), nil, nil, SW_SHOWNORMAL);
+end;
+
+procedure TProducMatFailure.DownloadImage1Click(Sender: TObject);
+var
+  SourceFile, DestFile, FileName: string;
+begin
+  if Query1.FieldByName('Image').IsNull then Exit;
+
+  FileName := Query1.FieldByName('Image').AsString;
+
+  SaveDialog1.FileName := FileName;
+
+  if not SaveDialog1.Execute then Exit;
+
+  SourceFile := '\\192.168.71.11\FileServer\QC-QIP\KHO IMQC\HINHNG\' + FileName;
+
+  DestFile := SaveDialog1.FileName;
+
+  // kiem tra file nguon
+  if not FileExists(SourceFile) then
+  begin
+    ShowMessage('Khong tim thay file tren server');
+    Exit;
+  end;
+
+  // kiem tra file dich
+  if FileExists(DestFile) then
+  begin
+    if MessageDlg('File da ton tai. Ghi de?', mtConfirmation, [mbYes, mbNo], 0) = mrNo then
+      Exit;
+  end;
+
+  // copy file
+  if CopyFile(PChar(SourceFile), PChar(DestFile), False) then
+    ShowMessage('Download file OK')
+  else
+    ShowMessage('Download file error');
+end;
+
+end.

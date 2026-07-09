@@ -1,0 +1,156 @@
+object AssemblyRYDlg: TAssemblyRYDlg
+  Left = 503
+  Top = 304
+  Width = 706
+  Height = 542
+  Caption = 'RY Dialog'
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -13
+  Font.Name = 'MS Sans Serif'
+  Font.Style = []
+  OldCreateOrder = False
+  Position = poDesktopCenter
+  PixelsPerInch = 96
+  TextHeight = 16
+  object Panel1: TPanel
+    Left = 0
+    Top = 0
+    Width = 690
+    Height = 49
+    Align = alTop
+    TabOrder = 0
+    object Label3: TLabel
+      Left = 416
+      Top = 17
+      Width = 19
+      Height = 16
+      Caption = 'RY'
+    end
+    object Label1: TLabel
+      Left = 16
+      Top = 17
+      Width = 64
+      Height = 16
+      Caption = 'Cutting Die'
+    end
+    object Label2: TLabel
+      Left = 232
+      Top = 17
+      Width = 27
+      Height = 16
+      Caption = 'SKU'
+    end
+    object ED_RY: TEdit
+      Left = 440
+      Top = 13
+      Width = 121
+      Height = 24
+      Color = clYellow
+      TabOrder = 0
+    end
+    object Button1: TButton
+      Left = 596
+      Top = 12
+      Width = 75
+      Height = 25
+      Caption = 'Query'
+      TabOrder = 1
+      OnClick = Button1Click
+    end
+    object ED_CuttingDie: TEdit
+      Left = 85
+      Top = 13
+      Width = 121
+      Height = 24
+      TabOrder = 2
+    end
+    object ED_SKU: TEdit
+      Left = 264
+      Top = 13
+      Width = 121
+      Height = 24
+      TabOrder = 3
+    end
+  end
+  object DBGridEh1: TDBGridEh
+    Left = 0
+    Top = 49
+    Width = 690
+    Height = 454
+    Align = alClient
+    DataSource = DS1
+    Flat = False
+    FooterColor = clWindow
+    FooterFont.Charset = DEFAULT_CHARSET
+    FooterFont.Color = clWindowText
+    FooterFont.Height = -13
+    FooterFont.Name = 'MS Sans Serif'
+    FooterFont.Style = []
+    FooterRowCount = 1
+    HorzScrollBar.Tracking = True
+    SumList.Active = True
+    SumList.VirtualRecords = True
+    TabOrder = 1
+    TitleFont.Charset = DEFAULT_CHARSET
+    TitleFont.Color = clWindowText
+    TitleFont.Height = -13
+    TitleFont.Name = 'MS Sans Serif'
+    TitleFont.Style = []
+    UseMultiTitle = True
+    VertScrollBar.Tracking = True
+    OnDblClick = DBGridEh1DblClick
+    Columns = <
+      item
+        EditButtons = <>
+        FieldName = 'DDBH'
+        Footer.DisplayFormat = '###,##0'
+        Footer.ValueType = fvtCount
+        Footers = <>
+        Title.Caption = 'RY'
+      end
+      item
+        EditButtons = <>
+        FieldName = 'DAOMH'
+        Footers = <>
+        Title.Caption = 'Cutting Die'
+      end
+      item
+        EditButtons = <>
+        FieldName = 'ARTICLE'
+        Footers = <>
+        Title.Caption = 'SKU'
+      end
+      item
+        DisplayFormat = '###,##0'
+        EditButtons = <>
+        FieldName = 'Pairs'
+        Footers = <>
+      end>
+  end
+  object Query1: TQuery
+    DatabaseName = 'DB'
+    Left = 16
+    Top = 136
+    object Query1DDBH: TStringField
+      FieldName = 'DDBH'
+      Size = 15
+    end
+    object Query1DAOMH: TStringField
+      FieldName = 'DAOMH'
+      Size = 30
+    end
+    object Query1ARTICLE: TStringField
+      FieldName = 'ARTICLE'
+    end
+    object Query1Pairs: TIntegerField
+      FieldName = 'Pairs'
+    end
+  end
+  object DS1: TDataSource
+    DataSet = Query1
+    Left = 16
+    Top = 104
+  end
+end

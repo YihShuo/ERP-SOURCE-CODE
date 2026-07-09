@@ -1,0 +1,1302 @@
+unit OrderList1;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, DB, DBTables, Grids, DBGrids, StdCtrls, DBCtrls, ExtCtrls,comobj
+  ,dateutils,ehlibBDE, GridsEh, DBGridEh, Menus, iniFiles,funUnit;
+
+type
+  TOrderList = class(TForm)
+    DBGrid1: TDBGridEh;
+    QueryExcel: TQuery;
+    DS1: TDataSource;
+    OrdMas: TQuery;
+    OrdMasSCBH: TStringField;
+    OrdMasZLBH: TStringField;
+    OrdMasXieXing: TStringField;
+    OrdMasSheHao: TStringField;
+    OrdMasArticle: TStringField;
+    OrdMasXieMing: TStringField;
+    OrdMasQty: TFloatField;
+    OrdMasShipDate: TDateTimeField;
+    DBGrid2: TDBGridEh;
+    DS2: TDataSource;
+    OrdDet: TQuery;
+    OrdMasDDZT: TStringField;
+    OrdMasDDCC: TStringField;
+    OrdMasXXCC: TStringField;
+    OrdMasYWSM: TStringField;
+    OrdMasKFJC: TStringField;
+    PopupMenu1: TPopupMenu;
+    N1: TMenuItem;
+    N2: TMenuItem;
+    YWDDTP: TQuery;
+    SpecMas: TQuery;
+    SpecMasDDBH: TStringField;
+    SpecMasYSBH: TStringField;
+    SpecMasXieXing: TStringField;
+    SpecMasSheHao: TStringField;
+    SpecMasArticle: TStringField;
+    SpecMasXieMing: TStringField;
+    SpecMasQty: TFloatField;
+    SpecMasETD: TDateTimeField;
+    SpecMasXXCC: TStringField;
+    SpecMasDDCC: TStringField;
+    SpecMasDDZT: TStringField;
+    SpecMasKFJC: TStringField;
+    SpecMasPacking: TStringField;
+    SpecMasDDMT: TStringField;
+    SpecMasDDBZ: TStringField;
+    SpecMasKHDDBH1: TStringField;
+    SpecMasKHPO: TStringField;
+    SpecMasCountry: TStringField;
+    OrdMasDAOMH: TStringField;
+    OrdMasXTMH: TStringField;
+    SpecMasYSSM: TStringField;
+    OrdMasBUYNO: TStringField;
+    OrdMasKHPO: TStringField;
+    Qtemp: TQuery;
+    OrdDetDDBH: TStringField;
+    OrdDetDDCC: TStringField;
+    OrdDetXXCC: TStringField;
+    OrdDetQty: TIntegerField;
+    OrdMasDest: TStringField;
+    N3: TMenuItem;
+    OrdMasSB: TStringField;
+    Label8: TLabel;
+    Label9: TLabel;
+    OrdMasInDate: TDateTimeField;
+    OrdMasStatus: TStringField;
+    OrdMasUserDate_Status: TDateTimeField;
+    Label16: TLabel;
+    Label17: TLabel;
+    Label20: TLabel;
+    Label21: TLabel;
+    Panel5: TPanel;
+    Label1: TLabel;
+    Label2: TLabel;
+    Label3: TLabel;
+    Label7: TLabel;
+    Label5: TLabel;
+    Label6: TLabel;
+    Label4: TLabel;
+    Label19: TLabel;
+    Label18: TLabel;
+    Label10: TLabel;
+    Label11: TLabel;
+    Label12: TLabel;
+    Label13: TLabel;
+    Label14: TLabel;
+    Label15: TLabel;
+    Label22: TLabel;
+    Label23: TLabel;
+    Label24: TLabel;
+    Label25: TLabel;
+    Label26: TLabel;
+    Label27: TLabel;
+    Label28: TLabel;
+    Label29: TLabel;
+    DBNavigator1: TDBNavigator;
+    Edit1: TEdit;
+    Edit2: TEdit;
+    CBX2: TComboBox;
+    CBX3: TComboBox;
+    Button1: TButton;
+    Edit3: TEdit;
+    Button2: TButton;
+    Edit4: TEdit;
+    Edit5: TEdit;
+    RadioButton1: TRadioButton;
+    BuyNoEdit: TEdit;
+    RB1: TRadioButton;
+    Edit6: TEdit;
+    RadioButton2: TRadioButton;
+    OrdMasSB_STATUS: TStringField;
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure Button1Click(Sender: TObject);
+    procedure Edit1KeyPress(Sender: TObject; var Key: Char);
+    procedure Edit2KeyPress(Sender: TObject; var Key: Char);
+    procedure Edit3KeyPress(Sender: TObject; var Key: Char);
+    procedure Button2Click(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
+    procedure CreateColorPanel(L, T, W, H: Integer; AColor: TColor; AText: string; AFontColor: TColor);
+    procedure DBGrid1GetCellParams(Sender: TObject; Column: TColumnEh;
+      AFont: TFont; var Background: TColor; State: TGridDrawState);
+    procedure N1Click(Sender: TObject);
+    procedure N2Click(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure N3Click(Sender: TObject);
+    procedure N4Click(Sender: TObject);
+  private
+    { Private declarations }
+    procedure ShowOrdSize();
+  public
+    ShoePicPath:String;
+    { Public declarations }
+    procedure ReadIni();
+  end;
+
+var
+  OrderList: TOrderList;
+  sdate,edate:TDate;
+
+implementation
+
+uses main1, PSpecPrintss1, PSpecPrintssTW1, OrderPack_Print1,PSPecPrintss_SP1,
+     PSpecPrintss_Price1, PSpecPrintss_SP_Price1, PSpecPrintssTW_Price1;
+
+{$R *.dfm}
+procedure TOrderList.ReadIni();
+var MyIni :Tinifile;
+    AppDir:string;
+begin
+
+  ShoePicPath := '\\192.168.23.11\A_DataCenter\CDC\Sales\BOM';
+  AppDir:=ExtractFilePath(Application.ExeName);
+  if FileExists(AppDir+'\ComName.ini')=true then
+  begin
+    try
+      MyIni := Tinifile.Create(AppDir+'\ComName.ini');
+      ShoePicPath:=MyIni.ReadString('ShoePic','Bom_N31_shoePic','');
+    finally
+      MyIni.Free;
+    end;
+  end;
+end;
+
+procedure TOrderList.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+  free;
+end;
+
+procedure TOrderList.Button1Click(Sender: TObject);
+var y,m:word;
+begin
+  if (CBX2.text='')or (CBX3.text='')  then
+  begin
+    showmessage('You have to select the year and month first.');
+    abort;
+  end;
+  y:=strtoint(CBX2.Text);
+  m:=strtoint(CBX3.Text);
+  if (y>2999) or (y<1900) then
+  begin
+    showmessage('Pls key in right year');
+    abort;
+  end;
+  if (m=0) or (m>12) then
+  begin
+    showmessage('Pls key in right month');
+    abort;
+  end;
+  sdate:=encodedate(y,m,1);
+  edate:=endofthemonth(sdate);
+
+  with OrdMas do
+  begin
+    active:=false;
+    sql.Clear;
+    sql.add('select distinct SCZL.SCBH, SCZL.ZLBH,DDZL.DDZT,LBZLS.YWSM,');
+    sql.add('DDZL.XieXing,DDZL.SheHao, DDZL.XieXing,DDZL.CCGB as DDCC,KFZL.KFJC,');
+    sql.add('SCZL.Qty as Qty,DDZL.Article,DDZL.ShipDate,XXZL.CCGB as XXCC,XXZL.XieMing,XXZL.DAOMH,XXZL.XTMH,DDZL.BUYNO,DDZL.KHPO,DDZL.Dest,CASE WHEN COUNT(YWCP.SB) < COUNT(*) THEN NULL ELSE MAX(YWCP.SB) END AS SB,  ');
+    sql.add('CASE WHEN COUNT(YWCP.INDATE) < COUNT(*) THEN NULL ELSE MAX(YWCP.INDATE) END AS InDate, ');
+    sql.add('CASE WHEN COUNT(CASE WHEN YWCP.SB IS NULL THEN 1 END) > 0 AND COUNT(CASE WHEN YWCP.SB IS NOT NULL THEN 1 END) > 0 THEN ''YELLOW'' END AS SB_STATUS,');
+    sql.add('DDZL_PASS.Fails as Status, MAX(DDZL_PASS.USERDATE) as UserDate_Status');
+    sql.add('from SCZL');
+    sql.add('left join ZLZL on ZLZL.ZLBH=SCZL.ZLBH');
+    sql.add('left join DDZL  on ZLZL.ZLBH=DDZL.DDBH');
+    sql.add('left join KFZL on KFZl.KFDH=DDZl.KHBH ') ;
+    sql.add('left join XXZL  on DDZL.XieXing=XXZL.XieXing and DDZL.SheHao=XXZL.SheHao');
+    sql.add('left join LBZLS on LBZLS.LB='+''''+'06'+''''+' and LBZLS.LBDH=DDZL.DDGB');
+    Sql.add('left join YWCP  on SCZL.SCBH = YWCP.DDBH');
+    sql.Add('left join DDZL_PASS on ddzl.DDBH=DDZL_PASS.DDBH');
+    sql.Add('where SCZL.SCBH like '+''''+edit1.Text+'%'+'''');
+    sql.add('      and KFZL.KFJC like'+''''+edit4.text+'%'+'''');
+    sql.add('      and SCZL.SCBH=SCZL.ZLBH');
+    sql.add('      and XXZL.ARTICLE like '+''''+edit3.Text+'%'+'''');
+    sql.add('      and XXZL.XieMing like '+''''+'%'+edit2.text+'%'+'''');
+    if edit5.Text<>'' then
+       sql.add('      and XXZL.DAOMH like '+''''+'%'+edit5.text+'%'+'''');
+    if edit6.Text<>'' then
+       sql.add('      and XXZL.XTMH like '+''''+'%'+edit6.text+'%'+'''');
+    if RB1.Checked=true then
+       sql.add('      and convert(smalldatetime,convert(varchar,DDZL.ShipDate,111)) between '''+formatdatetime('yyyy/MM/dd',sdate)+''''+' and '+''''+formatdatetime('yyyy/MM/dd',edate)+'''')
+    else
+       SQL.Add('and DDZL.BUYNO like '''+BuyNoEdit.Text+'%'' ');
+    sql.add('      and DDZL.GSBH='+''''+main.edit2.Text+'''');
+    sql.add(' group by SCZL.SCBH, SCZL.ZLBH, DDZL.DDZT, LBZLS.YWSM, DDZL.XieXing, DDZL.SheHao, DDZL.CCGB, KFZL.KFJC,SCZL.Qty, DDZL.Article, DDZL.ShipDate,XXZL.CCGB, XXZL.XieMing, XXZL.DAOMH, XXZL.XTMH,DDZL.BUYNO, DDZL.KHPO, ');
+    sql.Add(' DDZL.Dest,DDZL_PASS.Fails,DDZL_PASS.USERDATE');
+    sql.add('order by SCZL.ZLBH');
+    //ShowMessage(SQL.Text);
+    //funcobj.WriteErrorLog(sql.Text );
+    active:=true;
+  end;
+  OrdDet.active:=true;
+  ShowOrdSize();
+end;
+procedure TOrderList.ShowOrdSize();
+var a,b,c,d:string;
+begin
+  if OrdMas.RecordCount>0 then
+  begin
+    //找出訂單尺寸及斬刀尺寸的對應關係
+    a:=OrdMas.fieldbyname('DDCC').value  ;
+    b:=OrdMas.fieldbyname('XXCC').value;
+     //找出所有國別尺寸的對應關係
+       //找出訂單鞋型國別尺寸的對應關係
+    if a='K' then
+    begin
+      a:='XXZLS3.UK_Size as DDCC,';
+      c:='XXZLS3.UK_Size';
+    end;
+    if a='J' then
+    begin
+      a:='XXZLS3.JPN_Size as DDCC,';
+      c:='XXZLS3.JPN_Size';
+    end;
+    if a='E' then
+    begin
+      a:='XXZLS3.EUR_Size as DDCC,';
+      c:='XXZLS3.EUR_Size';
+    end;
+    if a='F' then
+    begin
+      a:='XXZLS3.FRN_Size as DDCC,';
+      c:='XXZLS3.FRN_Size';
+    end;
+    if a='M' then
+    begin
+      a:='XXZLS3.MX_Size as DDCC,';
+      c:='XXZLS3.MX_Size';
+    end;
+    if a='U' then
+    begin
+      a:='XXZLS3.US_Size as DDCC,';
+      c:='XXZLS3.US_Size';
+    end;
+    if a='O' then
+    begin
+      a:='XXZLS3.OTH_Size as DDCC,';
+      C:='XXZLS3.OTH_Size';
+    end;
+    if b='K' then
+      b:='XXZLS3.UK_Size as XXCC,';
+      d:='XXZLS3.UK_Size';
+    if b='J' then
+    begin
+      b:='XXZLS3.JPN_Size as XXCC,';
+      d:='XXZLS3.JPN_Size';
+    end;
+    if b='E' then
+    begin
+      b:='XXZLS3.EUR_Size as XXCC,';
+      d:='XXZLS3.EUR_Size';
+    end;
+    if b='F' then
+    begin
+      b:='XXZLS3.FRN_Size as XXCC,';
+      d:='XXZLS3.FRN_Size';
+    end;
+    if b='M' then
+    begin
+      b:='XXZLS3.MX_Size as XXCC,';
+      d:='XXZLS3.MX_Size';
+    end;
+    if b='U' then
+    begin
+      b:='XXZLS3.US_Size as XXCC,';
+      d:='XXZLS3.US_Size';
+    end;
+    if b='O' then
+    begin
+      b:=' XXZLS3.OTH_Size as XXCC,';
+      d:='XXZLS3.OTH_Size';
+    end;
+    //showmessage(c);
+       //尺寸明細
+   with OrdDet do
+   begin
+       active:=false;
+       sql.Clear;
+       //訂單及工具尺寸
+       sql.add('select DDZLs.DDBH,'+a+b+'DDZLs.Quantity as Qty ');
+       sql.add('from DDZLs ');
+       sql.add('left join XXZLS3  on  XXZLS3.XieXing=:XieXing and DDZLS.CC='+c);
+       sql.add('where DDZLs.DDBH=:SCBH');
+       sql.add('and DDZLs.Quantity<>0  ');
+       //funcobj.WriteErrorLog(sql.Text);
+       active:=true;                                                                                                                                                                                                                                             
+   end;
+  end;
+end;
+
+
+procedure TOrderList.Edit1KeyPress(Sender: TObject; var Key: Char);
+begin
+  if key=#13 then
+    edit2.SetFocus;
+end;
+
+procedure TOrderList.Edit2KeyPress(Sender: TObject; var Key: Char);
+begin
+  if key=#13 then
+    edit3.SetFocus;
+end;
+
+procedure TOrderList.Edit3KeyPress(Sender: TObject; var Key: Char);
+begin
+  if key=#13 then
+    edit4.SetFocus;
+end;
+
+{procedure TOrderList.Button2Click(Sender: TObject);
+  var eclApp,WorkBook:olevariant;
+      i,j,k:integer;
+  begin
+  if  OrdMas.active  then
+    begin
+    try
+      eclApp:=CreateOleObject('Excel.Application');
+      WorkBook:=CreateOleObject('Excel.Sheet');
+    except
+      Application.MessageBox('No Mcrosoft   Excel','Microsoft   Excel',MB_OK+MB_ICONWarning);
+      Exit;
+    end;
+    try
+        WorkBook:=eclApp.workbooks.Add;
+        OrdMas.First;
+        with Qtemp do
+        begin
+          active:=false;
+          sql.Clear;
+          sql.Add('select distinct DDZLS.CC from DDZLS');
+          sql.add('left join ZLZL on ZLZL.ZLBH=DDZLS.DDBH ');
+          sql.add('left join DDZL on DDZL.DDBH=DDZLS.DDBH ');
+          sql.Add('where DDZLS.DDBH in (');
+          for i:=0 to OrdMas.RecordCount-1 do
+          begin
+            if i < OrdMas.RecordCount-1 then
+              sql.Add('''' + OrdMas.fieldbyname('SCBH').AsString + ''',')
+            else
+              sql.Add('''' + OrdMas.fieldbyname('SCBH').AsString + ''')');
+            OrdMas.Next ;
+          end;
+          sql.add('order by DDZLS.CC');
+          //funcobj.WriteErrorLog(sql.Text);
+          active:=true;
+        end;
+
+
+        with QueryExcel do
+        begin
+          active:=false;
+          sql.Clear;
+          sql.add('select distinct SCZL.SCBH, SCZL.ZLBH,DDZL.DDZT,LBZLS.YWSM,');
+          sql.add('DDZL.XieXing,DDZL.SheHao, DDZL.XieXing,DDZL.CCGB as DDCC,KFZL.KFJC,');
+          sql.add('SCZL.Qty as Qty,DDZL.Article,DDZL.ShipDate,XXZL.CCGB as XXCC,XXZL.XieMing,XXZL.DAOMH,XXZL.XTMH,DDZL.BUYNO,DDZL.KHPO');
+          while not Qtemp.Eof do
+          begin
+            sql.add(',Max(case  when DDZLS.CC='+''''+Qtemp.fieldbyname('CC').value+'''');
+            sql.add(' then DDZLS.Quantity else null end) as '+''''+Qtemp.fieldbyname('CC').value+'''');
+            Qtemp.Next;
+          end;
+          sql.add('from SCZL');
+          sql.add('left join ZLZL on ZLZL.ZLBH=SCZL.ZLBH');
+          sql.add('left join DDZL  on ZLZL.ZLBH=DDZL.DDBH');
+          sql.add('left join KFZL on KFZl.KFDH=DDZl.KHBH ') ;
+          sql.add('left join XXZL  on DDZL.XieXing=XXZL.XieXing and DDZL.SheHao=XXZL.SheHao');
+          sql.add('left join LBZLS on LBZLS.LB='+''''+'06'+''''+' and LBZLS.LBDH=DDZL.DDGB');
+          sql.add('left join DDZLS on DDZL.DDBH=DDZLS.DDBH ');
+          sql.Add('where SCZL.SCBH like '+''''+edit1.Text+'%'+'''');
+          sql.add('      and KFZL.KFJC like'+''''+edit4.text+'%'+'''');
+          sql.add('      and SCZL.SCBH=SCZL.ZLBH');
+          sql.add('      and XXZL.ARTICLE like '+''''+edit3.Text+'%'+'''');
+          sql.add('      and XXZL.XieMing like '+''''+'%'+edit2.text+'%'+'''');
+          if edit5.Text<>'' then
+             sql.add('      and XXZL.DAOMH like '+''''+'%'+edit5.text+'%'+'''');
+          if edit6.Text<>'' then
+             sql.add('      and XXZL.XTMH like '+''''+'%'+edit6.text+'%'+'''');
+          if RB1.Checked=true then
+             sql.add('      and convert(smalldatetime,convert(varchar,DDZL.ShipDate,111)) between '''+formatdatetime('yyyy/MM/dd',sdate)+''''+' and '+''''+formatdatetime('yyyy/MM/dd',edate)+'''')
+          else
+             SQL.Add('and DDZL.BUYNO like '''+BuyNoEdit.Text+'%'' ');
+          sql.add('      and DDZL.GSBH='+''''+main.edit2.Text+'''');
+          sql.add('group by SCZL.SCBH, SCZL.ZLBH,DDZL.DDZT,LBZLS.YWSM,DDZL.XieXing,DDZL.SheHao,DDZL.XieXing,DDZL.CCGB,KFZL.KFJC,');
+          sql.add('		 SCZL.Qty,DDZL.Article,DDZL.ShipDate,XXZL.CCGB,XXZL.XieMing,XXZL.DAOMH,XXZL.XTMH,DDZL.BUYNO,DDZL.KHPO');
+          sql.add('order by SCZL.ZLBH');
+          //funcobj.WriteErrorLog(sql.Text);
+          active:=true;
+        end;
+
+        eclApp.Range[eclApp.Cells[1,1],eclApp.Cells[1,QueryExcel.FieldCount]].NumberFormat := '@'; //format excel column to text
+
+        for   i:=0   to   QueryExcel.FieldCount-1  do
+        begin
+          eclApp.Cells(1,i+1):=QueryExcel.fields[i].FieldName;
+        end;
+
+        QueryExcel.First;
+        j:=2;
+        while   not   QueryExcel.Eof   do
+        begin
+          for   i:=0   to   QueryExcel.FieldCount-1   do
+          begin
+            eclApp.Cells[j,i+1].NumberFormatLocal:='@';
+            eclApp.Cells(j,i+1):=QueryExcel.Fields[i].Value;
+          end;
+          QueryExcel.Next;
+          inc(j);
+        end;
+      eclapp.columns.autofit;
+      eclApp.Visible:=True;
+      except
+        on   F:Exception   do
+          showmessage(F.Message);
+      end;
+    end;
+end;       }
+
+procedure TOrderList.Button2Click(Sender: TObject);
+var
+  eclApp, WorkBook: OleVariant;
+  i, j: Integer;
+  HugeSQL: string;
+  ItemCount: Integer;
+begin
+  if OrdMas.Active then
+  begin
+    // =========================================================================
+    // KHOI TAO EXCEL
+    // =========================================================================
+    try
+      eclApp := CreateOleObject('Excel.Application');
+      WorkBook := CreateOleObject('Excel.Sheet'); 
+    except
+      Application.MessageBox('No Microsoft Excel', 'Microsoft Excel', MB_OK + MB_ICONWarning);
+      Exit;
+    end;
+
+    try
+      WorkBook := eclApp.Workbooks.Add;
+      
+      // CHO EXCEL HIEN LEN NGAY TU DAU DE QUAN SAT TIEN DO
+      eclApp.Visible := True;
+
+      // =========================================================================
+      // 1. XU LY QTEMP (Lay danh sach Size CC) - Ap dung bam nho menh de IN
+      // =========================================================================
+      OrdMas.First;
+      HugeSQL := 'SELECT DISTINCT DDZLS.CC FROM DDZLS ' +
+                 'LEFT JOIN ZLZL ON ZLZL.ZLBH=DDZLS.DDBH ' +
+                 'LEFT JOIN DDZL ON DDZL.DDBH=DDZLS.DDBH ' +
+                 'WHERE ';
+
+      ItemCount := 0;
+      while not OrdMas.Eof do
+      begin
+        // Chia nho: Cu 1000 record thi ngat IN ra, tranh lam ngop MSSQL 2008 R2
+        if ItemCount mod 1000 = 0 then
+        begin
+          if ItemCount > 0 then
+            HugeSQL := HugeSQL + ') OR DDZLS.DDBH IN ('
+          else
+            HugeSQL := HugeSQL + 'DDZLS.DDBH IN (';
+        end
+        else
+        begin
+          HugeSQL := HugeSQL + ',';
+        end;
+
+        // Dung QuotedStr thay the viec cong nhay don bang tay, Trim de xoa khoang trang rac
+        HugeSQL := HugeSQL + QuotedStr(Trim(OrdMas.FieldByName('SCBH').AsString));
+
+        Inc(ItemCount);
+        OrdMas.Next;
+      end;
+
+      // Dong ngoac ket thuc va them ORDER BY
+      if ItemCount > 0 then
+        HugeSQL := HugeSQL + ') ';
+      HugeSQL := HugeSQL + 'ORDER BY DDZLS.CC';
+
+      // Nap cau lenh vao Qtemp
+      with Qtemp do
+      begin
+        Active := False;
+        ParamCheck := False; // Bat buoc tat de Delphi khong check nham ky tu ':'
+        SQL.Text := HugeSQL;
+        //funcobj.WriteErrorLog(SQL.Text);
+        Active := True;
+      end;
+
+      // =========================================================================
+      // 2. XU LY QUERYEXCEL (Du lieu chinh & Pivot Cot Size dong)
+      // =========================================================================
+      with QueryExcel do
+      begin
+        Active := False;
+        ParamCheck := False; // Bat buoc tat cho truy van dong dai
+        SQL.Clear;
+        
+        // Da xoa bot mot cot DDZL.XieXing bi viet trung lap o code goc
+        SQL.Add('SELECT DISTINCT SCZL.SCBH, SCZL.ZLBH, DDZL.DDZT, LBZLS.YWSM,');
+        SQL.Add('DDZL.XieXing, DDZL.SheHao, DDZL.CCGB as DDCC, KFZL.KFJC,');
+        SQL.Add('SCZL.Qty as Qty, DDZL.Article, DDZL.ShipDate, XXZL.CCGB as XXCC, XXZL.XieMing, XXZL.DAOMH, XXZL.XTMH, DDZL.BUYNO, DDZL.KHPO');
+
+        // Tao cot Pivot lay Size (CC) theo so luong tu Qtemp
+        Qtemp.First; 
+        while not Qtemp.Eof do
+        begin
+          SQL.Add(', MAX(CASE WHEN DDZLS.CC=' + QuotedStr(Qtemp.FieldByName('CC').AsString));
+          SQL.Add(' THEN DDZLS.Quantity ELSE NULL END) AS ' + QuotedStr(Qtemp.FieldByName('CC').AsString));
+          Qtemp.Next;
+        end;
+
+        SQL.Add('FROM SCZL');
+        SQL.Add('LEFT JOIN ZLZL ON ZLZL.ZLBH=SCZL.ZLBH');
+        SQL.Add('LEFT JOIN DDZL ON ZLZL.ZLBH=DDZL.DDBH');
+        SQL.Add('LEFT JOIN KFZL ON KFZL.KFDH=DDZL.KHBH ');
+        SQL.Add('LEFT JOIN XXZL ON DDZL.XieXing=XXZL.XieXing AND DDZL.SheHao=XXZL.SheHao');
+        SQL.Add('LEFT JOIN LBZLS ON LBZLS.LB=''06'' AND LBZLS.LBDH=DDZL.DDGB');
+        SQL.Add('LEFT JOIN DDZLS ON DDZL.DDBH=DDZLS.DDBH ');
+        
+        // Dieu kien Where
+        SQL.Add('WHERE SCZL.SCBH LIKE ' + QuotedStr(Edit1.Text + '%'));
+        SQL.Add('      AND KFZL.KFJC LIKE ' + QuotedStr(Edit4.Text + '%'));
+        SQL.Add('      AND SCZL.SCBH=SCZL.ZLBH');
+        SQL.Add('      AND XXZL.ARTICLE LIKE ' + QuotedStr(Edit3.Text + '%'));
+        SQL.Add('      AND XXZL.XieMing LIKE ' + QuotedStr('%' + Edit2.Text + '%'));
+
+        if Edit5.Text <> '' then
+          SQL.Add('      AND XXZL.DAOMH LIKE ' + QuotedStr('%' + Edit5.Text + '%'));
+        if Edit6.Text <> '' then
+          SQL.Add('      AND XXZL.XTMH LIKE ' + QuotedStr('%' + Edit6.Text + '%'));
+
+        if RB1.Checked = True then
+          SQL.Add('      AND CONVERT(smalldatetime, CONVERT(varchar, DDZL.ShipDate, 111)) BETWEEN ' +
+                  QuotedStr(FormatDateTime('yyyy/MM/dd', sdate)) + ' AND ' + QuotedStr(FormatDateTime('yyyy/MM/dd', edate)))
+        else
+          SQL.Add('      AND DDZL.BUYNO LIKE ' + QuotedStr(BuyNoEdit.Text + '%'));
+
+        SQL.Add('      AND DDZL.GSBH=' + QuotedStr(main.edit2.Text));
+
+        // Gom nhom Group By
+        SQL.Add('GROUP BY SCZL.SCBH, SCZL.ZLBH, DDZL.DDZT, LBZLS.YWSM, DDZL.XieXing, DDZL.SheHao, DDZL.CCGB, KFZL.KFJC,');
+        SQL.Add('         SCZL.Qty, DDZL.Article, DDZL.ShipDate, XXZL.CCGB, XXZL.XieMing, XXZL.DAOMH, XXZL.XTMH, DDZL.BUYNO, DDZL.KHPO');
+        SQL.Add('ORDER BY SCZL.ZLBH');
+
+        //funcobj.WriteErrorLog(SQL.Text);
+        Active := True;
+      end;
+
+      // =========================================================================
+      // 3. DO DU LIEU RA EXCEL (KEM CHONG TREO GIAO DIEN)
+      // =========================================================================
+      eclApp.Range[eclApp.Cells[1, 1], eclApp.Cells[1, QueryExcel.FieldCount]].NumberFormat := '@';
+
+      // In tieu de cot
+      for i := 0 to QueryExcel.FieldCount - 1 do
+      begin
+        eclApp.Cells(1, i + 1) := QueryExcel.Fields[i].FieldName;
+      end;
+
+      // In du lieu tung dong
+      QueryExcel.First;
+      j := 2;
+      while not QueryExcel.Eof do
+      begin
+        for i := 0 to QueryExcel.FieldCount - 1 do
+        begin
+          eclApp.Cells[j, i + 1].NumberFormatLocal := '@';
+          eclApp.Cells(j, i + 1) := QueryExcel.Fields[i].Value;
+        end;
+        
+        // CHONG DO: Giai phong CPU sau moi 100 dong xuat ra Excel
+        if j mod 100 = 0 then
+          Application.ProcessMessages;
+
+        QueryExcel.Next;
+        Inc(j);
+      end;
+
+      eclApp.Columns.AutoFit;
+
+    except
+      on F: Exception do
+        ShowMessage('Loi xuat Excel: ' + F.Message);
+    end;
+  end;
+end;
+
+procedure TOrderList.FormDestroy(Sender: TObject);
+begin
+  OrderList:=nil;
+end;
+
+procedure TOrderList.DBGrid1GetCellParams(Sender: TObject;
+  Column: TColumnEh; AFont: TFont; var Background: TColor;
+  State: TGridDrawState);
+var
+  ShipDate: TDateTime;
+  SBField: TField;
+begin
+  if Column.Index > 8 then Exit;
+
+  AFont.Color := clWindowText;
+  Background := clWindow;
+
+  SBField := OrdMas.FieldByName('SB');
+  if OrdMas.FieldByName('SB_STATUS').AsString = 'YELLOW' then
+  begin
+    Background := clYellow;
+    Exit;
+  end;
+  if (not SBField.IsNull) and (SBField.AsInteger = 3) then
+  begin
+    Background := RGB(153,255,0);
+    Exit;
+  end;
+  if OrdMas.FieldByName('Status').AsString = 'PASS' then
+  begin
+    Background := clGreen;
+    Exit;
+  end;
+
+  if OrdMas.FieldByName('Status').AsString = 'Fails' then
+  begin
+    Background := clRed;
+    Exit;
+  end;
+  if not OrdMas.FieldByName('ShipDate').IsNull then
+  begin
+    ShipDate := OrdMas.FieldByName('ShipDate').AsDateTime;
+    if (Date > ShipDate) and (not SBField.IsNull) then
+    begin
+      Background := clGray;
+      AFont.Color := clBlue;
+      Exit;
+    end;
+    if (Date > ShipDate) and (SBField.IsNull) then
+    begin
+      Background := clGray;
+      AFont.Color := clRed;
+      Exit;
+    end;
+  end;
+  if not SBField.IsNull then
+    Background := clBlue;
+  if not OrdMas.FieldByName('ShipDate').IsNull then
+  begin
+    ShipDate := OrdMas.FieldByName('ShipDate').AsDateTime;
+
+    if (ShipDate >= Date) and (ShipDate <= Date + 7) then
+    begin
+      Background := clGreen;
+      AFont.Color := RGB(255,165,0);
+    end;
+  end;
+end;
+
+procedure TOrderList.N1Click(Sender: TObject);
+var shoePic:string;
+    i:integer;
+begin
+  if messagedlg('English version?',mtinformation,[mbYes,mbNo],0)=mrYes then
+  begin
+    if messagedlg('Not show Child materail?',mtinformation,[mbYes,mbNo],0)=mrYes then
+      begin
+        PSpecPrintss:=TPSpecPrintss.create(nil);
+        //20150617修改共用Plan N11
+        PSpecPrintss.MemoTemp.DataSource:=DS1;
+        PSpecPrintss.Titlememo.DataSource:=DS1;
+        PSpecPrintss.MemoOth.DataSource:=DS1;
+        PSpecPrintss.QMatList.DataSource:=DS1;
+        PSpecPrintss.TitleMemo.Active:=true;
+        //
+        PSpecPrintss.QRCompositeReport1.prepare;
+        i:=PSpecPrintss.QuickRep2.QRPrinter.pagecount ;
+        PSpecPrintss.PageN1.Caption:='/  '+inttostr(i);
+        PSpecPrintss.PageN2.Caption:='/  '+inttostr(i);
+        PSpecPrintss.PageN3.Caption:='/  '+inttostr(i);
+        PSpecPrintss.Fac1.Caption:=PSpecPrintss.Fac1.Caption+main.Edit2.Text;
+        PSpecPrintss.Fac2.Caption:=PSpecPrintss.Fac2.Caption+main.Edit2.Text;
+        PSpecPrintss.Fac3.Caption:=PSpecPrintss.Fac3.Caption+main.Edit2.Text;
+        try
+          // 圖片加載不論是否成功都要打印
+          shoePic:=PSpecPrintss.TitleMemo.fieldbyname('IMGName').AsString  ;
+          if FileExists(shoePic)=true then
+          begin
+            PSpecPrintss.QRImage1.Picture.LoadFromFile(shoePic);
+            PSpecPrintss.QRImage2.Picture.LoadFromFile(shoePic);
+            PSpecPrintss.QRImage3.Picture.LoadFromFile(shoePic);
+          end else
+          begin
+            shoePic:=StringReplace(shoePic,'H:',ShoePicPath, [rfReplaceAll, rfIgnoreCase]);
+            if FileExists(shoePic)=true then
+            begin
+              PSpecPrintss.QRImage1.Picture.LoadFromFile(shoePic);
+              PSpecPrintss.QRImage2.Picture.LoadFromFile(shoePic);
+              PSpecPrintss.QRImage3.Picture.LoadFromFile(shoePic);
+            end;
+          end;
+          //
+          PSpecPrintss.QRCompositeReport1.Preview;
+        except
+          showmessage('No picture of article.');
+          PSpecPrintss.QRCompositeReport1.Preview;
+        end ;
+      end
+    else
+      begin
+        PSPecPrintss_SP:=TPSpecPrintss_SP.create(nil);
+        //20150617修改共用Plan N11
+        PSPecPrintss_SP.MemoTemp.DataSource:=DS1;
+        PSPecPrintss_SP.Titlememo.DataSource:=DS1;
+        PSPecPrintss_SP.MemoOth.DataSource:=DS1;
+        PSPecPrintss_SP.QMatList.DataSource:=DS1;
+        PSPecPrintss_SP.TitleMemo.Active:=true;
+        //
+        PSpecPrintss_SP.QRCompositeReport1.prepare;
+        i:=PSpecPrintss_SP.QuickRep2.QRPrinter.pagecount ;
+        PSpecPrintss_SP.PageN1.Caption:='/  '+inttostr(i);
+        PSpecPrintss_SP.PageN2.Caption:='/  '+inttostr(i);
+        PSpecPrintss_SP.PageN3.Caption:='/  '+inttostr(i);
+        PSpecPrintss_SP.Fac1.Caption:=PSpecPrintss_SP.Fac1.Caption+main.Edit2.Text;
+        PSpecPrintss_SP.Fac2.Caption:=PSpecPrintss_SP.Fac2.Caption+main.Edit2.Text;
+        PSpecPrintss_SP.Fac3.Caption:=PSpecPrintss_SP.Fac3.Caption+main.Edit2.Text;
+        try
+          // 圖片加載不論是否成功都要打印
+          shoePic:=PSpecPrintss_SP.TitleMemo.fieldbyname('IMGName').AsString  ;
+          if FileExists(shoePic)=true then
+          begin
+            PSpecPrintss_SP.QRImage1.Picture.LoadFromFile(shoePic);
+            PSpecPrintss_SP.QRImage2.Picture.LoadFromFile(shoePic);
+            PSpecPrintss_SP.QRImage3.Picture.LoadFromFile(shoePic);
+          end else
+          begin
+            shoePic:=StringReplace(shoePic,'H:',ShoePicPath, [rfReplaceAll, rfIgnoreCase]);
+            if FileExists(shoePic)=true then
+            begin
+              PSpecPrintss_SP.QRImage1.Picture.LoadFromFile(shoePic);
+              PSpecPrintss_SP.QRImage2.Picture.LoadFromFile(shoePic);
+              PSpecPrintss_SP.QRImage3.Picture.LoadFromFile(shoePic);
+            end;
+          end;
+          //
+          PSpecPrintss_SP.QRCompositeReport1.Preview;
+        except
+          showmessage('No picture of article.');
+          PSpecPrintss_SP.QRCompositeReport1.Preview;
+         end ;
+      end;
+   end
+else
+    begin
+      //showmessage('A');
+      PSpecPrintssTW:=TPSpecPrintssTW.create(nil);
+      //20150617修改共用Plan N11
+      PSpecPrintssTW.MemoTemp.DataSource:=DS1;
+      PSpecPrintssTW.Titlememo.DataSource:=DS1;
+      PSpecPrintssTW.MemoOth.DataSource:=DS1;
+      PSpecPrintssTW.QMatList.DataSource:=DS1;
+      PSpecPrintssTW.TitleMemo.Active:=true;
+      //      
+      PSpecPrintssTW.QRCompositeReport1.prepare;
+      i:=PSpecPrintssTW.QuickRep2.QRPrinter.pagecount ;
+      PSpecPrintssTW.PageN1.Caption:='/  '+inttostr(i);
+      PSpecPrintssTW.PageN2.Caption:='/  '+inttostr(i);
+      PSpecPrintssTW.PageN3.Caption:='/  '+inttostr(i);
+      PSpecPrintssTW.Fac1.Caption:=PSpecPrintssTW.Fac1.Caption+main.Edit2.Text;
+      PSpecPrintssTW.Fac2.Caption:=PSpecPrintssTW.Fac2.Caption+main.Edit2.Text;
+      PSpecPrintssTW.Fac3.Caption:=PSpecPrintssTW.Fac3.Caption+main.Edit2.Text;
+      try
+        // 圖片加載不論是否成功都要打印
+        shoePic:=PSpecPrintssTW.TitleMemo.fieldbyname('IMGName').AsString  ;
+        if FileExists(shoePic)=true then
+        begin
+          PSpecPrintssTW.QRImage1.Picture.LoadFromFile(shoePic);
+          PSpecPrintssTW.QRImage2.Picture.LoadFromFile(shoePic);
+          PSpecPrintssTW.QRImage3.Picture.LoadFromFile(shoePic);
+        end else
+        begin
+          shoePic:=StringReplace(shoePic,'H:',ShoePicPath, [rfReplaceAll, rfIgnoreCase]);
+          if FileExists(shoePic)=true then
+          begin
+            PSpecPrintssTW.QRImage1.Picture.LoadFromFile(shoePic);
+            PSpecPrintssTW.QRImage2.Picture.LoadFromFile(shoePic);
+            PSpecPrintssTW.QRImage3.Picture.LoadFromFile(shoePic);
+          end;
+        end;
+        PSpecPrintssTW.QRCompositeReport1.Preview;
+      except
+        showmessage('No picture of article.');
+        PSpecPrintssTW.QRCompositeReport1.Preview;
+      end;
+  end;
+
+end;
+
+procedure TOrderList.N2Click(Sender: TObject);
+var PC1,PC2,PC3,PC4,PC5,PC6,PC7,PC8,a:string;
+begin
+  SpecMas.Active:=true;
+  YWDDTP.Active:=true;
+  if (not SpecMas.FieldByName('Packing').isnull) and (not SpecMas.FieldByName('DDMT').isnull) and (not SpecMas.FieldByName('DDBZ').isnull and RadioButton2.Checked=true) then
+  begin
+    OrderPack_Print:=TOrderPack_Print.create(self);
+    //OrderPack_Print.QRLabel46.Enabled:=true;
+    //OrderPack_Print.QRLabel47.Enabled:=true;
+    //OrderPack_Print.QRLabel48.Enabled:=true;
+
+    OrderPack_Print.QRCompositeReport1.prepare;
+    OrderPack_Print.PAGEN1.caption:='/'+inttostr(OrderPack_Print.quickrep3.QRPrinter.pagecount);
+    OrderPack_Print.PAGEN2.caption:='/'+inttostr(OrderPack_Print.quickrep3.QRPrinter.pagecount);
+    OrderPack_Print.PAGEN3.caption:='/'+inttostr(OrderPack_Print.quickrep3.QRPrinter.pagecount);
+    with YWDDTP do
+      begin
+        Active:=true;
+        PC1:='';
+        PC2:='';
+        PC3:='';
+        PC4:='';
+        PC5:='';
+        PC6:='';
+        PC7:='';
+        PC8:='';
+        if recordcount>0 then
+          begin
+            PC1:=fieldbyname('TPMEMO').AsString;
+            //OrderPack_Print.QPC1.Picture.LoadFromFile();
+            next;
+          end;
+        if recordcount>1 then
+          begin
+            PC2:=fieldbyname('TPMEMO').AsString;
+            //OrderPack_Print.QPC2.Picture.LoadFromFile(fieldbyname('TPMEMO').AsString);
+            next;
+          end;
+        if recordcount>2 then
+          begin
+            PC3:=fieldbyname('TPMEMO').AsString;
+            //OrderPack_Print.QPC3.Picture.LoadFromFile(fieldbyname('TPMEMO').AsString);
+            next;
+          end;
+        if recordcount>3 then
+          begin
+            PC4:=fieldbyname('TPMEMO').AsString;
+            //OrderPack_Print.QPC3.Picture.LoadFromFile(fieldbyname('TPMEMO').AsString);
+            next;
+          end;
+        if recordcount>4 then
+          begin
+            PC5:=fieldbyname('TPMEMO').AsString;
+            //OrderPack_Print.QPC3.Picture.LoadFromFile(fieldbyname('TPMEMO').AsString);
+            next;
+          end;
+        if recordcount>5 then
+          begin
+            PC6:=fieldbyname('TPMEMO').AsString;
+            //OrderPack_Print.QPC3.Picture.LoadFromFile(fieldbyname('TPMEMO').AsString);
+            next;
+          end;
+        if recordcount>6 then
+          begin
+            PC7:=fieldbyname('TPMEMO').AsString;
+            //OrderPack_Print.QPC3.Picture.LoadFromFile(fieldbyname('TPMEMO').AsString);
+            next;
+          end;
+        if recordcount>7 then
+          begin
+            PC8:=fieldbyname('TPMEMO').AsString;
+            //OrderPack_Print.QPC3.Picture.LoadFromFile(fieldbyname('TPMEMO').AsString);
+            next;
+          end;
+        if PC1<>'' then
+           OrderPack_Print.QPC1.Picture.LoadFromFile(PC1);
+        if PC2<>'' then
+           OrderPack_Print.QPC2.Picture.LoadFromFile(PC2);
+        if PC3<>'' then
+           OrderPack_Print.QPC3.Picture.LoadFromFile(PC3);
+       { if PC4<>'' then
+           OrderPack_Print.QPC4.Picture.LoadFromFile(PC4);
+        if PC5<>'' then
+           OrderPack_Print.QPC5.Picture.LoadFromFile(PC5);
+        if PC6<>'' then
+           OrderPack_Print.QPC6.Picture.LoadFromFile(PC6);
+        if PC7<>'' then
+           OrderPack_Print.QPC7.Picture.LoadFromFile(PC7);
+        if PC8<>'' then
+           OrderPack_Print.QPC8.Picture.LoadFromFile(PC8);}
+        active:=false;
+      end;
+    try
+    OrderPack_Print.IMGName1.Picture.LoadFromFile(OrderList.SpecMas.fieldbyname('IMGName').AsString);
+    OrderPack_Print.IMGName2.Picture.LoadFromFile(OrderList.SpecMas.fieldbyname('IMGName').AsString);
+    except
+    showmessage('Can not import picture, Pls contect with IT. 有問題找IT');
+    end;
+    OrderPack_Print.QRCompositeReport1.Preview;
+    OrderPack_Print.free;
+  end
+  else
+    begin
+      if messagedlg('Not enough ,are you want to preview first?',mtconfirmation,[mbYes,mbNo],0)=mryes then
+        begin
+          OrderPack_Print:=TOrderPack_Print.create(self);
+          //OrderPack_Print.QRLabel46.Enabled:=true;
+          OrderPack_Print.QRLabel47.Enabled:=true;
+          OrderPack_Print.QRLabel48.Enabled:=true;
+          OrderPack_Print.QRCompositeReport1.prepare;
+          OrderPack_Print.PAGEN1.caption:='/'+inttostr(OrderPack_Print.quickrep3.QRPrinter.pagecount);
+          OrderPack_Print.PAGEN2.caption:='/'+inttostr(OrderPack_Print.quickrep3.QRPrinter.pagecount);
+          OrderPack_Print.PAGEN3.caption:='/'+inttostr(OrderPack_Print.quickrep3.QRPrinter.pagecount);
+        with YWDDTP do
+          begin
+            Active:=true;
+            PC1:='';
+            PC2:='';
+            PC3:='';
+            PC4:='';
+            PC5:='';
+            PC6:='';
+            PC7:='';
+            PC8:='';
+            if recordcount>0 then
+              begin
+                PC1:=fieldbyname('TPMEMO').AsString;
+                //OrderPack_Print.QPC1.Picture.LoadFromFile();
+                next;
+              end;
+            if recordcount>1 then
+              begin
+                PC2:=fieldbyname('TPMEMO').AsString;
+                //OrderPack_Print.QPC2.Picture.LoadFromFile(fieldbyname('TPMEMO').AsString);
+                next;
+              end;
+            if recordcount>2 then
+              begin
+                PC3:=fieldbyname('TPMEMO').AsString;
+                //OrderPack_Print.QPC3.Picture.LoadFromFile(fieldbyname('TPMEMO').AsString);
+                next;
+              end;
+            if recordcount>3 then
+          begin
+            PC4:=fieldbyname('TPMEMO').AsString;
+            //OrderPack_Print.QPC3.Picture.LoadFromFile(fieldbyname('TPMEMO').AsString);
+            next;
+          end;
+        if recordcount>4 then
+          begin
+            PC5:=fieldbyname('TPMEMO').AsString;
+            //OrderPack_Print.QPC3.Picture.LoadFromFile(fieldbyname('TPMEMO').AsString);
+            next;
+          end;
+        if recordcount>5 then
+          begin
+            PC6:=fieldbyname('TPMEMO').AsString;
+            //OrderPack_Print.QPC3.Picture.LoadFromFile(fieldbyname('TPMEMO').AsString);
+            next;
+          end;
+        if recordcount>6 then
+          begin
+            PC7:=fieldbyname('TPMEMO').AsString;
+            //OrderPack_Print.QPC3.Picture.LoadFromFile(fieldbyname('TPMEMO').AsString);
+            next;
+          end;
+        if recordcount>7 then
+          begin
+            PC8:=fieldbyname('TPMEMO').AsString;
+            //OrderPack_Print.QPC3.Picture.LoadFromFile(fieldbyname('TPMEMO').AsString);
+            next;
+          end;
+        if PC1<>'' then
+           //OrderPack_Print.QPC1.Picture.LoadFromFile(PC1);
+        if PC2<>'' then
+           //OrderPack_Print.QPC2.Picture.LoadFromFile(PC2);
+        if PC3<>'' then
+           //OrderPack_Print.QPC3.Picture.LoadFromFile(PC3);
+        if PC4<>'' then
+           //OrderPack_Print.QPC4.Picture.LoadFromFile(PC4);
+        if PC5<>'' then
+           //OrderPack_Print.QPC5.Picture.LoadFromFile(PC5);
+        if PC6<>'' then
+           //OrderPack_Print.QPC6.Picture.LoadFromFile(PC6);
+        if PC7<>'' then
+           //OrderPack_Print.QPC7.Picture.LoadFromFile(PC7);
+        if PC8<>'' then
+           //OrderPack_Print.QPC8.Picture.LoadFromFile(PC8);
+            active:=false;
+          end;
+        try
+        OrderPack_Print.IMGName1.Picture.LoadFromFile(OrderList.SpecMas.fieldbyname('IMGName').AsString);
+        OrderPack_Print.IMGName2.Picture.LoadFromFile(OrderList.SpecMas.fieldbyname('IMGName').AsString);
+        except
+        showmessage('Can not import picture, Pls contect with IT. 有問題找IT');
+        end;
+          {try              // 圖片加載不論是否成功都要打印
+            a:=SpecMas.fieldbyname('IMGName').AsString  ;
+            OrderPack_Print.IMGName1.Picture.LoadFromFile(a);
+            OrderPack_Print.IMGName2.Picture.LoadFromFile(a);
+          except
+            showmessage('No picture of article.');
+          end ;  }
+          OrderPack_Print.QRCompositeReport1.Preview;
+          OrderPack_Print.free;
+        end;
+    end;
+end;
+
+procedure TOrderList.CreateColorPanel(L, T, W, H: Integer; AColor: TColor; AText: string; AFontColor: TColor);
+var
+  pnl: TPanel;
+begin
+  pnl := TPanel.Create(Self);
+  with pnl do
+  begin
+    Parent := Self;
+    Left := L;
+    Top := T;
+    Width := W;
+    Height := H;
+    Color := AColor;
+    BevelOuter := bvRaised;
+    BevelInner := bvRaised;
+    BevelWidth := 2;
+
+    Caption := AText;
+    Font.Color := AFontColor;
+    Font.Style := [fsBold];
+    Font.Size := 10;
+
+    Alignment := taCenter;
+  end;
+end;
+
+procedure TOrderList.FormCreate(Sender: TObject);
+var
+  myYear, myMonth, myDay: Word;
+  i: Integer;
+begin
+  DecodeDate(Date(), myYear, myMonth, myDay);
+  for i := 0 to CBX2.Items.Count - 1 do
+  begin
+    if StrToIntDef(CBX2.Items[i], 0) = myYear then
+    begin
+      CBX2.ItemIndex := i;
+      Break;
+    end;
+  end;
+  for i := 0 to CBX3.Items.Count - 1 do
+  begin
+    if StrToIntDef(CBX3.Items[i], 0) = myMonth then
+    begin
+      CBX3.ItemIndex := i;
+      Break;
+    end;
+  end;
+  BuyNoEdit.Text := FormatDateTime('YYYYMM', Date());
+  ReadIni();
+  CreateColorPanel(763, 4, 49, 22, clBlue, '', clWhite);
+  CreateColorPanel(763, 35, 49, 22, clYellow, '', clWhite);
+  CreateColorPanel(907, 6, 49, 22, RGB(153,255,0), '', clWhite);
+  CreateColorPanel(907, 34, 49, 22, clGreen, 'ABC', RGB(255,165,0));
+  CreateColorPanel(763, 65, 49, 22, clGreen, '', clWhite);
+  CreateColorPanel(1084, 6, 49, 22, clGray, 'ABC', clBlue);
+  CreateColorPanel(1084, 34, 49, 22, clGray, 'ABC', clRed);
+  CreateColorPanel(907, 65, 49, 22, clRed, '', clWhite);
+end;
+
+procedure TOrderList.N3Click(Sender: TObject);
+var eclApp,WorkBook:olevariant;
+    i,j:integer;
+begin
+  if OrdMas.Active then
+  begin
+    if OrdMas.recordcount=0 then
+    begin
+      showmessage('No record.');
+      abort;
+    end;
+  end else
+  begin
+    showmessage('No record.');
+    abort;
+  end;
+
+  try
+    eclApp:=CreateOleObject('Excel.Application');
+    WorkBook:=CreateOleObject('Excel.Sheet');
+  except
+    Application.MessageBox('NO Microsoft   Excel','Microsoft   Excel',MB_OK+MB_ICONWarning);
+    Exit;
+  end;
+
+  try
+    WorkBook:=eclApp.workbooks.Add;
+    eclApp.Cells(1,1):='NO';
+    for   i:=1   to   OrdMas.fieldcount   do
+    begin
+      eclApp.Cells(1,i+1):=OrdMas.fields[i-1].FieldName;
+    end;
+    OrdMas.First;
+    j:=2;
+    while   not  OrdMas.Eof   do
+      begin
+        eclApp.Cells(j,1):=j-1;
+        for   i:=1   to   OrdMas.fieldcount   do
+        begin
+          eclApp.Cells(j,i+1):=OrdMas.Fields[i-1].Value;
+        end;
+        OrdMas.Next;
+        inc(j);
+      end;
+    eclapp.columns.autofit;
+    showmessage('Succeed.');
+    eclApp.Visible:=True;
+  except
+    on   F:Exception   do
+      showmessage(F.Message);
+  end;
+end;
+
+procedure TOrderList.N4Click(Sender: TObject);
+var shoePic:string;
+    i:integer;
+begin
+  if messagedlg('English version?',mtinformation,[mbYes,mbNo],0)=mrYes then
+  begin
+    if messagedlg('Not show Child materail?',mtinformation,[mbYes,mbNo],0)=mrYes then
+      begin
+        PSpecPrintss_Price:=TPSpecPrintss_Price.create(nil);
+        //20150617修改共用Plan N11
+        PSpecPrintss_Price.MemoTemp.DataSource:=DS1;
+        PSpecPrintss_Price.Titlememo.DataSource:=DS1;
+        PSpecPrintss_Price.MemoOth.DataSource:=DS1;
+        PSpecPrintss_Price.QMatList.DataSource:=DS1;
+        PSpecPrintss_Price.TitleMemo.Active:=true;
+        //
+        PSpecPrintss_Price.QRCompositeReport1.prepare;
+        i:=PSpecPrintss_Price.QuickRep2.QRPrinter.pagecount ;
+        PSpecPrintss_Price.PageN1.Caption:='/  '+inttostr(i);
+        PSpecPrintss_Price.PageN2.Caption:='/  '+inttostr(i);
+        PSpecPrintss_Price.PageN3.Caption:='/  '+inttostr(i);
+        PSpecPrintss_Price.Fac1.Caption:=PSpecPrintss_Price.Fac1.Caption+main.Edit2.Text;
+        PSpecPrintss_Price.Fac2.Caption:=PSpecPrintss_Price.Fac2.Caption+main.Edit2.Text;
+        PSpecPrintss_Price.Fac3.Caption:=PSpecPrintss_Price.Fac3.Caption+main.Edit2.Text;
+        try
+          // 圖片加載不論是否成功都要打印
+          shoePic:=PSpecPrintss_Price.TitleMemo.fieldbyname('IMGName').AsString  ;
+          if FileExists(shoePic)=true then
+          begin
+            PSpecPrintss_Price.QRImage1.Picture.LoadFromFile(shoePic);
+            PSpecPrintss_Price.QRImage2.Picture.LoadFromFile(shoePic);
+            PSpecPrintss_Price.QRImage3.Picture.LoadFromFile(shoePic);
+          end else
+          begin
+            shoePic:=StringReplace(shoePic,'H:',ShoePicPath, [rfReplaceAll, rfIgnoreCase]);
+            if FileExists(shoePic)=true then
+            begin
+              PSpecPrintss_Price.QRImage1.Picture.LoadFromFile(shoePic);
+              PSpecPrintss_Price.QRImage2.Picture.LoadFromFile(shoePic);
+              PSpecPrintss_Price.QRImage3.Picture.LoadFromFile(shoePic);
+            end;
+          end;
+          //
+          PSpecPrintss_Price.QRCompositeReport1.Preview;
+        except
+          showmessage('No picture of article.');
+          PSpecPrintss_Price.QRCompositeReport1.Preview;
+        end ;
+      end
+    else
+      begin
+        PSpecPrintss_SP_Price:=TPSpecPrintss_SP_Price.create(nil);
+        //20150617修改共用Plan N11
+        PSpecPrintss_SP_Price.MemoTemp.DataSource:=DS1;
+        PSpecPrintss_SP_Price.Titlememo.DataSource:=DS1;
+        PSpecPrintss_SP_Price.MemoOth.DataSource:=DS1;
+        PSpecPrintss_SP_Price.QMatList.DataSource:=DS1;
+        PSpecPrintss_SP_Price.TitleMemo.Active:=true;
+        //
+        PSpecPrintss_SP_Price.QRCompositeReport1.prepare;
+        i:=PSpecPrintss_SP_Price.QuickRep2.QRPrinter.pagecount ;
+        PSpecPrintss_SP_Price.PageN1.Caption:='/  '+inttostr(i);
+        PSpecPrintss_SP_Price.PageN2.Caption:='/  '+inttostr(i);
+        PSpecPrintss_SP_Price.PageN3.Caption:='/  '+inttostr(i);
+        PSpecPrintss_SP_Price.Fac1.Caption:=PSpecPrintss_SP_Price.Fac1.Caption+main.Edit2.Text;
+        PSpecPrintss_SP_Price.Fac2.Caption:=PSpecPrintss_SP_Price.Fac2.Caption+main.Edit2.Text;
+        PSpecPrintss_SP_Price.Fac3.Caption:=PSpecPrintss_SP_Price.Fac3.Caption+main.Edit2.Text;
+        try
+          // 圖片加載不論是否成功都要打印
+          shoePic:=PSpecPrintss_SP_Price.TitleMemo.fieldbyname('IMGName').AsString  ;
+          if FileExists(shoePic)=true then
+          begin
+            PSpecPrintss_SP_Price.QRImage1.Picture.LoadFromFile(shoePic);
+            PSpecPrintss_SP_Price.QRImage2.Picture.LoadFromFile(shoePic);
+            PSpecPrintss_SP_Price.QRImage3.Picture.LoadFromFile(shoePic);
+          end else
+          begin
+            shoePic:=StringReplace(shoePic,'H:',ShoePicPath, [rfReplaceAll, rfIgnoreCase]);
+            if FileExists(shoePic)=true then
+            begin
+              PSpecPrintss_SP_Price.QRImage1.Picture.LoadFromFile(shoePic);
+              PSpecPrintss_SP_Price.QRImage2.Picture.LoadFromFile(shoePic);
+              PSpecPrintss_SP_Price.QRImage3.Picture.LoadFromFile(shoePic);
+            end;
+          end;
+          //
+          PSpecPrintss_SP_Price.QRCompositeReport1.Preview;
+        except
+          showmessage('No picture of article.');
+          PSpecPrintss_SP_Price.QRCompositeReport1.Preview;
+         end ;
+      end;
+   end
+else
+    begin
+      //showmessage('A');
+      PSpecPrintssTW_Price:=TPSpecPrintssTW_Price.create(nil);
+      //20150617修改共用Plan N11
+      PSpecPrintssTW_Price.MemoTemp.DataSource:=DS1;
+      PSpecPrintssTW_Price.Titlememo.DataSource:=DS1;
+      PSpecPrintssTW_Price.MemoOth.DataSource:=DS1;
+      PSpecPrintssTW_Price.QMatList.DataSource:=DS1;
+      PSpecPrintssTW_Price.TitleMemo.Active:=true;
+      //      
+      PSpecPrintssTW_Price.QRCompositeReport1.prepare;
+      i:=PSpecPrintssTW_Price.QuickRep2.QRPrinter.pagecount ;
+      PSpecPrintssTW_Price.PageN1.Caption:='/  '+inttostr(i);
+      PSpecPrintssTW_Price.PageN2.Caption:='/  '+inttostr(i);
+      PSpecPrintssTW_Price.PageN3.Caption:='/  '+inttostr(i);
+      PSpecPrintssTW_Price.Fac1.Caption:=PSpecPrintssTW_Price.Fac1.Caption+main.Edit2.Text;
+      PSpecPrintssTW_Price.Fac2.Caption:=PSpecPrintssTW_Price.Fac2.Caption+main.Edit2.Text;
+      PSpecPrintssTW_Price.Fac3.Caption:=PSpecPrintssTW_Price.Fac3.Caption+main.Edit2.Text;
+      try
+        // 圖片加載不論是否成功都要打印
+        shoePic:=PSpecPrintssTW_Price.TitleMemo.fieldbyname('IMGName').AsString  ;
+        if FileExists(shoePic)=true then
+        begin
+          PSpecPrintssTW_Price.QRImage1.Picture.LoadFromFile(shoePic);
+          PSpecPrintssTW_Price.QRImage2.Picture.LoadFromFile(shoePic);
+          PSpecPrintssTW_Price.QRImage3.Picture.LoadFromFile(shoePic);
+        end else
+        begin
+          shoePic:=StringReplace(shoePic,'H:',ShoePicPath, [rfReplaceAll, rfIgnoreCase]);
+          if FileExists(shoePic)=true then
+          begin
+            PSpecPrintssTW_Price.QRImage1.Picture.LoadFromFile(shoePic);
+            PSpecPrintssTW_Price.QRImage2.Picture.LoadFromFile(shoePic);
+            PSpecPrintssTW_Price.QRImage3.Picture.LoadFromFile(shoePic);
+          end;
+        end;
+        PSpecPrintssTW_Price.QRCompositeReport1.Preview;
+      except
+        showmessage('No picture of article.');
+        PSpecPrintssTW_Price.QRCompositeReport1.Preview;
+      end;
+  end;
+end;
+
+end.

@@ -1,0 +1,21 @@
+program CanHC_HK;
+
+uses
+  Forms,
+  R_Hoachat_dp in 'R_Hoachat_dp.pas' {R_hoachat},
+  DM1 in 'DM1.pas' {DM: TDataModule},
+  ScanCheck in 'ScanCheck.pas' {CheckScan},
+  Canchitiet in 'Canchitiet.pas' {Chitiet},
+  CheckLean in 'CheckLean.pas' {CheckLean1};
+
+{$R *.res}
+
+begin
+  Application.Initialize;
+  Application.CreateForm(TDM, DM);
+ Application.CreateForm(TR_hoachat, R_hoachat);
+// Application.CreateForm(TCheckScan, CheckScan);
+// Application.CreateForm(TChitiet, Chitiet);
+// Application.CreateForm(TCheckLean1, CheckLean1);
+  Application.Run;
+end.
