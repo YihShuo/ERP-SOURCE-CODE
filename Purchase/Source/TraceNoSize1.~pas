@@ -543,8 +543,17 @@ begin
                with tmpQuery do
                begin
                  Active:=false;
-                 SQL.Clear;
-                 SQL.Add('Update CGZLSS set CFMDate=CONVERT(datetime, '''+CFMDate+''', 103) where CGNO='''+CGNO+''' and ZLBH='''+ZLBH+''' and CLBH='''+CLBH+''' and Convert(smalldatetime,'''+CFMDate+''')>GetDate()-180 and CGNO=(select CGNO from CGZL where CGNO='''+CGNO+''' and USERID='''+main.Edit1.Text+''')  ');
+                  SQL.Clear;
+                  SQL.Add('UPDATE CGZLSS');
+                  SQL.Add('SET CFMDate = CAST(''' + CFMDate + ''' AS date)');
+                  SQL.Add('WHERE CGNO = ''' + CGNO + '''');
+                  SQL.Add('  AND ZLBH = ''' + ZLBH + '''');
+                  SQL.Add('  AND CLBH = ''' + CLBH + '''');
+                  SQL.Add('  AND CAST(''' + CFMDate + ''' AS date) > GETDATE() - 180');
+                  SQL.Add('  AND CGNO = (SELECT CGNO');
+                  SQL.Add('               FROM CGZL');
+                  SQL.Add('               WHERE CGNO = ''' + CGNO + '''');
+                  SQL.Add('                 AND USERID = ''' + Main.Edit1.Text + ''')');
                  //funcObj.WriteErrorLog(sql.Text);
                  ExecSQL;
                end;
