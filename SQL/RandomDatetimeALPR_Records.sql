@@ -42,14 +42,12 @@ RandomizedData AS (
         YWCP.EXEDATE AS EXEDATE_GOC,
         YWCP.STUFFED_INV_NO,
         
-        -- 1. XỬ LÝ INTIME: Trừ phút từ giờ gốc, nếu lùi sang ngày hôm trước -> Ép về 00:XX của ngày đó
         CASE 
             WHEN DATEADD(MINUTE, -R.RandomMinsIn, YWCP.EXEDATE) < CAST(YWCP.EXEDATE_DATE AS DATETIME)
             THEN DATEADD(MINUTE, R.FallbackMinsIn, CAST(YWCP.EXEDATE_DATE AS DATETIME))
             ELSE DATEADD(MINUTE, -R.RandomMinsIn, YWCP.EXEDATE)
         END AS InTime,
         
-        -- 2. XỬ LÝ OUTTIME: Cộng phút từ giờ gốc, nếu lố sang ngày hôm sau -> Ép về 23:XX của ngày đó
         CASE 
             WHEN DATEADD(MINUTE, R.RandomMinsOut, YWCP.EXEDATE) >= DATEADD(DAY, 1, CAST(YWCP.EXEDATE_DATE AS DATETIME))
             THEN DATEADD(MINUTE, R.FallbackMinsOut, DATEADD(HOUR, 23, CAST(YWCP.EXEDATE_DATE AS DATETIME)))
@@ -59,10 +57,10 @@ RandomizedData AS (
     FROM StuffedData YWCP
     CROSS APPLY (
         SELECT 
-            (ABS(CHECKSUM(NEWID())) % 121) + 60 AS RandomMinsIn,  -- Ngẫu nhiên từ 60 - 180 phút
-            (ABS(CHECKSUM(NEWID())) % 121) + 60 AS RandomMinsOut, -- Ngẫu nhiên từ 60 - 180 phút
-            ABS(CHECKSUM(NEWID())) % 60 AS FallbackMinsIn,         -- Ngẫu nhiên từ 0 - 59 phút (giữ ở mức 00:XX)
-            ABS(CHECKSUM(NEWID())) % 60 AS FallbackMinsOut         -- Ngẫu nhiên từ 0 - 59 phút (giữ ở mức 23:XX)
+            (ABS(CHECKSUM(NEWID())) % 121) + 60 AS RandomMinsIn,
+            (ABS(CHECKSUM(NEWID())) % 121) + 60 AS RandomMinsOut, 
+            ABS(CHECKSUM(NEWID())) % 60 AS FallbackMinsIn,         
+            ABS(CHECKSUM(NEWID())) % 60 AS FallbackMinsOut        
     ) R
     LEFT JOIN ALPR_DB..ALPR_Records A 
         ON YWCP.BIEN_SO COLLATE DATABASE_DEFAULT = A.Plate_Id COLLATE DATABASE_DEFAULT 
@@ -73,7 +71,6 @@ RandomizedData AS (
     WHERE A.ID IS NULL 
 )
 
--- >>> TỪ ĐÂY BẠN CÓ THỂ VIẾT TIẾP CODE ĐỂ XỬ LÝ DỮ LIỆU CỦA CTE "RandomizedData" <<<
 SELECT 
     InTime,
     OutTime,
