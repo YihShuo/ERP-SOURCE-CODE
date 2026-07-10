@@ -60,12 +60,6 @@ type
     Query1BB: TStringField;
     Query1CC: TStringField;
     Query1DD: TStringField;
-    Query1Grade: TStringField;
-    Query1TotalSF: TFloatField;
-    Query1PercentGrade: TIntegerField;
-    Query1UseSF: TFloatField;
-    Query1PercentNCU: TIntegerField;
-    Query1CompenSF: TFloatField;
     Query1TestCon: TStringField;
     Query1IsCompen: TStringField;
     Query1CompenQty: TStringField;
@@ -81,6 +75,27 @@ type
     Query1MSCFDate: TDateTimeField;
     Query1YN: TIntegerField;
     btCopy: TButton;
+    Panel2: TPanel;
+    Panel3: TPanel;
+    BitBtn1: TBitBtn;
+    BitBtn2: TBitBtn;
+    BitBtn3: TBitBtn;
+    BitBtn4: TBitBtn;
+    BitBtn5: TBitBtn;
+    DBGridEh1: TDBGridEh;
+    QDetail: TQuery;
+    DS_Detail: TDataSource;
+    UpDetail: TUpdateSQL;
+    QDetailReportID: TIntegerField;
+    QDetailGrade: TStringField;
+    QDetailTotalSF: TCurrencyField;
+    QDetailPercentGrade: TIntegerField;
+    QDetailUSERID: TStringField;
+    QDetailUSERDate: TDateTimeField;
+    QDetailYN: TIntegerField;
+    QDetailPercentNCU: TIntegerField;
+    QDetailUseSF: TFloatField;
+    QDetailCompenSF: TFloatField;
     procedure DBGrid1KeyPress(Sender: TObject; var Key: Char);
     procedure Button1Click(Sender: TObject);
     procedure SetColumnsReadOnly;
@@ -102,6 +117,11 @@ type
     procedure DBGrid1CellClick(Column: TColumnEh);
     procedure btClearClick(Sender: TObject);
     procedure btCopyClick(Sender: TObject);
+    procedure BitBtn1Click(Sender: TObject);
+    procedure BitBtn2Click(Sender: TObject);
+    procedure BitBtn3Click(Sender: TObject);
+    procedure BitBtn4Click(Sender: TObject);
+    procedure BitBtn5Click(Sender: TObject);
   private
     { Private declarations }
   public
@@ -495,6 +515,20 @@ begin
   bbt6.Enabled:=true;
   bExcel.Enabled := true;
   bExF.Enabled := true;
+
+  if Query1.RecordCount > 0 then
+  begin
+    BitBtn1.Enabled := true;
+    BitBtn2.Enabled := true;
+    BitBtn3.Enabled := true
+  end
+  else
+  begin
+    BitBtn1.Enabled := false;
+    BitBtn2.Enabled := false;
+    BitBtn3.Enabled := false;
+  end;
+  QDetail.Active := true;
 end;
 
 procedure TLeatherMatInspection.BB6Click(Sender: TObject);
@@ -574,7 +608,7 @@ procedure TLeatherMatInspection.bExFClick(Sender: TObject);
 var
   ExcelApp, Workbook, Worksheet, borderRange, Pic, Rg, TB: OleVariant;
   StartRow, InsertRow, row: Integer;
-  DuongDanFile, SaveFile: string;
+  DuongDanFile, SaveFile, AppDir, SrcFile, DstFile: string;
   SigS, SigWMS, SigL, SigI: Boolean;
   s: WideString;
   i, p: Integer;
@@ -583,6 +617,16 @@ var
   v: array[0..14] of WideString;
   cur: WideString;
 begin
+  AppDir := ExtractFilePath(Application.ExeName);
+
+  if not DirectoryExists(AppDir) then
+    ForceDirectories(AppDir);
+
+  SrcFile := '\\192.168.71.4\erp\lys_erp\A-QIP-WS011-01C.xlsx';
+  DstFile := IncludeTrailingPathDelimiter(AppDir) + 'A-QIP-WS011-01C.xlsx';
+
+  if not CopyFile(PChar(SrcFile), PChar(DstFile), False) then
+    ShowMessage('Copy file that bai');
 
   DuongDanFile := ExtractFilePath(ParamStr(0)) + 'A-QIP-WS011-01C.xlsx';
   SaveDialog := TSaveDialog.Create(nil);
@@ -860,6 +904,112 @@ begin
   Query1.FieldByName('IsCompen').AsString     := OldIsCompen;
   Query1.FieldByName('CompenQty').AsString    := OldCompenQty;
   Query1.Post;
+end;
+
+procedure TLeatherMatInspection.BitBtn1Click(Sender: TObject);
+begin
+  with QDetail do
+  begin
+  RequestLive :=  true;
+  CachedUpdates:= true;
+  Insert;
+  end;
+BitBtn4.enabled:=true;
+BitBtn5.enabled:=true;
+end;
+
+procedure TLeatherMatInspection.BitBtn2Click(Sender: TObject);
+begin
+if messagedlg('Are you sure you want to delete?',mtconfirmation,[mbYes,mbNo],0)<>mrYes then
+  begin
+    abort;
+  end;
+with QDetail do
+  begin
+    cachedupdates:=true;
+    requestlive:=true;
+    edit;
+    fieldbyname('YN').Value:=0;
+  end;
+BitBtn4.enabled:=true;
+BitBtn5.enabled:=true;
+end;
+
+procedure TLeatherMatInspection.BitBtn3Click(Sender: TObject);
+begin
+with QDetail do
+  begin
+    cachedupdates:=true;
+    requestlive:=true;
+    edit;
+  end;
+BitBtn4.enabled:=true;
+BitBtn5.enabled:=true;
+end;
+
+procedure TLeatherMatInspection.BitBtn4Click(Sender: TObject);
+var i: integer;
+begin
+  try
+    QDetail.first;
+    for i:=1 to QDetail.RecordCount do
+      begin
+        case QDetail.updatestatus of
+          usinserted:
+            begin
+              if QDetail.fieldbyname('Supplier').isnull then
+              begin
+                QDetail.delete;
+              end else
+              begin
+                QDetail.Edit;
+                QDetail.FieldByName('ReportID').Value := Query1.FieldByName('ReportID').Value;
+                QDetail.FieldByName('USERID').Value := main.Edit1.Text;
+                QDetail.FieldByName('YN').Value := 1;
+                QDetail.FieldByName('USERDate').Value := FormatDateTime('yyyy-mm-dd', Now);
+                UpDetail.apply(ukinsert);
+              end;
+            end;
+          usmodified:
+             begin
+               if QDetail.FieldByName('YN').value='0' then
+                 begin
+                   if messagedlg('Are you sure you want to delete?',mtconfirmation,[mbYes,mbNo],0)=mrYes then
+                   begin
+                    QDetail.Edit;
+                    QDetail.FieldByName('USERID').Value := main.Edit1.Text;
+                    UpDetail.Apply(ukdelete)
+                   end;
+                 end else
+                 begin
+                  QDetail.Edit;
+                  UpDetail.apply(ukmodify);
+                 end;
+              end;
+        end;
+        QDetail.next;
+      end;
+    QDetail.active:=false;
+    QDetail.cachedupdates:=false;
+    QDetail.requestlive:=false;
+    QDetail.active:=true;
+    BitBtn4.enabled:=false;
+    BitBtn5.enabled:=false;
+  except
+   Messagedlg('Have wrong, can not save data!',mtwarning,[mbyes],0);
+  end;
+end;
+
+procedure TLeatherMatInspection.BitBtn5Click(Sender: TObject);
+begin
+  with QDetail do
+  begin
+    CachedUpdates := false;
+    RequestLive := false;
+    BitBtn4.Enabled := false;
+    BitBtn5.Enabled := false;
+    dbgrid1.ReadOnly := false;
+  end;
 end;
 
 end.

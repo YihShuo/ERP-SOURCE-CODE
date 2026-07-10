@@ -1100,8 +1100,8 @@ object MonthlyReportMaterial: TMonthlyReportMaterial
       'FROM QC_MonthlyMaterialDetail'
       'WHERE ReportID = :ReportID and 2=2')
     UpdateObject = UpSQLDetail
-    Left = 288
-    Top = 656
+    Left = 312
+    Top = 648
     ParamData = <
       item
         DataType = ftInteger
@@ -1257,6 +1257,6 @@ object MonthlyReportMaterial: TMonthlyReportMaterial
   object DS2: TDataSource
     DataSet = Query2
     Left = 248
-    Top = 640
+    Top = 648
   end
 end
