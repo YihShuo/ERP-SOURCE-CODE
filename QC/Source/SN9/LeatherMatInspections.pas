@@ -340,17 +340,15 @@ procedure TLeatherMatInspection.Button1Click(Sender: TObject);
 begin
  SetColumnsReadOnly;
 
- if MenuCode.Text = 'N981' then
-  btCopy.Visible := true;
+ {if MenuCode.Text = 'N981' then
+  btCopy.Visible := true;}
 
  with Query1 do
  begin
   Active:=false;
   SQL.Clear;
   SQL.Add('SELECT ReportID, Cont, Time, IQty, MatName, PONo,');
-  SQL.Add('ThickStand, Reality, Color, AA, BB, CC, DD, Grade, TotalSF, PercentGrade,');
-  SQL.Add('CONVERT(numeric(18,2), TotalSF*PercentGrade/100) as UseSF, PercentNCU,');
-  SQL.Add('CONVERT(numeric(18,2), (PercentGrade-PercentNCU)*TotalSF/100) as CompenSF,');
+  SQL.Add('ThickStand, Reality, Color, AA, BB, CC, DD,');
   SQL.Add('TestCon, IsCompen, CompenQty, SCFID, SCFDate, LCFID, LCFDate, PreparedID, ');
   SQL.Add('PreparedDate, USERID, USERDate, MSCFID, MSCFDate, YN');
   SQL.Add('FROM QC_LeatherInspec');
@@ -957,7 +955,7 @@ begin
         case QDetail.updatestatus of
           usinserted:
             begin
-              if QDetail.fieldbyname('Supplier').isnull then
+              if QDetail.fieldbyname('Grade').IsNull then
               begin
                 QDetail.delete;
               end else

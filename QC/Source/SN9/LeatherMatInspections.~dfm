@@ -898,6 +898,8 @@ object LeatherMatInspection: TLeatherMatInspection
       FooterFont.Height = -11
       FooterFont.Name = 'MS Sans Serif'
       FooterFont.Style = []
+      FooterRowCount = 1
+      SumList.Active = True
       TabOrder = 1
       TitleFont.Charset = DEFAULT_CHARSET
       TitleFont.Color = clWindowText
@@ -909,6 +911,7 @@ object LeatherMatInspection: TLeatherMatInspection
           EditButtons = <>
           FieldName = 'ReportID'
           Footers = <>
+          Visible = False
         end
         item
           EditButtons = <>
@@ -918,11 +921,30 @@ object LeatherMatInspection: TLeatherMatInspection
         item
           EditButtons = <>
           FieldName = 'TotalSF'
+          Footer.ValueType = fvtSum
           Footers = <>
         end
         item
           EditButtons = <>
           FieldName = 'PercentGrade'
+          Footers = <>
+          Width = 75
+        end
+        item
+          EditButtons = <>
+          FieldName = 'PercentNCU'
+          Footers = <>
+        end
+        item
+          EditButtons = <>
+          FieldName = 'CompenSF'
+          Footer.ValueType = fvtSum
+          Footers = <>
+        end
+        item
+          EditButtons = <>
+          FieldName = 'UseSF'
+          Footer.ValueType = fvtSum
           Footers = <>
         end
         item
@@ -938,21 +960,6 @@ object LeatherMatInspection: TLeatherMatInspection
         item
           EditButtons = <>
           FieldName = 'YN'
-          Footers = <>
-        end
-        item
-          EditButtons = <>
-          FieldName = 'PercentNCU'
-          Footers = <>
-        end
-        item
-          EditButtons = <>
-          FieldName = 'UseSF'
-          Footers = <>
-        end
-        item
-          EditButtons = <>
-          FieldName = 'CompenSF'
           Footers = <>
         end>
     end
@@ -1246,6 +1253,35 @@ object LeatherMatInspection: TLeatherMatInspection
     Top = 664
   end
   object UpDetail: TUpdateSQL
+    ModifySQL.Strings = (
+      'update QC_LeatherInspecDetail'
+      'set'
+      '  ReportID = :ReportID,'
+      '  Grade = :Grade,'
+      '  TotalSF = :TotalSF,'
+      '  PercentGrade = :PercentGrade,'
+      '  USERID = :USERID,'
+      '  USERDate = :USERDate,'
+      '  YN = :YN,'
+      '  PercentNCU = :PercentNCU'
+      'where'
+      '  ReportID = :OLD_ReportID and'
+      '  Grade = :OLD_Grade')
+    InsertSQL.Strings = (
+      'insert into QC_LeatherInspecDetail'
+      
+        '  (ReportID, Grade, TotalSF, PercentGrade, USERID, USERDate, YN,' +
+        ' PercentNCU)'
+      'values'
+      
+        '  (:ReportID, :Grade, :TotalSF, :PercentGrade, :USERID, :USERDat' +
+        'e, :YN, '
+      '   :PercentNCU)')
+    DeleteSQL.Strings = (
+      'delete from QC_LeatherInspecDetail'
+      'where'
+      '  ReportID = :OLD_ReportID and'
+      '  Grade = :OLD_Grade')
     Left = 432
     Top = 664
   end
