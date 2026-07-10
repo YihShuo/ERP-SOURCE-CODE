@@ -123,6 +123,14 @@ type
     procedure BitBtn3Click(Sender: TObject);
     procedure BitBtn4Click(Sender: TObject);
     procedure BitBtn5Click(Sender: TObject);
+    procedure PrintSign(
+      AWorksheet: OleVariant;
+      AQuery: TQuery;
+      AInsertRow: Integer;
+      const AIDField, ADateField: string;
+      ACol: Integer;
+      UseUserName: Boolean
+    );
   private
     { Private declarations }
   public
@@ -137,6 +145,75 @@ implementation
 uses main1;
 
 {$R *.dfm}
+
+procedure TLeatherMatInspection.PrintSign(
+  AWorksheet: OleVariant;
+  AQuery: TQuery;
+  AInsertRow: Integer;
+  const AIDField, ADateField: string;
+  ACol: Integer;
+  UseUserName: Boolean
+);
+var
+  s, SignFile: string;
+  Cell, MergeCell: OleVariant;
+  CellLeft, CellTop, CellWidth, CellHeight: Double;
+  PicWidth, PicHeight: Double;
+begin
+  if AQuery.FieldByName(AIDField).IsNull
+     or (Trim(AQuery.FieldByName(AIDField).AsString) = '') then
+    Exit;
+
+  Cell := AWorksheet.Cells[25, ACol];
+  MergeCell := Cell.MergeArea;
+
+  MergeCell.WrapText := True;
+  MergeCell.HorizontalAlignment := -4108; // xlCenter
+  MergeCell.VerticalAlignment := -4108;   // xlCenter
+
+  s := AQuery.FieldByName(AIDField).AsString;
+  s := StringReplace(s, '_', Chr(10), [rfReplaceAll]);
+
+  if UseUserName then
+  begin
+    Cell.Value :=
+      Chr(10) + Chr(10) + Chr(10) +
+      GetUsernameByID(AQuery.FieldByName(AIDField).AsString)
+      + Chr(10)
+      + FormatDateTime(
+          'dd-mm-yyyy',
+          AQuery.FieldByName(ADateField).AsDateTime
+        );
+
+    SignFile := ExtractFilePath(Application.ExeName) +
+                'Signatures\' +
+                Trim(AQuery.FieldByName(AIDField).AsString) +
+                '.bmp';
+
+    if FileExists(SignFile) then
+    begin
+      CellLeft   := MergeCell.Left;
+      CellTop    := MergeCell.Top;
+      CellWidth  := MergeCell.Width;
+      CellHeight := MergeCell.Height;
+
+      PicWidth  := CellWidth * 0.4;
+      PicHeight := CellHeight * 0.45;
+
+      AWorksheet.Shapes.AddPicture(
+        SignFile,
+        False,
+        True,
+        CellLeft + (CellWidth - PicWidth) / 2, // can giua ngang
+        CellTop + (CellHeight * 0.1),          // phia tren
+        PicWidth,
+        PicHeight
+      );
+    end;
+  end
+  else
+    Cell.Value := s;
+end;
 
 function TLeatherMatInspection.GetUsernameByID(const AID: string): string;
 begin
@@ -716,8 +793,14 @@ begin
     end;
   end;
 
-  Worksheet.Cells[19, 11].Value :=
-  Worksheet.Cells[19, 14].Value :=
+  Worksheet.Cells[19, 5].Value := VarAsType(DBGridEh1.GetFooterValue(0, DBGridEh1.Columns[2]), varDouble);
+  Worksheet.Cells[19, 11].Value := VarAsType(DBGridEh1.GetFooterValue(0, DBGridEh1.Columns[5]), varDouble);
+  Worksheet.Cells[19, 14].Value := VarAsType(DBGridEh1.GetFooterValue(0, DBGridEh1.Columns[6]), varDouble);
+  Worksheet.Cells[19, 16].Value :=
+  FormatFloat('0.00',
+    VarAsType(DBGridEh1.GetFooterValue(0, DBGridEh1.Columns[6]), varDouble) /
+    VarAsType(DBGridEh1.GetFooterValue(0, DBGridEh1.Columns[2]), varDouble) * 100
+  ) + '%';
 
   CheckCompen := VarAsType(DBGridEh1.GetFooterValue(0, DBGridEh1.Columns[5]), varDouble);
   if CheckCompen > 0 then
@@ -731,6 +814,11 @@ begin
     Worksheet.Cells[20, 10].Value := 'Bu';
     Worksheet.Cells[20, 16].Value := Abs(CheckCompen);
   end;
+
+  PrintSign(Worksheet, Query1, 0, 'SCFID', 'SCFDate', 7, True);
+  PrintSign(Worksheet, Query1, 0, 'MSCFID', 'MSCFDate', 1, True);
+  PrintSign(Worksheet, Query1, 0, 'LCFID', 'LCFDate', 11, True);
+  PrintSign(Worksheet, Query1, 0, 'PreparedID', 'PreparedDate', 15, True);
 
   //Kiem tra ky KCS Super
   {Query1.First;
