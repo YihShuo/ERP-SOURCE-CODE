@@ -791,4 +791,14 @@ object WeeklyShippingPlan: TWeeklyShippingPlan
       OnClick = Delete1Click
     end
   end
+  object QCarton: TQuery
+    DatabaseName = 'DB'
+    Left = 112
+    Top = 200
+  end
+  object QDelCarton: TQuery
+    DatabaseName = 'DB'
+    Left = 144
+    Top = 200
+  end
 end

@@ -67,6 +67,8 @@ type
     Delete1: TMenuItem;
     Query1PlateID: TStringField;
     Query1Con_No: TStringField;
+    QCarton: TQuery;
+    QDelCarton: TQuery;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormDestroy(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -80,6 +82,7 @@ type
     procedure B1D9Click(Sender: TObject);
     procedure Delete1Click(Sender: TObject);
     procedure PopupMenu1Popup(Sender: TObject);
+    procedure InsertShippingPlanCarton;
   private
     { Private declarations }
   public
@@ -98,6 +101,133 @@ uses
   main1, PlanPage1;
 
 {$R *.dfm}
+
+procedure TWeeklyShippingPlan.InsertShippingPlanCarton;
+var
+  S, Item, Remark: string;
+  i, j: Integer;
+  StartNo, EndNo: Integer;
+  Lst: TStringList;
+begin
+  Lst := TStringList.Create;
+  try
+    Query1.First;
+    while not Query1.Eof do
+    begin
+      Remark := Trim(Query1.FieldByName('Remark').AsString);
+
+      if (Remark <> '') and (Pos('-', Remark) > 0) then
+      begin
+        //====================================================
+        // Xoa du lieu cu
+        //====================================================
+        QDelCarton.Close;
+        QDelCarton.SQL.Clear;
+        QDelCarton.SQL.Add('DELETE FROM ShippingPlanCarton');
+        QDelCarton.SQL.Add('WHERE RY = ''' + Query1.FieldByName('RY').AsString + '''');
+        QDelCarton.SQL.Add('AND PlateID = ''' + Query1.FieldByName('PlateID').AsString + '''');
+
+        if Query1.FieldByName('Con_No').IsNull then
+          QDelCarton.SQL.Add('AND Con_No = '''' ')
+        else
+          QDelCarton.SQL.Add('AND Con_No = ''' + Query1.FieldByName('Con_No').AsString + ''' ');
+
+        QDelCarton.ExecSQL;
+
+        //====================================================
+        // Chuan bi INSERT
+        //====================================================
+        QCarton.Close;
+        QCarton.SQL.Clear;
+        QCarton.SQL.Add('INSERT INTO ShippingPlanCarton');
+        QCarton.SQL.Add('(RY, Con_No, PlateID, CartonNo, UserID, UserDate)');
+        QCarton.SQL.Add('VALUES (:RY, :Con_No, :PlateID, :CartonNo, :UserID, GETDATE())');
+        QCarton.Prepare;
+
+        //====================================================
+        // Chi giu so, dau "," va "-"
+        //====================================================
+        S := '';
+        for i := 1 to Length(Remark) do
+          if Remark[i] in ['0'..'9', ',', '-'] then
+            S := S + Remark[i];
+
+        Lst.Clear;
+        ExtractStrings([','], [], PChar(S), Lst);
+
+        for i := 0 to Lst.Count - 1 do
+        begin
+          Item := Trim(Lst[i]);
+          if Item = '' then
+            Continue;
+
+          if Pos('-', Item) > 0 then
+          begin
+            StartNo := StrToIntDef(Copy(Item, 1, Pos('-', Item) - 1), 0);
+            EndNo := StrToIntDef(Copy(Item, Pos('-', Item) + 1, MaxInt), 0);
+
+            if (StartNo > 0) and (EndNo >= StartNo) then
+            begin
+              for j := StartNo to EndNo do
+              begin
+                QCarton.ParamByName('RY').AsString :=
+                  Query1.FieldByName('RY').AsString;
+
+                if Query1.FieldByName('Con_No').IsNull then
+                  QCarton.ParamByName('Con_No').Value := ''
+                else
+                  QCarton.ParamByName('Con_No').Value :=
+                    Query1.FieldByName('Con_No').Value;
+
+                QCarton.ParamByName('PlateID').Value :=
+                  Query1.FieldByName('PlateID').Value;
+
+                QCarton.ParamByName('CartonNo').AsInteger := j;
+
+                QCarton.ParamByName('UserID').AsString :=
+                  Main.Edit1.Text;
+
+                QCarton.ExecSQL;
+              end;
+            end;
+          end
+          else
+          begin
+            StartNo := StrToIntDef(Item, 0);
+
+            if StartNo > 0 then
+            begin
+              QCarton.ParamByName('RY').AsString :=
+                Query1.FieldByName('RY').AsString;
+
+              if Query1.FieldByName('Con_No').IsNull then
+                QCarton.ParamByName('Con_No').Clear
+              else
+                QCarton.ParamByName('Con_No').Value :=
+                  Query1.FieldByName('Con_No').Value;
+
+              QCarton.ParamByName('PlateID').Value :=
+                Query1.FieldByName('PlateID').Value;
+
+              QCarton.ParamByName('CartonNo').AsInteger := StartNo;
+
+              QCarton.ParamByName('UserID').AsString :=
+                Main.Edit1.Text;
+
+              QCarton.ExecSQL;
+            end;
+          end;
+        end;
+
+        QCarton.UnPrepare;
+      end;
+
+      Query1.Next;
+    end;
+  finally
+    Lst.Free;
+  end;
+end;
 
 procedure TWeeklyShippingPlan.FormClose(Sender: TObject;
   var Action: TCloseAction);
@@ -488,6 +618,8 @@ begin
       ExecSQL;
     end;
 
+    InsertShippingPlanCarton;
+
     //try
     //  if (MinDate <> MaxDate) then
     //    JsonBody := TStringStream.Create('{"ChatID":"7738524933","ParseMode":"HTML","Text":"<blockquote>Date: ' + FormatDateTime('yyyy/MM/dd', MinDate) + ' ~ ' + FormatDateTime('yyyy/MM/dd', MaxDate) + '\nWeekly Shipping Plan has been updated</blockquote>"}')
@@ -599,13 +731,13 @@ begin
           WorkSheet.Cells.Font.Size := 10;
           eclApp.Columns[1].ColumnWidth := 2;
 
-          eclApp.Range[eclApp.Cells[1, 2], eclApp.Cells[1, 9]].Merge;
+          eclApp.Range[eclApp.Cells[1, 2], eclApp.Cells[1, 11]].Merge;
           eclApp.Cells[1, 2] := 'WEEKLY SHIPPING PLAN';
-          eclApp.Range[eclApp.Cells[2, 2], eclApp.Cells[2, 9]].Merge;
+          eclApp.Range[eclApp.Cells[2, 2], eclApp.Cells[2, 11]].Merge;
           eclApp.Cells[2, 2] := '¸ËÂd (¨®) ©ú²Ó';
-          eclApp.Range[eclApp.Cells[3, 2], eclApp.Cells[3, 9]].Merge;
+          eclApp.Range[eclApp.Cells[3, 2], eclApp.Cells[3, 11]].Merge;
           eclApp.Cells[3, 2] := 'CHI TIET DONG CONT (XE)';
-          eclApp.Range[eclApp.Cells[1, 2], eclApp.Cells[3, 9]].HorizontalAlignment := -4108;
+          eclApp.Range[eclApp.Cells[1, 2], eclApp.Cells[3, 11]].HorizontalAlignment := -4108;
           eclApp.Cells[4, 3] := FormatDateTime('yyyy/MM/dd', Query2.FieldByName('Date').AsDateTime);
           eclApp.Cells[4, 3].NumberFormat := 'yyyy/mm/dd';
 
