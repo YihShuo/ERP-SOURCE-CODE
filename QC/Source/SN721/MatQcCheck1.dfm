@@ -2255,6 +2255,7 @@ object MatQcCheck: TMatQcCheck
     object qry_QcLab_PDM_ID: TStringField
       FieldName = 'Lab_PDM_ID'
       FixedChar = True
+      Size = 50
     end
     object qry_QcPDM_File_Name: TStringField
       FieldName = 'PDM_File_Name'
