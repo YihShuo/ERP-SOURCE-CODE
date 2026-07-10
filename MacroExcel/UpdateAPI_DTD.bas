@@ -1,7 +1,7 @@
 Attribute VB_Name = "UpdateAPI_DTD"
 Option Explicit
 
-Sub UpdateRePoList()
+Sub UpdatePO_DTD()
 
     Dim ws As Worksheet
     Dim LastRow As Long
@@ -27,9 +27,9 @@ Sub UpdateRePoList()
             ApiDate = Trim(ws.Cells(i, 2).Text)
         End If
 
-        Json = "{""Date"":""" & ApiDate & """," & _
+        Json = "{""date"":""" & ApiDate & """," & _
                """databaseType"":""A""," & _
-               """PoList"":[""" & KHPO & """]}"
+               """poList"":[""" & KHPO & """]}"
 
         ws.Cells(i, 3).Value = Json
 
@@ -51,7 +51,7 @@ ContinueLoop:
 
     Next i
 
-    MsgBox "Hoàn thành."
+    MsgBox "OK!"
 
     Exit Sub
 
