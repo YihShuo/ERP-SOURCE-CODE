@@ -96,6 +96,7 @@ type
     QDetailPercentNCU: TIntegerField;
     QDetailUseSF: TFloatField;
     QDetailCompenSF: TFloatField;
+    QUpMas: TQuery;
     procedure DBGrid1KeyPress(Sender: TObject; var Key: Char);
     procedure Button1Click(Sender: TObject);
     procedure SetColumnsReadOnly;
@@ -947,6 +948,7 @@ end;
 
 procedure TLeatherMatInspection.BitBtn4Click(Sender: TObject);
 var i: integer;
+CheckCompen: Double;
 begin
   try
     QDetail.first;
@@ -991,6 +993,32 @@ begin
     QDetail.cachedupdates:=false;
     QDetail.requestlive:=false;
     QDetail.active:=true;
+
+    CheckCompen := VarAsType(DBGridEh1.GetFooterValue(0, DBGridEh1.Columns[5]), varDouble);
+    with QUpMas do
+    begin
+      Close;
+      SQL.Clear;
+
+      if CheckCompen >= 0 then
+      begin
+        SQL.Add('UPDATE QC_LeatherInspec');
+        SQL.Add('SET TestCon = ''OK'',');
+        SQL.Add('    IsCompen = ''Khong bu''');
+        SQL.Add('WHERE ReportID = ''' + Query1.FieldByName('ReportID').AsString + '''');
+      end
+      else
+      begin
+        SQL.Add('UPDATE QC_LeatherInspec');
+        SQL.Add('SET TestCon = ''NG'',');
+        SQL.Add('    IsCompen = ''Bu'',');
+        SQL.Add('    CompenQty = ' + FloatToStr(Abs(CheckCompen)));
+        SQL.Add('WHERE ReportID = ''' + Query1.FieldByName('ReportID').AsString + '''');
+      end;
+
+      ExecSQL;
+    end;
+
     BitBtn4.enabled:=false;
     BitBtn5.enabled:=false;
   except

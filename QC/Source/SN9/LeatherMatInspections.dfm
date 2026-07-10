@@ -497,7 +497,7 @@ object LeatherMatInspection: TLeatherMatInspection
     TabOrder = 1
     TitleFont.Charset = DEFAULT_CHARSET
     TitleFont.Color = clWindowText
-    TitleFont.Height = -16
+    TitleFont.Height = -11
     TitleFont.Name = 'MS Sans Serif'
     TitleFont.Style = []
     TitleLines = 2
@@ -535,14 +535,14 @@ object LeatherMatInspection: TLeatherMatInspection
         FieldName = 'MatName'
         Footers = <>
         Title.Caption = 'Name materials '
-        Width = 300
+        Width = 200
       end
       item
         EditButtons = <>
         FieldName = 'PONo'
         Footers = <>
         Title.Caption = 'Po #'
-        Width = 300
+        Width = 100
       end
       item
         EditButtons = <>
@@ -586,50 +586,6 @@ object LeatherMatInspection: TLeatherMatInspection
         FieldName = 'DD'
         Footers = <>
         Width = 200
-      end
-      item
-        EditButtons = <>
-        FieldName = 'Grade'
-        Footers = <>
-        PickList.Strings = (
-          'I'
-          'II'
-          'III'
-          'IV'
-          'V'
-          'VI'
-          'VII')
-        Width = 50
-      end
-      item
-        EditButtons = <>
-        FieldName = 'TotalSF'
-        Footers = <>
-      end
-      item
-        EditButtons = <>
-        FieldName = 'PercentGrade'
-        Footers = <>
-        Width = 112
-      end
-      item
-        EditButtons = <>
-        FieldName = 'UseSF'
-        Footers = <>
-        ReadOnly = True
-      end
-      item
-        EditButtons = <>
-        FieldName = 'PercentNCU'
-        Footers = <>
-        Width = 95
-      end
-      item
-        EditButtons = <>
-        FieldName = 'CompenSF'
-        Footers = <>
-        ReadOnly = True
-        Width = 94
       end
       item
         EditButtons = <>
@@ -911,6 +867,7 @@ object LeatherMatInspection: TLeatherMatInspection
           EditButtons = <>
           FieldName = 'ReportID'
           Footers = <>
+          ReadOnly = True
           Visible = False
         end
         item
@@ -940,27 +897,32 @@ object LeatherMatInspection: TLeatherMatInspection
           FieldName = 'CompenSF'
           Footer.ValueType = fvtSum
           Footers = <>
+          ReadOnly = True
         end
         item
           EditButtons = <>
           FieldName = 'UseSF'
           Footer.ValueType = fvtSum
           Footers = <>
+          ReadOnly = True
         end
         item
           EditButtons = <>
           FieldName = 'USERID'
           Footers = <>
+          ReadOnly = True
         end
         item
           EditButtons = <>
           FieldName = 'USERDate'
           Footers = <>
+          ReadOnly = True
         end
         item
           EditButtons = <>
           FieldName = 'YN'
           Footers = <>
+          ReadOnly = True
           Visible = False
         end>
     end
@@ -1284,6 +1246,11 @@ object LeatherMatInspection: TLeatherMatInspection
       '  ReportID = :OLD_ReportID and'
       '  Grade = :OLD_Grade')
     Left = 432
+    Top = 664
+  end
+  object QUpMas: TQuery
+    DatabaseName = 'DB'
+    Left = 400
     Top = 664
   end
 end
