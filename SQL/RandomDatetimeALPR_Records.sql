@@ -77,7 +77,7 @@ SELECT
     BIEN_SO Plate1,
     BIEN_SO Plate2,
     BIEN_SO Plate3,
-    STUFFED_INV_NO as Packing_list,
+    STUFFED_INV_NO as Packing_List,
     '' as Inovice_no,
     CON_NO,
     REPLACE(EXEDATE_DATE,'-','\') as zDate,
