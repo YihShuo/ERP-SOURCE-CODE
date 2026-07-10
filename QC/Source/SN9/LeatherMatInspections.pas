@@ -609,6 +609,7 @@ var
   StartRow, InsertRow, row: Integer;
   DuongDanFile, SaveFile, AppDir, SrcFile, DstFile: string;
   SigS, SigWMS, SigL, SigI: Boolean;
+  CheckCompen: Double;
   s: WideString;
   i, p: Integer;
   r: array[0..14] of Integer;
@@ -669,9 +670,6 @@ begin
   r[9]:=9; c[9]:=5;
   r[10]:=10; c[10]:=5;
   r[11]:=11; c[11]:=5;
-  r[12]:=19; c[12]:=3;
-  r[13]:=19; c[13]:=10;
-  r[14]:=19; c[14]:=16;
   if Query1.RecordCount = 0 then Exit;
 
   v[0] := Query1.FieldByName('Cont').AsString;
@@ -686,11 +684,8 @@ begin
   v[9] := Query1.FieldByName('BB').AsString;
   v[10]:= Query1.FieldByName('CC').AsString;
   v[11]:= Query1.FieldByName('DD').AsString;
-  v[12]:= Query1.FieldByName('TestCon').AsString;
-  v[13]:= Query1.FieldByName('IsCompen').AsString;
-  v[14]:= Query1.FieldByName('CompenQty').AsString;
 
-  for i := 0 to 14 do
+  for i := 0 to 11 do
   begin
     cur := Worksheet.Cells[r[i], c[i]].Value;
     if cur = '' then
@@ -706,23 +701,39 @@ begin
 
 
   begin
-    Query1.First;
+    QDetail.First;
     row := 12;
 
-    while not Query1.Eof do
+    while not QDetail.Eof do
     begin
-      Worksheet.Cells[row, 2].Value := Query1.FieldByName('Grade').AsString;
-      Worksheet.Cells[row, 5].Value := Query1.FieldByName('TotalSF').AsString + 'F';
-      Worksheet.Cells[row, 8].Value := Query1.FieldByName('PercentGrade').AsString + '%';
-      Worksheet.Cells[row, 11].Value := Query1.FieldByName('CompenSF').AsString + 'F';
-      Worksheet.Cells[row, 16].Value := Query1.FieldByName('UseSF').AsString + 'F';
+      Worksheet.Cells[row, 2].Value := QDetail.FieldByName('Grade').AsString;
+      Worksheet.Cells[row, 5].Value := QDetail.FieldByName('TotalSF').AsString + 'F';
+      Worksheet.Cells[row, 8].Value := QDetail.FieldByName('PercentGrade').AsString + '%';
+      Worksheet.Cells[row, 11].Value := QDetail.FieldByName('CompenSF').AsString + 'F';
+      Worksheet.Cells[row, 14].Value := QDetail.FieldByName('UseSF').AsString + 'F';
       Inc(row);
-      Query1.Next;
+      QDetail.Next;
     end;
   end;
 
+  Worksheet.Cells[19, 11].Value := VarAsType(DBGridEh1.GetFooterValue(0, DBGridEh1.Columns[5]), varDouble);
+  Worksheet.Cells[19, 14].Value := VarAsType(DBGridEh1.GetFooterValue(0, DBGridEh1.Columns[6]), varDouble);
+
+  CheckCompen := VarAsType(DBGridEh1.GetFooterValue(0, DBGridEh1.Columns[5]), varDouble);
+  if CheckCompen > 0 then
+  begin
+    Worksheet.Cells[20, 3].Value := 'OK';
+    Worksheet.Cells[20, 10].Value := 'Khong bu';
+  end
+  else
+  begin
+    Worksheet.Cells[20, 3].Value := 'NG';
+    Worksheet.Cells[20, 10].Value := 'Bu';
+    Worksheet.Cells[20, 16].Value := Abs(CheckCompen);
+  end;
+
   //Kiem tra ky KCS Super
-  Query1.First;
+  {Query1.First;
   SigS := false;
   while not Query1.Eof do
   begin
@@ -787,7 +798,7 @@ begin
     Worksheet.Cells[24, 15].WrapText := True;
     Worksheet.Cells[24, 15].Value := Query1.FieldByName('PreparedID').AsString
     + Chr(10) + FormatDateTime('dd-mm-yyyy', Query1.FieldByName('PreparedDate').AsDateTime);
-  end;
+  end;}
     
   //dinh dang header
   if cbPDF.Checked then

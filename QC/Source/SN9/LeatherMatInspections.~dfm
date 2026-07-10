@@ -867,6 +867,7 @@ object LeatherMatInspection: TLeatherMatInspection
           EditButtons = <>
           FieldName = 'ReportID'
           Footers = <>
+          ReadOnly = True
           Visible = False
         end
         item
@@ -896,27 +897,32 @@ object LeatherMatInspection: TLeatherMatInspection
           FieldName = 'CompenSF'
           Footer.ValueType = fvtSum
           Footers = <>
+          ReadOnly = True
         end
         item
           EditButtons = <>
           FieldName = 'UseSF'
           Footer.ValueType = fvtSum
           Footers = <>
+          ReadOnly = True
         end
         item
           EditButtons = <>
           FieldName = 'USERID'
           Footers = <>
+          ReadOnly = True
         end
         item
           EditButtons = <>
           FieldName = 'USERDate'
           Footers = <>
+          ReadOnly = True
         end
         item
           EditButtons = <>
           FieldName = 'YN'
           Footers = <>
+          ReadOnly = True
           Visible = False
         end>
     end
