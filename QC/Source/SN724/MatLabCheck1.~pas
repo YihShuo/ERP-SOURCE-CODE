@@ -262,21 +262,6 @@ begin
       begin
         sql.Add(' AND CAST(mc.DateInput AS DATE) BETWEEN ''' + FormatDateTime('yyyy/MM/dd', DTP1.Date) + ''' AND ''' + FormatDateTime('yyyy/MM/dd', DTP2.Date) + '''');
       end;
-      if chkNotesting.Checked then
-          sql.Add('   and isnull(Lab_Check,'''') = '''' ');
-      if ckSettle.Checked then
-          SQL.Add('and mc.Settlement is null ');
-      if chkInspection.Checked or chkpass.Checked or chkFail.Checked then
-      begin
-          sql.Add('   and (1=2');
-          if chkInspection.Checked then
-             sql.Add('   or isnull(Final_Status,'''') ='''' ');
-          if chkpass.Checked then
-             sql.Add('   or Final_Status=''Pass'' ');
-          if chkFail.Checked then
-             sql.Add('   or Final_Status=''Fail'' ');
-          sql.Add(')');
-      end;
       if chk2.Checked then
           sql.Add('       and Tracking=''1'' ');
       if FlexID.Text <> '' then
@@ -329,6 +314,22 @@ begin
         sql.Add('       and mc.CGNO like '''+edt1.Text+'%'' ');
         sql.Add('       and mc.CLBH like '''+edt2.Text+'%'' ');
         sql.Add('       and ZSZL.ZSYWJC like '''+edt3.Text+'%'' ');
+
+        if chkNotesting.Checked then
+            sql.Add('   and isnull(Lab_Check,'''') = '''' ');
+        if ckSettle.Checked then
+            SQL.Add('and mc.Settlement is null ');
+        if chkInspection.Checked or chkpass.Checked or chkFail.Checked then
+        begin
+            sql.Add('   and (1=2');
+            if chkInspection.Checked then
+               sql.Add('   or isnull(Final_Status,'''') ='''' ');
+            if chkpass.Checked then
+               sql.Add('   or Final_Status=''Pass'' ');
+            if chkFail.Checked then
+               sql.Add('   or Final_Status=''Fail'' ');
+            sql.Add(')');
+        end;
 
         if FlexID.Text <> '' then
             SQL.add('and clzl_flex.cldhflex like '''+FlexID.Text+'%'' ');
@@ -802,7 +803,7 @@ begin
 
   if not SaveDialog1.Execute then Exit;
 
-  SourceFile := '\\192.168.71.11\upload-QC\' + main.Edit2.Text + '\N724\Lab\' + FileName;
+  SourceFile := '\\192.168.71.11\FileServer\WebData\upload-QC\' + main.Edit2.Text + '\N724\Lab\' + FileName;
 
   DestFile := SaveDialog1.FileName;
 
@@ -870,7 +871,7 @@ begin
   FileName := qry_Qc.FieldByName('File_Name_Lab').AsString;
 
   // duong dan server share
-  BasePath := '\\192.168.71.11\upload-QC\' + main.Edit2.Text + '\N724\Lab\';
+  BasePath := '\\192.168.71.11\FileServer\WebData\upload-QC\' + main.Edit2.Text + '\N724\Lab\';
   FullPath := BasePath + FileName;
 
   try
@@ -1676,7 +1677,7 @@ begin
 
   FileName := qry_Qc.FieldByName('File_Name_Lab').AsString;
 
-  SourceFile := '\\192.168.71.11\upload-QC\' + main.Edit2.Text + '\N724\Lab\' + FileName;
+  SourceFile := '\\192.168.71.11\FileServer\WebData\upload-QC\' + main.Edit2.Text + '\N724\Lab\' + FileName;
 
   // kiem tra file nguon
   if not FileExists(SourceFile) then
@@ -1699,7 +1700,7 @@ begin
   if not OpenDialog1.Execute then Exit;
   if OpenDialog1.FileName = '' then Exit;
 
-  BasePath := '\\192.168.71.11\upload-QC\' + main.Edit2.Text + '\N724\Lab\';
+  BasePath := '\\192.168.71.11\FileServer\WebData\upload-QC\' + main.Edit2.Text + '\N724\Lab\';
   SaveFN := ExtractFileName(OpenDialog1.FileName);
   DestFile := BasePath + SaveFN;
 
@@ -1751,7 +1752,7 @@ begin
   if not OpenDialog1.Execute then Exit;
   if OpenDialog1.FileName = '' then Exit;
 
-  BasePath := '\\192.168.71.11\upload-QC\' + main.Edit2.Text + '\N724\Lab\';
+  BasePath := '\\192.168.71.11\FileServer\WebData\upload-QC\' + main.Edit2.Text + '\N724\Lab\';
   SaveFN := ExtractFileName(OpenDialog1.FileName);
   DestFile := BasePath + SaveFN;
 

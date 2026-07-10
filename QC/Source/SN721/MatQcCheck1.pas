@@ -761,7 +761,7 @@ begin
 
   if not SaveDialog1.Execute then Exit;
 
-  SourceFile := '\\192.168.71.11\upload-QC\' + main.Edit2.Text + '\N724\Lab\' + FileName;
+  SourceFile := '\\192.168.71.11\FileServer\WebData\upload-QC\' + main.Edit2.Text + '\N724\Lab\' + FileName;
 
   DestFile := SaveDialog1.FileName;
 
@@ -1458,7 +1458,7 @@ begin
 
   FileName := qry_Qc.FieldByName('File_Name_Lab').AsString;
 
-  SourceFile := '\\192.168.71.11\upload-QC\' + main.Edit2.Text + '\N724\Lab\' + FileName;
+  SourceFile := '\\192.168.71.11\FileServer\WebData\upload-QC\' + main.Edit2.Text + '\N724\Lab\' + FileName;
 
   // kiem tra file nguon
   if not FileExists(SourceFile) then

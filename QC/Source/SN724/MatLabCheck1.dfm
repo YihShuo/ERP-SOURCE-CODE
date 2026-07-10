@@ -1606,6 +1606,7 @@ object MatLabCheck: TMatLabCheck
     object qry_QcLab_PDM_ID: TStringField
       FieldName = 'Lab_PDM_ID'
       FixedChar = True
+      Size = 50
     end
     object qry_QcT2Test_Result: TStringField
       FieldName = 'T2Test_Result'
