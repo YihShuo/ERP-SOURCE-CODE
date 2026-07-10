@@ -930,6 +930,7 @@ object IncomeMatRubberOutsoles: TIncomeMatRubberOutsoles
     object Query1LabID: TStringField
       FieldName = 'LabID'
       FixedChar = True
+      Size = 50
     end
     object Query1LabResult: TStringField
       FieldName = 'LabResult'

@@ -1259,7 +1259,7 @@ object IncomeMatEvaPainting: TIncomeMatEvaPainting
     Top = 240
   end
   object PopupMenu1: TPopupMenu
-    Left = 523
+    Left = 512
     Top = 256
     object mnu4: TMenuItem
       Caption = 'Open Guarantee letter'

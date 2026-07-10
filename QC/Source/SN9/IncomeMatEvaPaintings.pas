@@ -1278,7 +1278,7 @@ begin
   if not OpenDialog1.Execute then Exit;
   if OpenDialog1.FileName = '' then Exit;
 
-  BasePath := '\\192.168.71.11\upload-QC\' + main.Edit2.Text + '\N95\';
+  BasePath := '\\192.168.71.11\FileServer\WebData\upload-QC\' + main.Edit2.Text + '\N95\';
   SaveFN := ExtractFileName(OpenDialog1.FileName);
   DestFile := BasePath + SaveFN;
 
@@ -1330,7 +1330,7 @@ begin
   if not OpenDialog1.Execute then Exit;
   if OpenDialog1.FileName = '' then Exit;
 
-  BasePath := '\\192.168.71.11\upload-QC\' + main.Edit2.Text + '\N95\';
+  BasePath := '\\192.168.71.11\FileServer\WebData\upload-QC\' + main.Edit2.Text + '\N95\';
   SaveFN := ExtractFileName(OpenDialog1.FileName);
   DestFile := BasePath + SaveFN;
 
@@ -1384,7 +1384,7 @@ begin
 
   if not SaveDialog1.Execute then Exit;
 
-  SourceFile := '\\192.168.71.11\upload-QC\' + main.Edit2.Text + '\N95\' + FileName;
+  SourceFile := '\\192.168.71.11\FileServer\WebData\upload-QC\' + main.Edit2.Text + '\N95\' + FileName;
 
   DestFile := SaveDialog1.FileName;
 
@@ -1417,7 +1417,7 @@ begin
 
   FileName := Query1.FieldByName('RpFile').AsString;
 
-  SourceFile := '\\192.168.71.11\upload-QC\' + main.Edit2.Text + '\N95\' + FileName;
+  SourceFile := '\\192.168.71.11\FileServer\WebData\upload-QC\' + main.Edit2.Text + '\N95\' + FileName;
 
   // kiem tra file nguon
   if not FileExists(SourceFile) then
@@ -1443,7 +1443,7 @@ begin
   FileName := Query1.FieldByName('RpFile').AsString;
 
   // duong dan server share
-  BasePath := '\\192.168.71.11\upload-QC\' + main.Edit2.Text + '\N95\';
+  BasePath := '\\192.168.71.11\FileServer\WebData\upload-QC\' + main.Edit2.Text + '\N95\';
   FullPath := BasePath + FileName;
 
   try
