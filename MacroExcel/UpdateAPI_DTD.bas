@@ -20,12 +20,7 @@ Sub UpdatePO_DTD()
     For i = 2 To LastRow
 
         KHPO = Trim(ws.Cells(i, 1).Value)
-
-        If IsDate(ws.Cells(i, 2).Value) Then
-            ApiDate = Format(ws.Cells(i, 2).Value, "yyyy-mm-dd")
-        Else
-            ApiDate = Trim(ws.Cells(i, 2).Text)
-        End If
+		ApiDate = Trim(Format(ws.Cells(i, 2).Value, "yyyy-mm-dd"))
 
         Json = "{""date"":""" & ApiDate & """," & _
                """databaseType"":""A""," & _
