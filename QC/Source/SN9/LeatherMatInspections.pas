@@ -807,6 +807,7 @@ begin
   begin
     Worksheet.Cells[20, 3].Value := 'OK';
     Worksheet.Cells[20, 10].Value := 'Khong bu';
+    Worksheet.Cells[20, 16].Value := 'OK';
   end
   else
   begin
@@ -1103,7 +1104,8 @@ begin
       begin
         SQL.Add('UPDATE QC_LeatherInspec');
         SQL.Add('SET TestCon = ''OK'',');
-        SQL.Add('    IsCompen = ''Khong bu''');
+        SQL.Add('    IsCompen = ''Khong bu'',');
+        SQL.Add('    CompenQty = ''OK'' ');
         SQL.Add('WHERE ReportID = ''' + Query1.FieldByName('ReportID').AsString + '''');
       end
       else
@@ -1118,6 +1120,8 @@ begin
       ExecSQL;
     end;
 
+    Query1.Active := false;
+    Query1.Active := true;
     BitBtn4.enabled:=false;
     BitBtn5.enabled:=false;
   except
