@@ -77,6 +77,7 @@ type
       AFont: TFont; var Background: TColor; State: TGridDrawState);
     procedure bExcelClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
+    procedure bbt6Click(Sender: TObject);
   private
     { Private declarations }
   public
@@ -486,6 +487,106 @@ begin
   dtpUSERDate.Date := Now;
   dtpExpDate.Date := Now - 30;
   dtpExpDate1.Date := Now;
+end;
+
+procedure TChemicalStockIn.bbt6Click(Sender: TObject);
+var
+  OD: TOpenDialog;
+  Excel, Book, Sheet: Variant;
+  Row: Integer;
+  WeightPerBag: Double;
+  TotalWeight: Double;
+  FullCount: Integer;
+  RemainWeight: Double;
+  i: Integer;
+begin
+  Query1.CachedUpdates := true;
+  Query1.RequestLive := true;
+  BB4.Enabled := true;
+  BB5.Enabled := true;
+  OD := TOpenDialog.Create(nil);
+  try
+    OD.Filter := 'Excel Files (*.xls;*.xlsx)|*.xls;*.xlsx';
+
+    if not OD.Execute then
+    begin
+      Query1.CachedUpdates := false;
+      Query1.RequestLive := false;
+      BB4.Enabled := false;
+      BB5.Enabled := false;
+      Exit;
+    end;
+
+    Excel := CreateOleObject('Excel.Application');
+    Excel.Visible := False;
+
+    Book := Excel.WorkBooks.Open(OD.FileName);
+    Sheet := Book.WorkSheets[1];
+
+    if Trim(Copy(VarToStr(Sheet.Cells[5, 4].Value),
+             Pos('/', VarToStr(Sheet.Cells[5, 4].Value)) + 1,
+             MaxInt)) <> 'Delivery notes' then
+    begin
+      ShowMessage('Sai format file Excel!');
+      Exit;
+    end;
+
+    Row := 15;
+
+    while VarIsNumeric(Sheet.Cells[Row, 1].Value) do
+    begin
+      if (Trim(VarToStr(Sheet.Cells[Row, 3].Value)) <> '') and
+         (Trim(VarToStr(Sheet.Cells[Row, 6].Value)) <> '') then
+      begin
+        WeightPerBag := Sheet.Cells[Row, 5].Value; // E
+        TotalWeight  := Sheet.Cells[Row, 6].Value; // F
+
+        if WeightPerBag > 0 then
+        begin
+          FullCount := Trunc(TotalWeight / WeightPerBag);
+          RemainWeight := TotalWeight - FullCount * WeightPerBag;
+
+          // cac dong du Weight
+          for i := 1 to FullCount do
+          begin
+            Query1.Append;
+            Query1.FieldByName('CLBH').AsString :=
+              Trim(VarToStr(Sheet.Cells[Row, 3].Value));
+            Query1.FieldByName('ExpirationDate').Value :=
+              Sheet.Cells[Row, 9].Value;
+            Query1.FieldByName('Weight').AsFloat := WeightPerBag;
+            Query1.Post;
+          end;
+
+          //dong cuoi neu con du
+          if RemainWeight > 0.000001 then
+          begin
+            Query1.Append;
+            Query1.FieldByName('CLBH').AsString :=
+              Trim(VarToStr(Sheet.Cells[Row, 3].Value));
+            Query1.FieldByName('ExpirationDate').Value :=
+              Sheet.Cells[Row, 9].Value;
+            Query1.FieldByName('Weight').AsFloat := RemainWeight;
+            Query1.Post;
+          end;
+        end;
+      end;
+
+      Inc(Row);
+    end;
+
+    Book.Close(False);
+    Excel.Quit;
+
+    Sheet := Unassigned;
+    Book := Unassigned;
+    Excel := Unassigned;
+
+    ShowMessage('Import thanh cong!');
+
+  finally
+    OD.Free;
+  end;
 end;
 
 end.
