@@ -453,7 +453,7 @@ object LeatherSummary: TLeatherSummary
     Top = 324
     Width = 1245
     Height = 279
-    ActivePage = TabSheet6
+    ActivePage = TabSheet23
     Align = alClient
     Style = tsFlatButtons
     TabOrder = 1
@@ -24583,6 +24583,7 @@ object LeatherSummary: TLeatherSummary
     end
     object qry_dimDiff: TCurrencyField
       FieldName = 'Diff'
+      currency = False
     end
   end
   object Upd_Dim: TUpdateSQL
