@@ -144,39 +144,9 @@ object ChemicalStockOut: TChemicalStockOut
       OnKeyPress = cbDepKeyPress
       Items.Strings = (
         ''
-        'DT_GCN-3F-LINE 1'
-        'DT_GCN-3F-LINE 2'
-        'DT_GCN-3F-LINE 3'
-        'DT_GCN-3F-LINE 4'
-        'DT_GCN-3F-LINE 5'
-        'DT_GCN-3F-LINE 6'
-        'DT_GCN-4F-LINE 1'
-        'DT_GCN-4F-LINE 2'
-        'DT_GCN-4F-LINE 3'
-        'DT_GCN-4F-LINE 4'
-        'DT_GCN-4F-LINE 5'
-        'DT_M-3F-LINE 1'
-        'DT_M-3F-LINE 2'
-        'DT_M-3F-LINE 3'
-        'DT_M-3F-LINE 4'
-        'DT_M-3F-LINE 5'
-        'DT_M-3F-LINE 6'
-        'DT_M-4F-LINE 1'
-        'DT_M-4F-LINE 2'
-        'DT_M-4F-LINE 3'
-        'DT_M-4F-LINE 4'
-        'DT_M-4F-LINE 5'
-        'DT_G-3F-LINE 1'
-        'DT_G-3F-LINE 2'
-        'DT_G-3F-LINE 3'
-        'DT_G-3F-LINE 4'
-        'DT_G-3F-LINE 5'
-        'DT_G-3F-LINE 6'
-        'DT_G-4F-LINE 1'
-        'DT_G-4F-LINE 2'
-        'DT_G-4F-LINE 3'
-        'DT_G-4F-LINE 4'
-        'DT_G-4F-LINE 5')
+        'Phong_Keo_Xuong_A'
+        'Phong_Keo_Xuong_B'
+        'Phong_Keo_TyDat')
     end
     object edtCLBH: TEdit
       Left = 488

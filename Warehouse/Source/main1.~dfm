@@ -1,7 +1,7 @@
 object main: Tmain
   Left = 529
   Top = 341
-  Width = 970
+  Width = 1102
   Height = 549
   Caption = 'Warehouse'
   Color = clBtnFace
@@ -22,7 +22,7 @@ object main: Tmain
   object Image1: TImage
     Left = 0
     Top = 0
-    Width = 954
+    Width = 1086
     Height = 468
     Align = alClient
     AutoSize = True
@@ -46,7 +46,7 @@ object main: Tmain
   object StatusBar1: TStatusBar
     Left = 0
     Top = 468
-    Width = 954
+    Width = 1086
     Height = 22
     Panels = <>
   end
@@ -746,6 +746,17 @@ object main: Tmain
       object SNC6: TMenuItem
         Caption = 'NC6 FOC Matreial Trace'
         OnClick = SNC6Click
+      end
+    end
+    object NDChemical1: TMenuItem
+      Caption = 'ND Chemical'
+      object SNND1: TMenuItem
+        Caption = 'ND1 Nhap kho'
+        OnClick = SNND1Click
+      end
+      object SND2: TMenuItem
+        Caption = 'ND2 Xuat kho'
+        OnClick = SND2Click
       end
     end
   end

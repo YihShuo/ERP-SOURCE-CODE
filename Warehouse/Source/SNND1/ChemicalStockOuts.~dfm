@@ -123,6 +123,7 @@ object ChemicalStockOut: TChemicalStockOut
       Width = 537
       Height = 89
       AutoSize = False
+      CharCase = ecUpperCase
       Color = clYellow
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
@@ -182,6 +183,7 @@ object ChemicalStockOut: TChemicalStockOut
       Top = 136
       Width = 169
       Height = 28
+      CharCase = ecUpperCase
       TabOrder = 3
     end
     object btSearch: TButton

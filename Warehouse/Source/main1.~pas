@@ -189,6 +189,9 @@ type
     SNC5: TMenuItem;
     SNC6: TMenuItem;
     SN8F: TMenuItem;
+    NDChemical1: TMenuItem;
+    SNND1: TMenuItem;
+    SND2: TMenuItem;
     procedure ExitClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormCreate(Sender: TObject);
@@ -330,6 +333,8 @@ type
     procedure SN29Click(Sender: TObject);
     procedure SN62Click(Sender: TObject);
     procedure SN8FClick(Sender: TObject);
+    procedure SNND1Click(Sender: TObject);
+    procedure SND2Click(Sender: TObject);
   private
     MKID:String;
     LanguageID:String;
@@ -389,7 +394,8 @@ uses Sitearea1, Firststock1, MaterialArea1, DeliverList1, EntryList1,
   LYV_LastborrowCFM_TL1,LYV_RAPborrow1, FOCList1, LYV_TLreturn1,
   TLSTOCK_new1, LYV_TLborrow1, LYV_TLborrowCFM1, RequestCheckStock1,
   MonthlyStockReport1, Declaretion_Check1, FOCMaterialTrace1, AnyStock_R1,
-  Deliverdet_R1, Scrap_Material1, EntryDayOff1, WarehouseLimit1;
+  Deliverdet_R1, Scrap_Material1, EntryDayOff1, WarehouseLimit1,
+  ChemicalStockIns, ChemicalStockOuts;
 
 
 {$R *.dfm}
@@ -1409,6 +1415,16 @@ end;
 procedure Tmain.SN8FClick(Sender: TObject);
 begin
   showFm(Pointer(warehouselimit), Twarehouselimit, TMenuItem(Sender).Name);
+end;
+
+procedure Tmain.SNND1Click(Sender: TObject);
+begin
+  showFm(Pointer(ChemicalStockIn), TChemicalStockIn, TMenuItem(Sender).Name);
+end;
+
+procedure Tmain.SND2Click(Sender: TObject);
+begin
+    showFm(Pointer(ChemicalStockOut), TChemicalStockOut, TMenuItem(Sender).Name);
 end;
 
 end.

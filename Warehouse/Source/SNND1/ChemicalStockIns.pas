@@ -531,6 +531,15 @@ begin
       Exit;
     end;
 
+    with query1 do
+    begin
+      Active := false;
+      SQL.Clear;
+      SQL.Add('SELECT KCRK_HC.*, CLZL.YWPM FROM KCRK_HC ');
+      SQL.Add('LEFT JOIN CLZL ON CLZL.CLDH = KCRK_HC.CLBH WHERE 1=2');
+      Active := true;
+    end;
+
     Row := 15;
 
     while VarIsNumeric(Sheet.Cells[Row, 1].Value) do
@@ -558,7 +567,7 @@ begin
             Query1.Post;
           end;
 
-          //dong cuoi neu con du
+          // dong cuoi neu con du
           if RemainWeight > 0.000001 then
           begin
             Query1.Append;

@@ -523,6 +523,23 @@ begin
     Book := Excel.WorkBooks.Open(OD.FileName);
     Sheet := Book.WorkSheets[1];
 
+    if Trim(Copy(VarToStr(Sheet.Cells[5, 4].Value),
+             Pos('/', VarToStr(Sheet.Cells[5, 4].Value)) + 1,
+             MaxInt)) <> 'Delivery notes' then
+    begin
+      ShowMessage('Sai format file Excel!');
+      Exit;
+    end;
+
+    with query1 do
+    begin
+      Active := false;
+      SQL.Clear;
+      SQL.Add('SELECT KCRK_HC.*, CLZL.YWPM FROM KCRK_HC ');
+      SQL.Add('LEFT JOIN CLZL ON CLZL.CLDH = KCRK_HC.CLBH WHERE 1=2');
+      Active := true;
+    end;
+
     Row := 15;
 
     while VarIsNumeric(Sheet.Cells[Row, 1].Value) do
@@ -550,7 +567,7 @@ begin
             Query1.Post;
           end;
 
-          //dong cuoi neu con du
+          // dong cuoi neu con du
           if RemainWeight > 0.000001 then
           begin
             Query1.Append;

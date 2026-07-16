@@ -61,6 +61,7 @@ object ChemicalSearchs: TChemicalSearchs
         Width = 145
         Height = 21
         TabOrder = 0
+        Text = 'W'
       end
       object edtYWPM: TEdit
         Left = 288

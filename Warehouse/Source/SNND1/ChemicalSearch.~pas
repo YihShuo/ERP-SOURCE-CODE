@@ -49,7 +49,7 @@ begin
     SQL.Clear;
     Active := false;
     SQL.Add('SELECT CLDH, YWPM, DWBH FROM CLZL ');
-    SQL.Add('WHERE CLDH LIKE ''W' +edtCLBH.Text+ '%'' ');
+    SQL.Add('WHERE CLDH LIKE ''' +edtCLBH.Text+ '%'' ');
 
     if edtYWPM.Text <> '' then
       SQL.Add('AND YWPM LIKE ''%' +edtYWPM.Text+ '%'' ');
