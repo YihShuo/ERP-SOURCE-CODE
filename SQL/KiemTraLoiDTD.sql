@@ -218,5 +218,5 @@ ORDER BY
     K.ship_id ;
 --1. Nếu factory_code là NULL và số lượng factory_warehouse_fg10 bằng 0:
 --Vui lòng sử dụng Postman để hủy đơn đặt hàng (PO).
---2. Nếu dtdtracking_fg10 bằng 0 và factory_warehouse_fg10 có số lượng:
+--2. Nếu dtdtracking_fg10 <> factory_warehouse_fg10:
 --Vui lòng cập nhật (update) dữ liệu theo ngày hôm nay.

@@ -4,15 +4,15 @@ WITH RawData AS (
         Y.BIEN_SO, 
         Y.CON_NO, 
         Y.EXEDATE_DATE,
-        MAX(Y.EXEDATE) AS EXEDATE -- Chỉ lấy làm gốc tính Random, không làm rã nhóm STUFF
+        MAX(Y.EXEDATE) AS EXEDATE 
     FROM INVOICE_D I
     INNER JOIN (
         SELECT 
             DDBH, 
             CON_NO, 
             REPLACE(BIEN_SO, '-', '') BIEN_SO, 
-            EXEDATE,                             -- Giờ gốc
-            CAST(EXEDATE AS DATE) EXEDATE_DATE   -- Ngày dùng để STUFF
+            EXEDATE,                            
+            CAST(EXEDATE AS DATE) EXEDATE_DATE   
         FROM YWCP 
         WHERE EXEDATE >= '2026-01-01'
     ) Y ON Y.DDBH = I.RYNO
@@ -23,13 +23,13 @@ StuffedData AS (
         A.BIEN_SO, 
         A.CON_NO, 
         A.EXEDATE_DATE,
-        MAX(A.EXEDATE) AS EXEDATE, -- Đưa mốc giờ gốc ra ngoài cùng để tính toán
+        MAX(A.EXEDATE) AS EXEDATE, 
         STUFF((
             SELECT ';' + B.INV_NO
             FROM RawData B
             WHERE B.BIEN_SO = A.BIEN_SO
               AND B.CON_NO = A.CON_NO
-              AND B.EXEDATE_DATE = A.EXEDATE_DATE -- Liên kết hoàn toàn bằng Ngày tinh giản
+              AND B.EXEDATE_DATE = A.EXEDATE_DATE 
             FOR XML PATH(''), TYPE).value('.', 'NVARCHAR(MAX)'), 1, 1, '') AS STUFFED_INV_NO
     FROM RawData A
     GROUP BY A.BIEN_SO, A.CON_NO, A.EXEDATE_DATE
