@@ -921,7 +921,131 @@ begin
 end;
 
 procedure TCartonOrder.bbt6Click(Sender: TObject);
-var   a:string;
+var
+  k: Integer;
+  OrderList: string;
+  MainDS: TDataSet;
+  FullSQL: string;
+  PivotSQL: string;
+
+  procedure ExportToExcel(DataSet: TDataSet);
+  var
+    eclApp, WorkBook, Sheet, DataArray: OleVariant;
+    r, c, RowCount, ColCount: Integer;
+  begin
+    if not DataSet.Active or DataSet.IsEmpty then Exit;
+    try
+      eclApp := CreateOleObject('Excel.Application');
+      eclApp.Visible := False;
+      WorkBook := eclApp.Workbooks.Add;
+      Sheet := WorkBook.ActiveSheet;
+    except
+      Application.MessageBox('Loi Excel', 'Thong bao', MB_OK + MB_ICONWarning);
+      Exit;
+    end;
+    DataSet.DisableControls;
+    try
+      RowCount := DataSet.RecordCount;
+      ColCount := DataSet.FieldCount;
+      DataArray := VarArrayCreate([0, RowCount, 0, ColCount - 1], varVariant);
+      for c := 0 to ColCount - 1 do DataArray[0, c] := DataSet.Fields[c].FieldName;
+      DataSet.First; r := 1;
+      while not DataSet.Eof do
+      begin
+        for c := 0 to ColCount - 1 do DataArray[r, c] := DataSet.Fields[c].Value;
+        Inc(r); DataSet.Next;
+      end;
+      Sheet.Range[Sheet.Cells[1, 1], Sheet.Cells[RowCount + 1, ColCount]].Value := DataArray;
+      Sheet.Columns.AutoFit;
+      eclApp.Visible := True;
+    finally
+      DataSet.EnableControls;
+    end;
+  end;
+
+begin
+  if DBgridEh1.SelectedRows.Count = 0 then Exit;
+  MainDS := DBgridEh1.DataSource.DataSet;
+
+  if DBgridEh1.SelectedRows.Count = 1 then
+  begin
+    if YWBZPO.Active then ExportToExcel(YWBZPO);
+    Exit;
+  end;
+
+  OrderList := '';
+  MainDS.DisableControls;
+  try
+    for k := 0 to DBgridEh1.SelectedRows.Count - 1 do
+    begin
+      MainDS.GotoBookmark(Pointer(DBgridEh1.SelectedRows.Items[k]));
+      if OrderList <> '' then OrderList := OrderList + ',';
+      OrderList := OrderList + QuotedStr(MainDS.FieldByName('DDBH').AsString);
+    end;
+  finally
+    MainDS.EnableControls;
+  end;
+
+  with Qtemp do
+  begin
+    Close;
+    SQL.Clear;
+    SQL.Add('IF OBJECT_ID(''tempdb..#TempDDBH'') IS NOT NULL DROP TABLE #TempDDBH;');
+    SQL.Add('SELECT DDBH INTO #TempDDBH FROM YWDD WHERE YSBH IN (' + OrderList + ');');
+    ExecSQL;
+
+    Close;
+    SQL.Clear;
+    SQL.Add('SELECT DISTINCT DDCC FROM YWDDS WHERE DDBH IN (SELECT DDBH FROM #TempDDBH) AND Qty <> 0 ORDER BY DDCC');
+    Open;
+  end;
+  PivotSQL := '';
+  Qtemp.First;
+  while not Qtemp.Eof do
+  begin
+    PivotSQL := PivotSQL + Format(' , MAX(CASE WHEN POS.DDCC = ''%s'' THEN POS.Qty END) AS ''%s''', 
+                                  [Qtemp.FieldByName('DDCC').AsString, Qtemp.FieldByName('DDCC').AsString]);
+    Qtemp.Next;
+  end;
+
+  FullSQL := 'SELECT POS.YSBH, POS.DDBH, ddzl.khpo AS PO, xxzl.XIEMING, POS.XH, POS.MEMO, POS.CTS ' + PivotSQL +
+             ' , YWBZPO.CLBH, YWBZPO.L, YWBZPO.W, YWBZPO.H, YWBZPO.NW, YWBZPO.GW ' +
+             ' , CASE WHEN YWBZPO.CTQ IS NOT NULL THEN CONVERT(VARCHAR(5), YWBZPO.CTQ) + ''-'' + CONVERT(VARCHAR(5), YWBZPO.CTZ) ELSE NULL END AS CN ' +
+             ' , ROUND(YWBZPO.CBM, 4) AS CBM, ROUND(YWBZPO.CBM * 35.315, 2) AS CUFT, YWWX2.Capacity - SUM(POS.Qty) AS Surplus ' +
+             ' , MAX(YWBZPO.USERDATE) AS OrderingDate, MAX(POS.USERDATE) AS PackingDate ' +
+             ' FROM ( ' +
+             '   SELECT YWDD.YSBH, NULL AS DDBH, NULL AS XH, NULL AS MEMO, YWDDS.DDCC, SUM(YWDDS.Qty) AS Qty, MAX(DDPACKS.CTS) AS CTS, MAX(DDPACKS.USERDATE) AS UserDate ' +
+             '   FROM YWDDS ' +
+             '   LEFT JOIN YWDD ON YWDDS.DDBH = YWDD.DDBH ' +
+             '   LEFT JOIN (SELECT YSBH, SUM(CTS) AS CTS, MAX(YWBZPOS.USERDATE) AS USERDATE FROM ( ' +
+             '     SELECT YWDD.YSBH, YWBZPOS.DDBH, YWBZPOS.XH, YWBZPOS.CTS, MAX(YWBZPOS.USERDATE) AS USERDATE ' +
+             '     FROM YWBZPOS LEFT JOIN YWDD ON YWDD.DDBH = YWBZPOS.DDBH ' +
+             '     WHERE YWBZPOS.DDBH IN (SELECT DDBH FROM #TempDDBH) AND YWBZPOS.Qty <> 0 GROUP BY YWDD.YSBH, YWBZPOS.DDBH, YWBZPOS.XH, YWBZPOS.CTS ) YWBZPOS GROUP BY YSBH ' +
+             '   ) DDPACKS ON DDPACKS.YSBH = YWDD.YSBH ' +
+             '   WHERE YWDDS.DDBH IN (SELECT DDBH FROM #TempDDBH) ' +
+             '   GROUP BY YWDD.YSBH, YWDDS.DDCC ' +
+             '   UNION ' +
+             '   SELECT YSBH, YWBZPOS.DDBH, XH, MEMO, DDCC, YWBZPOS.Qty, CTS, YWBZPOS.USERDATE ' +
+             '   FROM YWBZPOS LEFT JOIN YWDD ON YWBZPOS.DDBH = YWDD.DDBH ' +
+             '   WHERE YWBZPOS.DDBH IN (SELECT DDBH FROM #TempDDBH) ' +
+             ' ) POS ' +
+             ' LEFT JOIN YWBZPO ON YWBZPO.DDBH = POS.DDBH AND YWBZPO.XH = POS.XH ' +
+             ' LEFT JOIN YWWX2 ON YWBZPO.CLBH = YWWX2.CLBH ' +
+             ' LEFT JOIN ddzl ON POS.YSBH = ddzl.DDBH ' +
+             ' LEFT JOIN xxzl ON ddzl.xiexing = xxzl.xiexing AND ddzl.shehao = xxzl.shehao ' +
+             ' GROUP BY POS.YSBH, POS.DDBH, ddzl.khpo, xxzl.XIEMING, POS.XH, POS.MEMO, POS.CTS, YWBZPO.CTQ, YWBZPO.CTZ, YWBZPO.NW, YWBZPO.GW, YWBZPO.L, YWBZPO.W, YWBZPO.H, YWBZPO.CBM, YWBZPO.CLBH, YWWX2.Capacity ';
+  with YWBZPOTemp do
+  begin
+    Close;
+    ParamCheck := False;
+    SQL.Text := FullSQL;
+    Open;
+  end;
+
+  //Xuat Excel
+  ExportToExcel(YWBZPOTemp);
+end;
+{var   a:string;
       eclApp,WorkBook:olevariant;
       i,j,k,l,m:integer;
       order: string;
@@ -1067,7 +1191,7 @@ begin
        //
     end;
     //
-end;
+end;}
 
 procedure TCartonOrder.DBGridEh1MouseDown(Sender: TObject;
   Button: TMouseButton; Shift: TShiftState; X, Y: Integer);

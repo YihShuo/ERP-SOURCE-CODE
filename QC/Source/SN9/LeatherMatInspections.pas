@@ -819,7 +819,7 @@ begin
   PrintSign(Worksheet, Query1, 0, 'SCFID', 'SCFDate', 7, True);
   PrintSign(Worksheet, Query1, 0, 'MSCFID', 'MSCFDate', 1, True);
   PrintSign(Worksheet, Query1, 0, 'LCFID', 'LCFDate', 11, True);
-  PrintSign(Worksheet, Query1, 0, 'PreparedID', 'PreparedDate', 15, True);
+  PrintSign(Worksheet, Query1, 0, 'PreparedID', 'PreparedDate', 15, False);
 
   //Kiem tra ky KCS Super
   {Query1.First;

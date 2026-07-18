@@ -1077,10 +1077,6 @@ object LeatherMatInspection: TLeatherMatInspection
       '  BB = :BB,'
       '  CC = :CC,'
       '  DD = :DD,'
-      '  Grade = :Grade,'
-      '  TotalSF = :TotalSF,'
-      '  PercentGrade = :PercentGrade,'
-      '  PercentNCU = :PercentNCU,'
       '  TestCon = :TestCon,'
       '  IsCompen = :IsCompen,'
       '  CompenQty = :CompenQty,'
@@ -1102,19 +1098,17 @@ object LeatherMatInspection: TLeatherMatInspection
       
         '  (ReportID, Cont, Time, IQty, MatName, PONo, ThickStand, Realit' +
         'y, Color, '
-      '   AA, BB, CC, DD, Grade, TotalSF, PercentGrade, PercentNCU, '
       
-        '   TestCon, IsCompen, CompenQty, SCFID, SCFDate, LCFID, LCFDate,' +
-        ' PreparedID, '
+        '   AA, BB, CC, DD, TestCon, IsCompen, CompenQty, SCFID, SCFDate,' +
+        ' LCFID, LCFDate, PreparedID,'
       '   PreparedDate, USERID, USERDate, MSCFID, MSCFDate, YN)'
       'values'
       
         '  (:ReportID, :Cont, :Time, :IQty, :MatName, :PONo, :ThickStand,' +
         ' :Reality, '
-      '   :Color, :AA, :BB, :CC, :DD, :Grade, :TotalSF, :PercentGrade,'
       
-        '   :PercentNCU, :TestCon, :IsCompen, :CompenQty, :SCFID, :SCFDat' +
-        'e,'
+        '   :Color, :AA, :BB, :CC, :DD, :TestCon, :IsCompen, :CompenQty, ' +
+        ':SCFID, :SCFDate,'
       
         '   :LCFID, :LCFDate, :PreparedID, :PreparedDate, :USERID, :USERD' +
         'ate, :MSCFID, '
