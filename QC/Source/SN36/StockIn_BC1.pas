@@ -1128,7 +1128,7 @@ begin
     sql.add('SELECT qcr.SCBH,');
     sql.add('    qcr.DepNO as DepID,');
     sql.add('    qcr.GSBH,');
-    sql.add('     LEFT(qcrd.YYBH,4) as DefectID,right(qcrd.YYBH,1) as Grade');
+    sql.add('     qcrd.YYBH as DefectID,right(qcrd.YYBH,1) as Grade');
     sql.add('    ,BDepartment.DepName, case when charindex(''.'',qcrd.CC) = 0 then qcrd.CC+''.0'' else qcrd.CC end as Size ');
     sql.add('    ,case when right(qcrd.YYBH,1) = ''B'' then ''L+R'' when is_right = 1 then ''R'' else ''L'' end as RorL ');
     sql.add('    ,case when right(qcrd.YYBH,1) = ''C'' then (SUM(CONVERT(numeric(18,1),qcrd.Qty))/2) else (SUM(CONVERT(numeric(18,1),qcrd.Qty))) end AS Qty ');
@@ -1144,11 +1144,11 @@ begin
     sql.add(') A');
     sql.add('left join qcr on A.SCBH=qcr.SCBH and  A.GSBH=qcr.GSBH --full order');
     sql.add('LEFT JOIN BDepartment  ON BDepartment.ID = qcr.DepNo');
-    sql.add('inner JOIN qcrd ON qcr.ProNo = qcrd.ProNo and  qcrd.YYBH LIKE ''%[B-C]'' ');
+    sql.add('inner JOIN qcrd ON qcr.ProNo = qcrd.ProNo and  qcrd.YYBH LIKE ''%[BC]'' ');
     sql.add('left join (select DDBH,DepID,GSBH,DefectID,Grade,sum(Qty)as Qty from KCRKS_BC ');
     sql.add('		left join KCRK_BC on KCRKS_BC.RKNO=KCRK_BC.RKNO group by  DDBH,DepID,GSBH,DefectID,Grade');
     sql.add('   )RK_BC on RK_BC.DDBH=qcr.SCBH and RK_BC.DepID=qcr.DepNO and RK_BC.GSBH=qcr.GSBH ');
-    sql.add('             and RK_BC.DefectID=LEFT(qcrd.YYBH,4) and RK_BC.Grade=right(qcrd.YYBH,1) ');
+    sql.add('             and RK_BC.DefectID = SUBSTRING(qcrd.YYBH, 1, LEN(qcrd.YYBH) - 1) and RK_BC.Grade=right(qcrd.YYBH,1) ');
     sql.Add('inner join QCBLYY on QCBLYY.YYBH=QCRD.YYBH ');
     sql.add('WHERE 1=1 and qcr.SCBH like''%'+ddbh.Text+'%''');
     if Edit1.Text <> '' then

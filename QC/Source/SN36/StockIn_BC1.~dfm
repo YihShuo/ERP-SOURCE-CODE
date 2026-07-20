@@ -1,6 +1,6 @@
 object StockIn_BC: TStockIn_BC
-  Left = 364
-  Top = 139
+  Left = 267
+  Top = 162
   Width = 1537
   Height = 569
   Caption = 'StockIn_BC'
