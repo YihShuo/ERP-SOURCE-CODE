@@ -528,6 +528,10 @@ begin
              MaxInt)) <> 'Delivery notes' then
     begin
       ShowMessage('Sai format file Excel!');
+      Query1.CachedUpdates := false;
+      Query1.RequestLive := false;
+      BB4.Enabled := false;
+      BB5.Enabled := false;
       Exit;
     end;
 
@@ -545,10 +549,10 @@ begin
     while VarIsNumeric(Sheet.Cells[Row, 1].Value) do
     begin
       if (Trim(VarToStr(Sheet.Cells[Row, 3].Value)) <> '') and
-         (Trim(VarToStr(Sheet.Cells[Row, 6].Value)) <> '') then
+         (Trim(VarToStr(Sheet.Cells[Row, 7].Value)) <> '') then
       begin
-        WeightPerBag := Sheet.Cells[Row, 5].Value; // E
-        TotalWeight  := Sheet.Cells[Row, 6].Value; // F
+        WeightPerBag := Sheet.Cells[Row, 5].Value;
+        TotalWeight  := Sheet.Cells[Row, 7].Value;
 
         if WeightPerBag > 0 then
         begin
@@ -562,19 +566,19 @@ begin
             Query1.FieldByName('CLBH').AsString :=
               Trim(VarToStr(Sheet.Cells[Row, 3].Value));
             Query1.FieldByName('ExpirationDate').Value :=
-              Sheet.Cells[Row, 9].Value;
+              Sheet.Cells[Row, 10].Value;
             Query1.FieldByName('Weight').AsFloat := WeightPerBag;
             Query1.Post;
           end;
 
-          // dong cuoi neu con du
+          // dong cuoi neu con du ra
           if RemainWeight > 0.000001 then
           begin
             Query1.Append;
             Query1.FieldByName('CLBH').AsString :=
               Trim(VarToStr(Sheet.Cells[Row, 3].Value));
             Query1.FieldByName('ExpirationDate').Value :=
-              Sheet.Cells[Row, 9].Value;
+              Sheet.Cells[Row, 10].Value;
             Query1.FieldByName('Weight').AsFloat := RemainWeight;
             Query1.Post;
           end;
@@ -594,7 +598,21 @@ begin
     ShowMessage('Import thanh cong!');
 
   finally
-    OD.Free;
+    try
+    if not VarIsEmpty(Book) then
+      Book.Close(False);
+    except
+    end;
+
+    try
+      if not VarIsEmpty(Excel) then
+        Excel.Quit;
+    except
+    end;
+
+    Sheet := Unassigned;
+    Book := Unassigned;
+    Excel := Unassigned;
   end;
 end;
 

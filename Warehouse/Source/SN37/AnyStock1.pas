@@ -782,7 +782,7 @@ begin
     if ((main.Edit2.Text='VDK') and (CBX1.text='ALL') and (NotInCKBHEdit.Text='CBY')) or (main.Edit2.Text='VC1') then      //2025.09.11 them VC1
       SQL.Add('order by KCZLS.KCBH,#CLZLKC.CLDH ')
     else
-      sql.add('order by convert (int, Mat.STT),#CLZLKC.CLDH  ');
+      sql.add('order by convert(int, Mat.STT),#CLZLKC.CLDH  ');
     //ShowMessage(sql.Text);
     //funcObj.WriteErrorLog(sql.Text);
     active:=true;
