@@ -140,8 +140,8 @@ begin
         QCarton.Close;
         QCarton.SQL.Clear;
         QCarton.SQL.Add('INSERT INTO ShippingPlanCarton');
-        QCarton.SQL.Add('(RY, Con_No, PlateID, CartonNo, UserID, UserDate)');
-        QCarton.SQL.Add('VALUES (:RY, :Con_No, :PlateID, :CartonNo, :UserID, GETDATE())');
+        QCarton.SQL.Add('(RY, Con_No, PlateID, CartonNo, UserID, UserDate, YN)');
+        QCarton.SQL.Add('VALUES (:RY, :Con_No, :PlateID, :CartonNo, :UserID, GETDATE(), ''1'')');
         QCarton.Prepare;
 
         //====================================================
@@ -264,9 +264,11 @@ begin
     SQL.Add('IF OBJECT_ID(''tempdb..#Container'') IS NOT NULL');
     SQL.Add('BEGIN DROP TABLE #Container END;');
 
-    SQL.Add('SELECT SP.Date, SP.Container, LBZLS.YWSM AS Country, ROW_NUMBER() OVER(PARTITION BY Date ORDER BY SP.Seq) AS Seq, SP.Pairs, SP.Cartons, SP.CBM INTO #SP FROM ShippingPlan AS SP');
+    SQL.Add('SELECT SP.Date, SP.Container, CASE WHEN PATINDEX(''%[^0-9 ]%'', LBZLS.YWSM) > 0');
+    SQL.Add('THEN SUBSTRING(LBZLS.YWSM, PATINDEX(''%[^0-9 ]%'', LBZLS.YWSM), LEN(LBZLS.YWSM)) ELSE LBZLS.YWSM END AS Country,');
+    SQL.Add('ROW_NUMBER() OVER(PARTITION BY Date ORDER BY SP.Seq) AS Seq, SP.Pairs, SP.Cartons, SP.CBM INTO #SP FROM ShippingPlan AS SP');
     SQL.Add('LEFT JOIN DDZL ON DDZL.DDBH = SP.RY');
-    SQL.Add('LEFT JOIN LBZLS ON LBZLS.LBDH = DDZL.DDGB AND LBZLS.LB = ''06''');
+    SQL.Add('LEFT JOIN LBZLS ON LBZLS.LBDH = DDZL.DEST AND LBZLS.LB = ''13''');
     SQL.Add('WHERE SP.Date BETWEEN ''' + FormatDateTime('yyyy/MM/dd', DTP1.Date) + ''' AND ''' + FormatDateTime('yyyy/MM/dd', DTP2.Date) + ''' AND SP.GSBH = ''' + main.Edit2.Text + '''');
 
     SQL.Add('SELECT ROW_NUMBER() OVER(ORDER BY SP1.Seq) AS ID, SP1.Date, SP1.Container, SP1.Country, SP1.Seq INTO #Container FROM #SP AS SP1');
@@ -298,9 +300,13 @@ begin
     Active := false;
     DataSource := DS2;
     SQL.Clear;
-    SQL.Add('SELECT SP.Date, SP.Container, SP.Seq, SP.Building, SP.RY, SP.PO, SP.SKU, XXZL.XieMing, SP.Pairs, SP.Cartons, SP.CBM, SP.Country, SP.Remark, SP.GSBH, SP.UserID, SP.UserDate, SP.YN, SP.PlateID, SP.Con_No FROM ShippingPlan AS SP');
+    SQL.Add('SELECT SP.Date, SP.Container, SP.Seq, SP.Building, SP.RY, SP.PO, SP.SKU, XXZL.XieMing, SP.Pairs, SP.Cartons, SP.CBM,');
+    SQL.Add('CASE WHEN PATINDEX(''%[^0-9 ]%'', LBZLS.YWSM) > 0');
+    SQL.Add('THEN SUBSTRING(LBZLS.YWSM, PATINDEX(''%[^0-9 ]%'', LBZLS.YWSM), LEN(LBZLS.YWSM)) ELSE LBZLS.YWSM END AS Country,');
+    SQL.Add('SP.Remark, SP.GSBH, SP.UserID, SP.UserDate, SP.YN, SP.PlateID, SP.Con_No FROM ShippingPlan AS SP');
     SQL.Add('LEFT JOIN DDZL ON DDZL.DDBH = SP.RY');
     SQL.Add('LEFT JOIN XXZL ON XXZL.XieXing = DDZL.XieXing AND XXZL.SheHao = DDZL.SheHao');
+    SQL.Add('LEFT JOIN LBZLS ON LBZLS.LBDH = DDZL.DEST AND LBZLS.LB = ''13''');
     SQL.Add('WHERE SP.Date = :Date AND SP.Container = :Container AND SP.Seq BETWEEN :MinSeq AND :MaxSeq AND SP.GSBH = ''' + main.Edit2.Text + '''');
     SQL.Add('ORDER BY SP.Date, SP.Seq');
     Active := true;
@@ -446,8 +452,9 @@ begin
                 begin
                   Active := false;
                   SQL.Clear;
-                  SQL.Add('SELECT DDZL.DDBH, XXZL.ARTICLE, XXZL.XieMing, LBZLS.YWSM AS Country FROM DDZL');
-                  SQL.Add('LEFT JOIN LBZLS ON LBZLS.LBDH = DDZL.DDGB AND LBZLS.LB = ''06''');
+                  SQL.Add('SELECT DDZL.DDBH, XXZL.ARTICLE, XXZL.XieMing, CASE WHEN PATINDEX(''%[^0-9 ]%'', LBZLS.YWSM) > 0');
+                  SQL.Add('THEN SUBSTRING(LBZLS.YWSM, PATINDEX(''%[^0-9 ]%'', LBZLS.YWSM), LEN(LBZLS.YWSM)) ELSE LBZLS.YWSM END AS Country FROM DDZL');
+                  SQL.Add('LEFT JOIN LBZLS ON LBZLS.LBDH = DDZL.DEST AND LBZLS.LB = ''13''');
                   SQL.Add('LEFT JOIN XXZL ON XXZL.XieXing = DDZL.XieXing AND XXZL.SheHao = DDZL.SheHao');
                   SQL.Add('WHERE DDZL.DDBH = ''' + Sheet.Cells[Row, Col + 11].Text + '''');
                   Active := true;
@@ -618,8 +625,6 @@ begin
       ExecSQL;
     end;
 
-    InsertShippingPlanCarton;
-
     //try
     //  if (MinDate <> MaxDate) then
     //    JsonBody := TStringStream.Create('{"ChatID":"7738524933","ParseMode":"HTML","Text":"<blockquote>Date: ' + FormatDateTime('yyyy/MM/dd', MinDate) + ' ~ ' + FormatDateTime('yyyy/MM/dd', MaxDate) + '\nWeekly Shipping Plan has been updated</blockquote>"}')
@@ -630,6 +635,8 @@ begin
     //except on E: Exception do
       //
     //end;
+
+    InsertShippingPlanCarton;
 
     B1D5.Enabled := false;
     B1D6.Enabled := false;
