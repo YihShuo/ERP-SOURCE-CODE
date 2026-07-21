@@ -516,7 +516,6 @@ object R_hoachat: TR_hoachat
       Font.Style = []
       ParentFont = False
       TabOrder = 20
-      Visible = False
       OnClick = Button11Click
     end
     object Button12: TButton

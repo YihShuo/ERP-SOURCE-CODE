@@ -1,6 +1,6 @@
 object TONKHO: TTONKHO
-  Left = 300
-  Top = 165
+  Left = 324
+  Top = 277
   Width = 1305
   Height = 675
   Caption = 'TON KHO'
@@ -52,6 +52,7 @@ object TONKHO: TTONKHO
       Width = 38
       Height = 16
       Caption = 'Don vi'
+      Visible = False
     end
     object Button1: TButton
       Left = 752
@@ -67,6 +68,7 @@ object TONKHO: TTONKHO
       Font.Style = [fsBold]
       ParentFont = False
       TabOrder = 0
+      OnClick = Button1Click
     end
     object Edit1: TEdit
       Left = 112
@@ -123,14 +125,16 @@ object TONKHO: TTONKHO
       ItemHeight = 25
       ParentFont = False
       TabOrder = 4
+      Visible = False
     end
   end
   object DBGridEh1: TDBGridEh
     Left = 0
     Top = 74
-    Width = 697
+    Width = 704
     Height = 562
-    Align = alLeft
+    Align = alClient
+    DataSource = DS1
     EvenRowColor = clYellow
     Flat = False
     FooterColor = clWindow
@@ -150,99 +154,126 @@ object TONKHO: TTONKHO
     TitleFont.Style = []
     Columns = <
       item
-        Color = clScrollBar
         EditButtons = <>
-        FieldName = 'ID'
+        FieldName = 'Xuong'
         Footer.ValueType = fvtCount
         Footers = <>
       end
       item
-        Color = clYellow
         EditButtons = <>
-        FieldName = 'Name'
+        FieldName = 'MaHoaChat'
         Footers = <>
-        Width = 200
+        Width = 150
       end
       item
-        Color = clYellow
         EditButtons = <>
-        FieldName = 'HC1'
-        Footers = <>
-      end
-      item
-        Color = clLime
-        EditButtons = <>
-        FieldName = 'HC2'
-        Footers = <>
-      end
-      item
-        Color = clYellow
-        EditButtons = <>
-        FieldName = 'HC3'
+        FieldName = 'HanSuDung'
         Footers = <>
       end
       item
         EditButtons = <>
-        FieldName = 'TL1'
+        FieldName = 'SoLuongNhap'
+        Footer.ValueType = fvtSum
+        Footers = <>
+        Width = 100
+      end
+      item
+        EditButtons = <>
+        FieldName = 'TongDaXuat'
+        Footer.ValueType = fvtSum
+        Footers = <>
+        Width = 100
+      end
+      item
+        EditButtons = <>
+        FieldName = 'TonKhoThucTe'
+        Footer.ValueType = fvtSum
+        Footers = <>
+        Width = 100
+      end>
+  end
+  object DBGridEh2: TDBGridEh
+    Left = 704
+    Top = 74
+    Width = 585
+    Height = 562
+    Align = alRight
+    DataSource = DS2
+    EvenRowColor = clYellow
+    Flat = False
+    FooterColor = clWindow
+    FooterFont.Charset = DEFAULT_CHARSET
+    FooterFont.Color = clWindowText
+    FooterFont.Height = -11
+    FooterFont.Name = 'MS Sans Serif'
+    FooterFont.Style = []
+    FooterRowCount = 1
+    OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghMultiSortMarking, dghDialogFind]
+    SumList.Active = True
+    TabOrder = 2
+    TitleFont.Charset = DEFAULT_CHARSET
+    TitleFont.Color = clWindowText
+    TitleFont.Height = -11
+    TitleFont.Name = 'MS Sans Serif'
+    TitleFont.Style = []
+    Columns = <
+      item
+        EditButtons = <>
+        FieldName = 'MaThung'
+        Footers = <>
+        Width = 150
+      end
+      item
+        EditButtons = <>
+        FieldName = 'SoLuongNhap'
+        Footers = <>
+        Width = 100
+      end
+      item
+        EditButtons = <>
+        FieldName = 'DaTru'
         Footers = <>
       end
       item
         EditButtons = <>
-        FieldName = 'TL2'
-        Footers = <>
-      end
-      item
-        Color = clYellow
-        EditButtons = <>
-        FieldName = 'TL3'
+        FieldName = 'ConLai'
         Footers = <>
       end>
   end
   object Query1: TQuery
+    AfterScroll = Query1AfterScroll
     DatabaseName = 'DB'
     SQL.Strings = (
-      'select  * from Ch_formula')
+      'SELECT '
+      '    CAST('#39#39' AS VARCHAR(20)) AS Xuong,'
+      '    CAST('#39#39' AS VARCHAR(50)) AS MaHoaChat,'
+      '    CAST(GETDATE() AS DATETIME) AS HanSuDung,'
+      '    CAST(0.0 AS FLOAT) AS SoLuongNhap,'
+      '    CAST(0.0 AS FLOAT) AS TongDaXuat,'
+      '    CAST(0.0 AS FLOAT) AS TonKhoThucTe'
+      'WHERE 1 = 0')
     Left = 208
     Top = 136
-    object Query1ID: TAutoIncField
-      FieldName = 'ID'
-      Origin = 'DB.CH_Formula.ID'
-    end
-    object Query1HC1: TStringField
-      FieldName = 'HC1'
-      Origin = 'DB.CH_Formula.HC1'
+    object Query1Xuong: TStringField
+      FieldName = 'Xuong'
       FixedChar = True
-      Size = 10
     end
-    object Query1HC2: TStringField
-      FieldName = 'HC2'
-      Origin = 'DB.CH_Formula.HC2'
+    object Query1MaHoaChat: TStringField
+      FieldName = 'MaHoaChat'
       FixedChar = True
-      Size = 10
+      Size = 50
     end
-    object Query1HC3: TStringField
-      FieldName = 'HC3'
-      Origin = 'DB.CH_Formula.HC3'
-      FixedChar = True
-      Size = 10
+    object Query1HanSuDung: TDateTimeField
+      FieldName = 'HanSuDung'
     end
-    object Query1TL1: TFloatField
-      FieldName = 'TL1'
-      Origin = 'DB.CH_Formula.TL1'
+    object Query1SoLuongNhap: TFloatField
+      FieldName = 'SoLuongNhap'
     end
-    object Query1TL2: TFloatField
-      FieldName = 'TL2'
-      Origin = 'DB.CH_Formula.TL2'
+    object Query1TongDaXuat: TFloatField
+      FieldName = 'TongDaXuat'
     end
-    object Query1TL3: TFloatField
-      FieldName = 'TL3'
-      Origin = 'DB.CH_Formula.TL3'
-    end
-    object Query1Name: TStringField
-      FieldName = 'Name'
-      Origin = 'DB.CH_Formula.Name'
-      FixedChar = True
-      Size = 250
+    object Query1TonKhoThucTe: TFloatField
+      FieldName = 'TonKhoThucTe'
     end
   end
   object DS1: TDataSource
@@ -289,45 +320,36 @@ object TONKHO: TTONKHO
     UpdateObject = Up
     Left = 520
     Top = 40
-    object AutoIncField1: TAutoIncField
-      FieldName = 'ID'
-      Origin = 'DB.CH_Formula.ID'
-    end
-    object StringField1: TStringField
-      FieldName = 'HC1'
-      Origin = 'DB.CH_Formula.HC1'
+  end
+  object DS2: TDataSource
+    DataSet = Query2
+    Left = 768
+    Top = 160
+  end
+  object Query2: TQuery
+    DatabaseName = 'DB'
+    SQL.Strings = (
+      'SELECT '
+      '    CAST('#39#39' AS VARCHAR(50)) AS MaThung,'
+      '    CAST(0.0 AS FLOAT) AS SoLuongNhap,'
+      '    CAST(0.0 AS FLOAT) AS DaTru,'
+      '    CAST(0.0 AS FLOAT) AS ConLai'
+      'WHERE 1 = 0')
+    Left = 768
+    Top = 208
+    object Query2MaThung: TStringField
+      FieldName = 'MaThung'
       FixedChar = True
-      Size = 10
+      Size = 50
     end
-    object StringField2: TStringField
-      FieldName = 'HC2'
-      Origin = 'DB.CH_Formula.HC2'
-      FixedChar = True
-      Size = 10
+    object Query2SoLuongNhap: TFloatField
+      FieldName = 'SoLuongNhap'
     end
-    object StringField3: TStringField
-      FieldName = 'HC3'
-      Origin = 'DB.CH_Formula.HC3'
-      FixedChar = True
-      Size = 10
+    object Query2DaTru: TFloatField
+      FieldName = 'DaTru'
     end
-    object FloatField1: TFloatField
-      FieldName = 'TL1'
-      Origin = 'DB.CH_Formula.TL1'
-    end
-    object FloatField2: TFloatField
-      FieldName = 'TL2'
-      Origin = 'DB.CH_Formula.TL2'
-    end
-    object FloatField3: TFloatField
-      FieldName = 'TL3'
-      Origin = 'DB.CH_Formula.TL3'
-    end
-    object StringField4: TStringField
-      FieldName = 'Name'
-      Origin = 'DB.CH_Formula.Name'
-      FixedChar = True
-      Size = 250
+    object Query2ConLai: TFloatField
+      FieldName = 'ConLai'
     end
   end
 end

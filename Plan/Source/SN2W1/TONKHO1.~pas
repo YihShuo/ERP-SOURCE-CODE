@@ -19,28 +19,27 @@ type
     CBBDep: TComboBox;
     Label3: TLabel;
     Query1: TQuery;
-    Query1ID: TAutoIncField;
-    Query1HC1: TStringField;
-    Query1HC2: TStringField;
-    Query1HC3: TStringField;
-    Query1TL1: TFloatField;
-    Query1TL2: TFloatField;
-    Query1TL3: TFloatField;
-    Query1Name: TStringField;
     DS1: TDataSource;
     Up: TUpdateSQL;
     temp: TQuery;
-    AutoIncField1: TAutoIncField;
-    StringField1: TStringField;
-    StringField2: TStringField;
-    StringField3: TStringField;
-    FloatField1: TFloatField;
-    FloatField2: TFloatField;
-    FloatField3: TFloatField;
-    StringField4: TStringField;
+    Query1Xuong: TStringField;
+    Query1MaHoaChat: TStringField;
+    Query1HanSuDung: TDateTimeField;
+    Query1SoLuongNhap: TFloatField;
+    Query1TongDaXuat: TFloatField;
+    Query1TonKhoThucTe: TFloatField;
+    DBGridEh2: TDBGridEh;
+    DS2: TDataSource;
+    Query2: TQuery;
+    Query2MaThung: TStringField;
+    Query2SoLuongNhap: TFloatField;
+    Query2DaTru: TFloatField;
+    Query2ConLai: TFloatField;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormDestroy(Sender: TObject);
     procedure FormCreate(Sender: TObject);
+    procedure Button1Click(Sender: TObject);
+    procedure Query1AfterScroll(DataSet: TDataSet);
   private
     { Private declarations }
   public
@@ -70,7 +69,7 @@ begin
     CbbGSBH.Items.Add('Xuong_A');
     CbbGSBH.Items.Add('Xuong_B');
     CbbGSBH.ItemIndex := 0;
-    with temp do
+   { with temp do
     begin
       active := false;
       SQL.Clear;
@@ -80,7 +79,186 @@ begin
     CbbDep.Items.Add('Xuong_A');
     CbbDep.Items.Add('Xuong_B');
     CbbDep.ItemIndex := 0;
-     end;
+     end; }
+end;
+
+procedure TTONKHO.Button1Click(Sender: TObject);
+begin
+  // Doi con tro chuot thanh hinh dong ho cat khi cho truy van
+  Screen.Cursor := crHourGlass; 
+  
+  try
+    with Query1 do
+    begin
+      Close;
+      SQL.Clear;
+
+      // 1. GOM NHOM NHAP THEO XUONG, MA HOA CHAT VA NGAY HSD 
+      SQL.Add('WITH BangNhap AS (');
+      SQL.Add('    SELECT CASE WHEN K.DepName LIKE ''%3F%'' OR K.DepName LIKE ''%4F%'' THEN ''Xuong_A'' ELSE ''Xuong_B'' END AS GSBH,');
+      SQL.Add('    LTRIM(RTRIM(K.CLBH)) AS MaHoaChat,');
+      // -- SUA O DAY: Ep ve DATE de cat gio, sau do ep nguoc lai DATETIME de Delphi nhan dung kieu --
+      SQL.Add('    CAST(CAST(K.ExpirationDate AS DATE) AS DATETIME) AS HanSuDung,');
+      SQL.Add('    SUM(CAST(K.Weight AS FLOAT)) AS SoLuongNhap');
+      SQL.Add('    FROM KCLL_HC K WHERE K.Weight > 0');
+      SQL.Add('    GROUP BY CASE WHEN K.DepName LIKE ''%3F%'' OR K.DepName LIKE ''%4F%'' THEN ''Xuong_A'' ELSE ''Xuong_B'' END,');
+      SQL.Add('             LTRIM(RTRIM(K.CLBH)), CAST(CAST(K.ExpirationDate AS DATE) AS DATETIME)');
+      SQL.Add('),');
+
+      // 2. Tinh luy ke (Running Total) theo tung ngay HSD 
+      SQL.Add('LuyKeNhap AS (');
+      SQL.Add('    SELECT N1.GSBH, N1.MaHoaChat, N1.HanSuDung, N1.SoLuongNhap,');
+      SQL.Add('    (SELECT SUM(N2.SoLuongNhap) FROM BangNhap N2');
+      SQL.Add('     WHERE N2.GSBH = N1.GSBH AND N2.MaHoaChat = N1.MaHoaChat');
+      SQL.Add('       AND N2.HanSuDung <= N1.HanSuDung');
+      SQL.Add('    ) AS TongLuyKe');
+      SQL.Add('    FROM BangNhap N1');
+      SQL.Add('),');
+
+      // 3. Boc tach XUAT tu ngay 13/07/2026
+      SQL.Add('XuatChiTiet AS (');
+      SQL.Add('    SELECT GSBH, LTRIM(RTRIM(inv_id)) AS MaHoaChat, ISNULL(curr_weight_ch, 0) AS SoLuongXuat FROM ch_Formulation_HK WHERE inv_id IS NOT NULL AND inv_id <> '''' AND curr_weight_ch > 0 AND create_time >= ''2026-07-13''');
+      SQL.Add('    UNION ALL');
+      SQL.Add('    SELECT GSBH, LTRIM(RTRIM(inv_id1)) AS MaHoaChat, ISNULL(curr_weight_ch1, 0) AS SoLuongXuat FROM ch_Formulation_HK WHERE inv_id1 IS NOT NULL AND inv_id1 <> '''' AND curr_weight_ch1 > 0 AND create_time >= ''2026-07-13''');
+      SQL.Add('    UNION ALL');
+      SQL.Add('    SELECT GSBH, LTRIM(RTRIM(sol_id)) AS MaHoaChat, ISNULL(curr_weight_sol, 0) AS SoLuongXuat FROM ch_Formulation_HK WHERE sol_id IS NOT NULL AND sol_id <> '''' AND curr_weight_sol > 0 AND create_time >= ''2026-07-13''');
+      SQL.Add('),');
+
+      // 4. Tong xuat cua tung Ma Hoa Chat
+      SQL.Add('TongXuat AS (');
+      SQL.Add('    SELECT GSBH, MaHoaChat, SUM(SoLuongXuat) AS TongSoLuongXuat');
+      SQL.Add('    FROM XuatChiTiet GROUP BY GSBH, MaHoaChat');
+      SQL.Add(')');
+
+      // 5. Select ket qua: Tinh luong XUAT va TON cho tung nhom HSD
+      SQL.Add('SELECT L.GSBH AS Xuong, L.MaHoaChat, L.HanSuDung, CAST(L.SoLuongNhap AS FLOAT) AS SoLuongNhap,');
+      
+      SQL.Add('CAST(CASE WHEN ISNULL(X.TongSoLuongXuat, 0) >= L.TongLuyKe THEN L.SoLuongNhap');
+      SQL.Add('          WHEN ISNULL(X.TongSoLuongXuat, 0) <= (L.TongLuyKe - L.SoLuongNhap) THEN 0');
+      SQL.Add('          ELSE ISNULL(X.TongSoLuongXuat, 0) - (L.TongLuyKe - L.SoLuongNhap) END AS FLOAT) AS TongDaXuat,');
+
+      SQL.Add('CAST(CASE WHEN ISNULL(X.TongSoLuongXuat, 0) >= L.TongLuyKe THEN 0');
+      SQL.Add('          WHEN ISNULL(X.TongSoLuongXuat, 0) <= (L.TongLuyKe - L.SoLuongNhap) THEN L.SoLuongNhap');
+      SQL.Add('          ELSE L.TongLuyKe - ISNULL(X.TongSoLuongXuat, 0) END AS FLOAT) AS TonKhoThucTe');
+      
+      SQL.Add('FROM LuyKeNhap L');
+      SQL.Add('LEFT JOIN TongXuat X ON L.GSBH = X.GSBH AND L.MaHoaChat = X.MaHoaChat');
+      
+      // Loc bo nhung nhom HSD da het hang 
+      SQL.Add('WHERE (CASE WHEN ISNULL(X.TongSoLuongXuat, 0) >= L.TongLuyKe THEN 0');
+      SQL.Add('            WHEN ISNULL(X.TongSoLuongXuat, 0) <= (L.TongLuyKe - L.SoLuongNhap) THEN L.SoLuongNhap');
+      SQL.Add('            ELSE L.TongLuyKe - ISNULL(X.TongSoLuongXuat, 0) END) > 0');
+      
+      if Trim(CbbGSBH.Text) <> '' then
+      begin
+        SQL.Add('  AND L.GSBH = ''' + Trim(CbbGSBH.Text) + '''');
+      end;
+
+      if Trim(Edit1.Text) <> '' then
+      begin
+        SQL.Add('  AND L.MaHoaChat LIKE ''%' + Trim(Edit1.Text) + '%''');
+      end;
+      
+      SQL.Add('ORDER BY L.GSBH, L.MaHoaChat, L.HanSuDung');
+
+      // Goi lenh Open de lay du lieu ve
+      Open;
+    end;
+  except
+    on E: Exception do
+    begin
+      ShowMessage('Co loi xay ra khi lay du lieu ton kho: ' + E.Message);
+    end;
+  end;
+  
+  Screen.Cursor := crDefault;
+end;
+
+procedure TTONKHO.Query1AfterScroll(DataSet: TDataSet);
+begin
+  // Kiem tra neu Query1 chua mo hoac khong co du lieu thi xoa trang Query2
+  if (not Query1.Active) or Query1.IsEmpty then
+  begin
+    if Assigned(Query2) and Query2.Active then Query2.Close;
+    Exit;
+  end;
+
+  // Doi con tro chuot de bao hieu dang xu ly
+  Screen.Cursor := crHourGlass;
+
+  try
+    with Query2 do
+    begin
+      Close;
+      SQL.Clear;
+
+      // 1. Lay tat ca cac thung (LLNO) cua Ma Hoa Chat va Xuong dang chon
+      SQL.Add('WITH BangNhap AS (');
+      SQL.Add('    SELECT K.LLNO, CAST(CAST(K.ExpirationDate AS DATE) AS DATETIME) AS HanSuDung, CAST(K.Weight AS FLOAT) AS SoLuongNhap');
+      SQL.Add('    FROM KCLL_HC K');
+      SQL.Add('    WHERE K.Weight > 0');
+      SQL.Add('      AND LTRIM(RTRIM(K.CLBH)) = :pMaHoaChat');
+      SQL.Add('      AND (CASE WHEN K.DepName LIKE ''%3F%'' OR K.DepName LIKE ''%4F%'' THEN ''Xuong_A'' ELSE ''Xuong_B'' END) = :pXuong');
+      SQL.Add('),');
+
+      // 2. Tinh luy ke (Running Total) cho tat ca cac thung de xac dinh thu tu bi tru (FEFO)
+      SQL.Add('LuyKeNhap AS (');
+      SQL.Add('    SELECT N1.LLNO, N1.HanSuDung, N1.SoLuongNhap,');
+      SQL.Add('    (SELECT SUM(N2.SoLuongNhap) FROM BangNhap N2');
+      SQL.Add('     WHERE N2.HanSuDung < N1.HanSuDung ');
+      // Uu tien thung nhap truoc neu cung han su dung
+      SQL.Add('        OR (N2.HanSuDung = N1.HanSuDung AND N2.LLNO <= N1.LLNO)');
+      SQL.Add('    ) AS TongLuyKe');
+      SQL.Add('    FROM BangNhap N1');
+      SQL.Add('),');
+
+      // 3. Tinh tong luong xuat cua RIENG ma hoa chat nay tai Xuong nay
+      SQL.Add('XuatChiTiet AS (');
+      SQL.Add('    SELECT ISNULL(curr_weight_ch, 0) AS SoLuongXuat FROM ch_Formulation_HK WHERE LTRIM(RTRIM(inv_id)) = :pMaHoaChat AND curr_weight_ch > 0 AND create_time >= ''2026-07-13'' AND GSBH = :pXuong');
+      SQL.Add('    UNION ALL');
+      SQL.Add('    SELECT ISNULL(curr_weight_ch1, 0) AS SoLuongXuat FROM ch_Formulation_HK WHERE LTRIM(RTRIM(inv_id1)) = :pMaHoaChat AND curr_weight_ch1 > 0 AND create_time >= ''2026-07-13'' AND GSBH = :pXuong');
+      SQL.Add('    UNION ALL');
+      SQL.Add('    SELECT ISNULL(curr_weight_sol, 0) AS SoLuongXuat FROM ch_Formulation_HK WHERE LTRIM(RTRIM(sol_id)) = :pMaHoaChat AND curr_weight_sol > 0 AND create_time >= ''2026-07-13'' AND GSBH = :pXuong');
+      SQL.Add('),');
+      
+      SQL.Add('TongXuat AS (');
+      SQL.Add('    SELECT ISNULL(SUM(SoLuongXuat), 0) AS TongSoLuongXuat FROM XuatChiTiet');
+      SQL.Add(')');
+
+      // 4. Select chi tiet tung thung va muc do bi tru (DaTru / ConLai)
+      SQL.Add('SELECT L.LLNO AS MaThung, CAST(L.SoLuongNhap AS FLOAT) AS SoLuongNhap,');
+      
+      SQL.Add('CAST(CASE WHEN X.TongSoLuongXuat >= L.TongLuyKe THEN L.SoLuongNhap');
+      SQL.Add('          WHEN X.TongSoLuongXuat <= (L.TongLuyKe - L.SoLuongNhap) THEN 0');
+      SQL.Add('          ELSE X.TongSoLuongXuat - (L.TongLuyKe - L.SoLuongNhap) END AS FLOAT) AS DaTru,');
+
+      SQL.Add('CAST(CASE WHEN X.TongSoLuongXuat >= L.TongLuyKe THEN 0');
+      SQL.Add('          WHEN X.TongSoLuongXuat <= (L.TongLuyKe - L.SoLuongNhap) THEN L.SoLuongNhap');
+      SQL.Add('          ELSE L.TongLuyKe - X.TongSoLuongXuat END AS FLOAT) AS ConLai');
+
+      SQL.Add('FROM LuyKeNhap L');
+      SQL.Add('CROSS JOIN TongXuat X');
+      
+      // 5. QUAN TRONG: Chi loc ra nhung thung thuoc dung ngay HSD dang xem o luoi chinh
+      SQL.Add('WHERE L.HanSuDung = :pHanSuDung');
+      SQL.Add('ORDER BY L.LLNO');
+
+      // Truyen 3 tham so tu dong dang duoc highlight cua Query1
+      ParamByName('pXuong').AsString := Query1.FieldByName('Xuong').AsString;
+      ParamByName('pMaHoaChat').AsString := Query1.FieldByName('MaHoaChat').AsString;
+      ParamByName('pHanSuDung').AsDateTime := Query1.FieldByName('HanSuDung').AsDateTime;
+
+      Open;
+    end;
+  except
+    on E: Exception do
+    begin
+      ShowMessage('Loi khi tai chi tiet thung: ' + E.Message);
+    end;
+  end;
+
+  // Tra lai con tro chuot binh thuong
+  Screen.Cursor := crDefault;
 end;
 
 end.
