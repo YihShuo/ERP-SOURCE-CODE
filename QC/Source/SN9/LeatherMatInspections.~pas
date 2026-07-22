@@ -295,10 +295,6 @@ begin
   DBGrid1.FieldColumns['BB'].ReadOnly            := True;
   DBGrid1.FieldColumns['CC'].ReadOnly            := True;
   DBGrid1.FieldColumns['DD'].ReadOnly            := True;
-  DBGrid1.FieldColumns['Grade'].ReadOnly         := True;
-  DBGrid1.FieldColumns['TotalSF'].ReadOnly       := True;
-  DBGrid1.FieldColumns['PercentGrade'].ReadOnly  := True;
-  DBGrid1.FieldColumns['PercentNCU'].ReadOnly    := True;
   DBGrid1.FieldColumns['TestCon'].ReadOnly       := True;
   DBGrid1.FieldColumns['IsCompen'].ReadOnly      := True;
   DBGrid1.FieldColumns['CompenQty'].ReadOnly     := True;
@@ -327,10 +323,6 @@ begin
   DBGrid1.FieldColumns['BB'].ReadOnly            := True;
   DBGrid1.FieldColumns['CC'].ReadOnly            := True;
   DBGrid1.FieldColumns['DD'].ReadOnly            := True;
-  DBGrid1.FieldColumns['Grade'].ReadOnly         := True;
-  DBGrid1.FieldColumns['TotalSF'].ReadOnly       := True;
-  DBGrid1.FieldColumns['PercentGrade'].ReadOnly  := True;
-  DBGrid1.FieldColumns['PercentNCU'].ReadOnly    := True;
   DBGrid1.FieldColumns['TestCon'].ReadOnly       := True;
   DBGrid1.FieldColumns['IsCompen'].ReadOnly      := True;
   DBGrid1.FieldColumns['CompenQty'].ReadOnly     := True;
@@ -359,10 +351,6 @@ begin
   DBGrid1.FieldColumns['BB'].ReadOnly            := True;
   DBGrid1.FieldColumns['CC'].ReadOnly            := True;
   DBGrid1.FieldColumns['DD'].ReadOnly            := True;
-  DBGrid1.FieldColumns['Grade'].ReadOnly         := True;
-  DBGrid1.FieldColumns['TotalSF'].ReadOnly       := True;
-  DBGrid1.FieldColumns['PercentGrade'].ReadOnly  := True;
-  DBGrid1.FieldColumns['PercentNCU'].ReadOnly    := True;
   DBGrid1.FieldColumns['TestCon'].ReadOnly       := True;
   DBGrid1.FieldColumns['IsCompen'].ReadOnly      := True;
   DBGrid1.FieldColumns['CompenQty'].ReadOnly     := True;
