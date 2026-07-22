@@ -1,3 +1,4 @@
+USE LYS_ERP
 WITH RawData AS (
     SELECT 
         I.INV_NO, 
