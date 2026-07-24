@@ -1,0 +1,31 @@
+SELECT qcr.SCBH,
+    qcr.DepNO as DepID,
+    qcr.GSBH,
+     LEFT(qcrd.YYBH,4) as DefectID,right(qcrd.YYBH,1) as Grade
+    ,BDepartment.DepName, case when charindex('.',qcrd.CC) = 0 then qcrd.CC+'.0' else qcrd.CC end as Size 
+    ,case when right(qcrd.YYBH,1) = 'B' then 'L+R' when is_right = 1 then 'R' else 'L' end as RorL 
+    ,case when right(qcrd.YYBH,1) = 'C' then (SUM(CONVERT(numeric(18,1),qcrd.Qty))/2) else (SUM(CONVERT(numeric(18,1),qcrd.Qty))) end AS Qty 
+    ,SUM(qcrd.Qty)-ISNULL(RK_BC.Qty,0) as RemainQty
+	   , case when SUM(qcrd.Qty)-ISNULL(RK_BC.Qty,0)>0 then 0 else 1 end as YN, QCBLYY.VNSM 
+FROM (select DISTINCT SCBH,GSBH from qcr where 1=1
+    AND qcr.GSBH = 'VDH'
+    AND qcr.USERDATE >= '2026-07-13'
+    AND qcr.USERDATE < '2026-07-21'
+    AND qcr.SCBH IS NOT NULL
+and GXLB='A'
+) A
+left join qcr on A.SCBH=qcr.SCBH and  A.GSBH=qcr.GSBH --full order
+LEFT JOIN BDepartment  ON BDepartment.ID = qcr.DepNo
+inner JOIN qcrd ON qcr.ProNo = qcrd.ProNo and  qcrd.YYBH LIKE '%[B-C]' 
+left join (select DDBH,DepID,GSBH,DefectID,Grade,sum(Qty)as Qty from KCRKS_BC 
+		left join KCRK_BC on KCRKS_BC.RKNO=KCRK_BC.RKNO group by  DDBH,DepID,GSBH,DefectID,Grade
+   )RK_BC on RK_BC.DDBH=qcr.SCBH and RK_BC.DepID=qcr.DepNO and RK_BC.GSBH=qcr.GSBH 
+             and RK_BC.DefectID=LEFT(qcrd.YYBH,4) and RK_BC.Grade=right(qcrd.YYBH,1) 
+inner join QCBLYY on QCBLYY.YYBH=QCRD.YYBH 
+WHERE 1=1 and qcr.SCBH like'%%'
+GROUP BY 
+    qcr.SCBH
+    ,qcr.DepNO,BDepartment.DepName 
+    ,qcr.GSBH
+    ,qcrd.YYBH,RK_BC.Qty,QCBLYY.VNSM, qcrd.CC, is_right 
+Order by DepNO
