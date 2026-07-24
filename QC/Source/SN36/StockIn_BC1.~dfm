@@ -795,6 +795,7 @@ object StockIn_BC: TStockIn_BC
           item
             EditButtons = <>
             FieldName = 'DepID'
+            Footer.ValueType = fvtCount
             Footers = <>
             Width = 84
           end

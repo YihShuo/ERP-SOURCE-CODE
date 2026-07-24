@@ -1124,8 +1124,115 @@ begin
   with QryPending do
   begin
     Active := false;
+    ParamCheck := false;
     SQL.Clear;
-    sql.add('SELECT qcr.SCBH,');
+    SQL.Add('WITH Combined_QCR AS (');
+    SQL.Add('    -- 1. Gop danh sach Header de loc dieu kien dot kiem tra (Subquery A)');
+    SQL.Add('    SELECT SCBH, GSBH, USERDATE, GXLB FROM QCR');
+    SQL.Add('    UNION ALL');
+    SQL.Add('    SELECT SCBH, GSBH, USERDATE, GXLB FROM QCR_RE');
+    SQL.Add('),');
+    SQL.Add('A AS (');
+    SQL.Add('    -- Loc ra danh sach Don hang (SCBH) thoa man dieu kien');
+    SQL.Add('    SELECT DISTINCT SCBH, GSBH');
+    SQL.Add('    FROM Combined_QCR');
+    SQL.Add('    WHERE GSBH = ''' + main.Edit2.Text + ''' ');
+    SQL.Add('      AND USERDATE >= ''' + FormatDateTime('yyyy/MM/dd', DTP3.Date) + ''' ');
+    SQL.Add('      AND USERDATE < ''' + FormatDateTime('yyyy/MM/dd', DTP4.Date) + ''' ');
+    SQL.Add('      AND SCBH IS NOT NULL');
+    SQL.Add('      AND GXLB = ''A''');
+    SQL.Add('),');
+    SQL.Add('Combined_Data AS (');
+    SQL.Add('    -- 2. Cap 1: QCR JOIN QCRD (Noi noi bo truoc de tranh trung cheo ProNo)');
+    SQL.Add('    SELECT');
+    SQL.Add('        qcr.SCBH,');
+    SQL.Add('        qcr.DepNO,');
+    SQL.Add('        qcr.GSBH,');
+    SQL.Add('        qcrd.YYBH,');
+    SQL.Add('        qcrd.CC,');
+    SQL.Add('        qcrd.Qty,');
+    SQL.Add('        qcrd.is_right');
+    SQL.Add('    FROM QCR qcr');
+    SQL.Add('    INNER JOIN QCRD qcrd ON qcr.ProNo = qcrd.ProNo');
+    SQL.Add('    WHERE qcrd.YYBH LIKE ''%[BC]''');
+    SQL.Add('');
+    SQL.Add('    UNION ALL');
+    SQL.Add('');
+    SQL.Add('    -- 3. Cap 2: QCR_RE JOIN QCRD_RE');
+    SQL.Add('    SELECT');
+    SQL.Add('        qcr.SCBH,');
+    SQL.Add('        qcr.DepNO,');
+    SQL.Add('        qcr.GSBH,');
+    SQL.Add('        qcrd.YYBH,');
+    SQL.Add('        qcrd.CC,');
+    SQL.Add('        qcrd.Qty,');
+    SQL.Add('        qcrd.is_right');
+    SQL.Add('    FROM QCR_RE qcr');
+    SQL.Add('    INNER JOIN QCRD_RE qcrd ON qcr.ProNo = qcrd.ProNo');
+    SQL.Add('    WHERE qcrd.YYBH LIKE ''%[BC]''');
+    SQL.Add('),');
+    SQL.Add('RK_BC AS (');
+    SQL.Add('    -- Gom nhom du lieu nhap kho theo DefectID & Grade');
+    SQL.Add('    SELECT DDBH, DepID, GSBH, DefectID, Grade, SUM(Qty) AS Qty');
+    SQL.Add('    FROM KCRKS_BC');
+    SQL.Add('    LEFT JOIN KCRK_BC ON KCRKS_BC.RKNO = KCRK_BC.RKNO');
+    SQL.Add('    GROUP BY DDBH, DepID, GSBH, DefectID, Grade');
+    SQL.Add(')');
+    SQL.Add('-- 4. Trich xuat va tinh toan ket qua cuoi cung');
+    SQL.Add('SELECT');
+    SQL.Add('    cd.SCBH,');
+    SQL.Add('    cd.DepNO AS DepID,');
+    SQL.Add('    cd.GSBH,');
+    SQL.Add('    cd.YYBH AS DefectID,');
+    SQL.Add('    RIGHT(cd.YYBH, 1) AS Grade,');
+    SQL.Add('    BDepartment.DepName,');
+    SQL.Add('    CASE');
+    SQL.Add('        WHEN CHARINDEX(''.'', cd.CC) = 0 THEN cd.CC + ''.0'''); // Da sua loi dau nhay o day
+    SQL.Add('        ELSE cd.CC');
+    SQL.Add('    END AS Size,');
+    SQL.Add('    CASE');
+    SQL.Add('        WHEN RIGHT(cd.YYBH, 1) = ''B'' THEN ''L+R''');
+    SQL.Add('        WHEN cd.is_right = 1 THEN ''R''');
+    SQL.Add('        ELSE ''L''');
+    SQL.Add('    END AS RorL,');
+    SQL.Add('    CASE');
+    SQL.Add('        WHEN RIGHT(cd.YYBH, 1) = ''C'' THEN (SUM(CONVERT(NUMERIC(18,1), cd.Qty)) / 2)');
+    SQL.Add('        ELSE (SUM(CONVERT(NUMERIC(18,1), cd.Qty)))');
+    SQL.Add('    END AS Qty,');
+    SQL.Add('    SUM(cd.Qty) - ISNULL(RK_BC.Qty, 0) AS RemainQty,');
+    SQL.Add('    CASE');
+    SQL.Add('        WHEN SUM(cd.Qty) - ISNULL(RK_BC.Qty, 0) > 0 THEN 0');
+    SQL.Add('        ELSE 1');
+    SQL.Add('    END AS YN,');
+    SQL.Add('    QCBLYY.VNSM');
+    SQL.Add('FROM A');
+    SQL.Add('INNER JOIN Combined_Data cd ON A.SCBH = cd.SCBH AND A.GSBH = cd.GSBH');
+    SQL.Add('LEFT JOIN BDepartment ON BDepartment.ID = cd.DepNO');
+    SQL.Add('LEFT JOIN RK_BC ON RK_BC.DDBH = cd.SCBH');
+    SQL.Add('               AND RK_BC.DepID = cd.DepNO');
+    SQL.Add('               AND RK_BC.GSBH = cd.GSBH');
+    SQL.Add('               AND RK_BC.DefectID = SUBSTRING(cd.YYBH, 1, LEN(cd.YYBH) - 1)');
+    SQL.Add('               AND RK_BC.Grade = RIGHT(cd.YYBH, 1)');
+    SQL.Add('INNER JOIN QCBLYY ON QCBLYY.YYBH = cd.YYBH');
+    SQL.Add('WHERE cd.SCBH LIKE ''%' + Trim(ddbh.Text) + '%'' ');
+
+    if Trim(Edit1.Text) <> '' then
+      SQL.Add('  AND cd.CC = ''' + Trim(Edit1.Text) + ''' '); // Da sua QCRD.CC thanh cd.CC
+
+    SQL.Add('GROUP BY');
+    SQL.Add('    cd.SCBH,');
+    SQL.Add('    cd.DepNO,');
+    SQL.Add('    BDepartment.DepName,');
+    SQL.Add('    cd.GSBH,');
+    SQL.Add('    cd.YYBH,');
+    SQL.Add('    RK_BC.Qty,');
+    SQL.Add('    QCBLYY.VNSM,');
+    SQL.Add('    cd.CC,');
+    SQL.Add('    cd.is_right');
+    SQL.Add('ORDER BY cd.DepNO;');
+
+    //old sql
+    {sql.add('SELECT qcr.SCBH,');
     sql.add('    qcr.DepNO as DepID,');
     sql.add('    qcr.GSBH,');
     sql.add('     qcrd.YYBH as DefectID,right(qcrd.YYBH,1) as Grade');
@@ -1158,7 +1265,7 @@ begin
     sql.add('    ,qcr.DepNO,BDepartment.DepName ');
     sql.add('    ,qcr.GSBH');
     sql.add('    ,qcrd.YYBH,RK_BC.Qty,QCBLYY.VNSM, qcrd.CC, is_right ');
-    sql.add('Order by DepNO');
+    sql.add('Order by DepNO');}
 
     //showmessage(SQL.Text);
     //funcobj.WriteErrorLog(sql.Text);
