@@ -131,6 +131,7 @@ type
       ACol: Integer;
       UseUserName: Boolean
     );
+    procedure FormCreate(Sender: TObject);
   private
     { Private declarations }
   public
@@ -1127,6 +1128,19 @@ begin
     BitBtn5.Enabled := false;
     dbgrid1.ReadOnly := false;
   end;
+end;
+
+procedure TLeatherMatInspection.FormCreate(Sender: TObject);
+begin
+ if main.Edit1.Text = '319684' then
+ begin
+  BB1.Visible := false;
+  BB2.Visible := false;
+  BB3.Visible := false;
+  BB4.Visible := false;
+  BB5.Visible := false;
+  btCopy.Visible := false;
+ end;
 end;
 
 end.

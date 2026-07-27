@@ -1,0 +1,9 @@
+C:\Users\Admin\source\repos\XuatDataKiemToan\XuatDataKiemToan\bin\Debug\XuatDataKiemToan.exe.config
+C:\Users\Admin\source\repos\XuatDataKiemToan\XuatDataKiemToan\bin\Debug\XuatDataKiemToan.exe
+C:\Users\Admin\source\repos\XuatDataKiemToan\XuatDataKiemToan\bin\Debug\XuatDataKiemToan.pdb
+C:\Users\Admin\source\repos\XuatDataKiemToan\XuatDataKiemToan\obj\Debug\XuatDataKiemToan.XuatDataKiemToan.resources
+C:\Users\Admin\source\repos\XuatDataKiemToan\XuatDataKiemToan\obj\Debug\XuatDataKiemToan.Properties.Resources.resources
+C:\Users\Admin\source\repos\XuatDataKiemToan\XuatDataKiemToan\obj\Debug\XuatDataKiemToan.csproj.GenerateResource.cache
+C:\Users\Admin\source\repos\XuatDataKiemToan\XuatDataKiemToan\obj\Debug\XuatDataKiemToan.csproj.CoreCompileInputs.cache
+C:\Users\Admin\source\repos\XuatDataKiemToan\XuatDataKiemToan\obj\Debug\XuatDataKiemToan.exe
+C:\Users\Admin\source\repos\XuatDataKiemToan\XuatDataKiemToan\obj\Debug\XuatDataKiemToan.pdb

@@ -16,6 +16,7 @@ object LeatherMatInspection: TLeatherMatInspection
   Visible = True
   WindowState = wsMaximized
   OnClose = FormClose
+  OnCreate = FormCreate
   OnDestroy = FormDestroy
   PixelsPerInch = 96
   TextHeight = 13
