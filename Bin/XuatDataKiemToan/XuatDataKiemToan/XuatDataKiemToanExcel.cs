@@ -309,7 +309,6 @@ namespace XuatDataKiemToan
                 xlApp.Visible = true;
                 MessageBox.Show("Xuất thành công!!!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
-
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);

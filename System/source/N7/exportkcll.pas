@@ -4,7 +4,8 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, ComCtrls, DB, DBTables, ExtCtrls, GridsEh, DBGridEh, ComObj;
+  Dialogs, StdCtrls, ComCtrls, DB, DBTables, ExtCtrls, GridsEh, DBGridEh, ComObj,
+  ShellAPI;
 
 type
   Texportkcll1 = class(TForm)
@@ -18,8 +19,10 @@ type
     Label1: TLabel;
     Label2: TLabel;
     Button2: TButton;
+    bWF: TButton;
     procedure Button2Click(Sender: TObject);
     procedure Button1Click(Sender: TObject);
+    procedure bWFClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -240,6 +243,37 @@ begin
     Screen.Cursor := crDefault;
     excelApp := Unassigned;
     dataArray := Unassigned;
+  end;
+end;
+
+procedure Texportkcll1.bWFClick(Sender: TObject);
+var
+  ExePath: string;
+  ResultCode: HINST;
+begin
+  // Duong dan toi file XuatDataKiemToan.exe 
+  // (Vi du nay lay file nam cung thu muc voi chuong trinh chinh)
+  ExePath := ExtractFilePath(Application.ExeName) + 'XuatDataKiemToan.exe';
+
+  // Kiem tra file co ton tai hay khong truoc khi goi
+  if FileExists(ExePath) then
+  begin
+    ResultCode := ShellExecute(
+      Handle,             // Cua so cha
+      'open',             // Lenh thuc hien ('open', 'print', 'explore'...)
+      PChar(ExePath),     // Duong dan file exe
+      nil,                // Tham so truyen vao (neu khong co thi de nil)
+      nil,                // Thu muc lam viec (de nil se dung thu muc mac dinh)
+      SW_SHOWNORMAL       // Trang thai hien thi cua so (SW_SHOWNORMAL, SW_SHOWMAXIMIZED, SW_HIDE...)
+    );
+
+    // ShellExecute tra ve gia tri nho hon hoac bang 32 neu co loi
+    if ResultCode <= 32 then
+      ShowMessage('Co loi khi mo file XuatDataKiemToan.exe! Ma loi: ' + IntToStr(ResultCode));
+  end
+  else
+  begin
+    ShowMessage('Khong tim thay file XuatDataKiemToan.exe');
   end;
 end;
 

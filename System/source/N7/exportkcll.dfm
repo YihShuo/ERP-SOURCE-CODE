@@ -1,6 +1,6 @@
 object exportkcll1: Texportkcll1
-  Left = 481
-  Top = 198
+  Left = 299
+  Top = 164
   Width = 1305
   Height = 668
   Caption = 'export phieu xuat'
@@ -69,6 +69,15 @@ object exportkcll1: Texportkcll1
       Caption = 'Excel'
       TabOrder = 3
       OnClick = Button2Click
+    end
+    object bWF: TButton
+      Left = 728
+      Top = 16
+      Width = 89
+      Height = 33
+      Caption = 'WinForms'
+      TabOrder = 4
+      OnClick = bWFClick
     end
   end
   object DBGridEh1: TDBGridEh
