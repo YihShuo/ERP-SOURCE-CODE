@@ -1,7 +1,7 @@
 object StockIn_BC: TStockIn_BC
-  Left = 267
-  Top = 162
-  Width = 1537
+  Left = 202
+  Top = 197
+  Width = 1672
   Height = 569
   Caption = 'StockIn_BC'
   Color = clBtnFace
@@ -23,7 +23,7 @@ object StockIn_BC: TStockIn_BC
   object Panel2: TPanel
     Left = 0
     Top = 0
-    Width = 1521
+    Width = 1656
     Height = 65
     Align = alTop
     TabOrder = 0
@@ -313,7 +313,7 @@ object StockIn_BC: TStockIn_BC
   object PC1: TPageControl
     Left = 0
     Top = 193
-    Width = 1521
+    Width = 1656
     Height = 337
     ActivePage = TabSheet3
     Align = alClient
@@ -325,7 +325,7 @@ object StockIn_BC: TStockIn_BC
       object DBGridEh1: TDBGridEh
         Left = 0
         Top = 0
-        Width = 1513
+        Width = 1648
         Height = 306
         Align = alClient
         DataSource = DS1
@@ -355,7 +355,7 @@ object StockIn_BC: TStockIn_BC
             Footer.ValueType = fvtCount
             Footers = <>
             ReadOnly = True
-            Title.Caption = '????|List No'
+            Title.Caption = #20837#24235#21934#34399'|List No'
             Width = 120
           end
           item
@@ -363,7 +363,7 @@ object StockIn_BC: TStockIn_BC
             EditButtons = <>
             FieldName = 'Building'
             Footers = <>
-            Title.Caption = '??|Building'
+            Title.Caption = #26847#21029'|Building'
             Width = 55
             OnEditButtonClick = DBGridEh1Columns1EditButtonClick
           end
@@ -372,7 +372,7 @@ object StockIn_BC: TStockIn_BC
             EditButtons = <>
             FieldName = 'DepID'
             Footers = <>
-            Title.Caption = '??????|Dep ID'
+            Title.Caption = #29983#29986#21934#20301#32232#34399'|Dep ID'
             Width = 80
             OnEditButtonClick = DBGridEh1Columns2EditButtonClick
           end
@@ -382,7 +382,7 @@ object StockIn_BC: TStockIn_BC
             FieldName = 'DepName'
             Footers = <>
             ReadOnly = True
-            Title.Caption = '??????|Dep Name'
+            Title.Caption = #29983#29986#21934#20301#21517#31281'|Dep Name'
             Width = 100
           end
           item
@@ -391,7 +391,7 @@ object StockIn_BC: TStockIn_BC
             FieldName = 'DepMemo'
             Footers = <>
             ReadOnly = True
-            Title.Caption = '??????|Dep Memo'
+            Title.Caption = #29983#29986#21934#20301#21517#31281'|Dep Memo'
             Width = 100
           end
           item
@@ -401,7 +401,7 @@ object StockIn_BC: TStockIn_BC
             Footer.ValueType = fvtSum
             Footers = <>
             ReadOnly = True
-            Title.Caption = 'B???|Grade B'
+            Title.Caption = 'B'#21697#25976#37327'|Grade B'
             Width = 60
           end
           item
@@ -411,7 +411,7 @@ object StockIn_BC: TStockIn_BC
             Footer.ValueType = fvtSum
             Footers = <>
             ReadOnly = True
-            Title.Caption = 'C???|Grade C'
+            Title.Caption = 'C'#21697#25976#37327'|Grade C'
             Width = 60
           end
           item
@@ -420,7 +420,7 @@ object StockIn_BC: TStockIn_BC
             FieldName = 'UserID'
             Footers = <>
             ReadOnly = True
-            Title.Caption = '???|User ID'
+            Title.Caption = #20351#29992#32773'|User ID'
             Width = 80
           end
           item
@@ -430,7 +430,7 @@ object StockIn_BC: TStockIn_BC
             FieldName = 'UserDate'
             Footers = <>
             ReadOnly = True
-            Title.Caption = '????|User Date'
+            Title.Caption = #30064#21205#26085#26399'|User Date'
             Width = 100
           end
           item
@@ -439,7 +439,7 @@ object StockIn_BC: TStockIn_BC
             FieldName = 'Status'
             Footers = <>
             ReadOnly = True
-            Title.Caption = '??|Status'
+            Title.Caption = #29376#24907'|Status'
             Width = 100
           end
           item
@@ -449,7 +449,7 @@ object StockIn_BC: TStockIn_BC
             FieldName = 'CFMDate'
             Footers = <>
             ReadOnly = True
-            Title.Caption = '?????|CFM Date'
+            Title.Caption = #30906#35469#20837#24235#26085'|CFM Date'
             Width = 100
           end>
       end
@@ -460,7 +460,7 @@ object StockIn_BC: TStockIn_BC
       object DBGridEh2: TDBGridEh
         Left = 0
         Top = 0
-        Width = 1513
+        Width = 1648
         Height = 306
         Align = alClient
         DataSource = DS2
@@ -489,7 +489,7 @@ object StockIn_BC: TStockIn_BC
             Footer.ValueType = fvtCount
             Footers = <>
             ReadOnly = True
-            Title.Caption = '????|List No'
+            Title.Caption = #20837#24235#21934#34399'|List No'
             Width = 120
           end
           item
@@ -501,7 +501,7 @@ object StockIn_BC: TStockIn_BC
             PickList.Strings = (
               'B'
               'C')
-            Title.Caption = '??|Grade'
+            Title.Caption = #31561#32026'|Grade'
             Width = 50
             OnUpdateData = DBGridEh2Columns1UpdateData
           end
@@ -510,7 +510,7 @@ object StockIn_BC: TStockIn_BC
             EditButtons = <>
             FieldName = 'DDBH'
             Footers = <>
-            Title.Caption = '????|Order'
+            Title.Caption = #35330#21934#32232#34399'|Order'
             Width = 80
             OnEditButtonClick = DBGridEh2Columns6EditButtonClick
           end
@@ -520,7 +520,7 @@ object StockIn_BC: TStockIn_BC
             FieldName = 'KHPO'
             Footers = <>
             ReadOnly = True
-            Title.Caption = '??PO|PO'
+            Title.Caption = #23458#25142'PO|PO'
             Width = 100
           end
           item
@@ -529,7 +529,7 @@ object StockIn_BC: TStockIn_BC
             FieldName = 'Article'
             Footers = <>
             ReadOnly = True
-            Title.Caption = '??|SKU'
+            Title.Caption = #29986#21697#36039#26009'|SKU'
             Width = 80
           end
           item
@@ -538,7 +538,7 @@ object StockIn_BC: TStockIn_BC
             FieldName = 'XieMing'
             Footers = <>
             ReadOnly = True
-            Title.Caption = '??|Shoe Name'
+            Title.Caption = #29986#21697#36039#26009'|Shoe Name'
             Width = 100
           end
           item
@@ -547,7 +547,7 @@ object StockIn_BC: TStockIn_BC
             FieldName = 'YSSM'
             Footers = <>
             ReadOnly = True
-            Title.Caption = '??|Color'
+            Title.Caption = #29986#21697#36039#26009'|Color'
             Width = 100
           end
           item
@@ -556,7 +556,7 @@ object StockIn_BC: TStockIn_BC
             FieldName = 'JiJie'
             Footers = <>
             ReadOnly = True
-            Title.Caption = '??|Season'
+            Title.Caption = #29986#21697#36039#26009'|Season'
             Width = 55
           end
           item
@@ -565,7 +565,7 @@ object StockIn_BC: TStockIn_BC
             FieldName = 'DDMH'
             Footers = <>
             ReadOnly = True
-            Title.Caption = '??|Outsole'
+            Title.Caption = #29986#21697#36039#26009'|Outsole'
             Width = 80
           end
           item
@@ -687,7 +687,7 @@ object StockIn_BC: TStockIn_BC
               '27.5'
               '28.0'
               '')
-            Title.Caption = '??|Size'
+            Title.Caption = #29986#21697#36039#26009'|Size'
             Width = 50
           end
           item
@@ -697,7 +697,7 @@ object StockIn_BC: TStockIn_BC
             Footer.DisplayFormat = '#0.0'
             Footer.ValueType = fvtSum
             Footers = <>
-            Title.Caption = '??|Qty'
+            Title.Caption = #29986#21697#36039#26009'|Qty'
             Width = 70
             OnUpdateData = DBGridEh2Columns13UpdateData
           end
@@ -708,7 +708,7 @@ object StockIn_BC: TStockIn_BC
             FieldName = 'DefectID'
             Footers = <>
             NotInKeyListIndex = 0
-            Title.Caption = '??|Defect'
+            Title.Caption = #29986#21697#36039#26009'|Defect'
             Width = 175
           end
           item
@@ -716,7 +716,7 @@ object StockIn_BC: TStockIn_BC
             EditButtons = <>
             FieldName = 'CheckDate'
             Footers = <>
-            Title.Caption = '????|Check Date'
+            Title.Caption = #27298#39511#26085#26399'|Check Date'
             Width = 100
           end
           item
@@ -730,7 +730,6 @@ object StockIn_BC: TStockIn_BC
             EditButtons = <>
             FieldName = 'Carton_No'
             Footers = <>
-            Title.Caption = '???|Carton_No'
           end
           item
             Color = cl3DLight
@@ -738,7 +737,7 @@ object StockIn_BC: TStockIn_BC
             FieldName = 'UserID'
             Footers = <>
             ReadOnly = True
-            Title.Caption = '???|UserID'
+            Title.Caption = #20351#29992#32773'|UserID'
             Width = 70
           end
           item
@@ -748,7 +747,7 @@ object StockIn_BC: TStockIn_BC
             FieldName = 'UserDate'
             Footers = <>
             ReadOnly = True
-            Title.Caption = '????|User Date'
+            Title.Caption = #30064#21205#26085#26399'|User Date'
             Width = 100
           end
           item
@@ -760,6 +759,12 @@ object StockIn_BC: TStockIn_BC
               'L+R'
               'R'
               'L')
+          end
+          item
+            EditButtons = <>
+            FieldName = 'Source'
+            Footers = <>
+            Visible = False
           end>
       end
     end
@@ -769,7 +774,7 @@ object StockIn_BC: TStockIn_BC
       object DBGridEh3: TDBGridEh
         Left = 0
         Top = 65
-        Width = 1513
+        Width = 1648
         Height = 241
         Align = alClient
         DataSource = ds3
@@ -858,15 +863,16 @@ object StockIn_BC: TStockIn_BC
           end
           item
             EditButtons = <>
-            FieldName = 'VNSM'
+            FieldName = 'VNSM2'
             Footers = <>
+            Title.Caption = 'VNSM'
             Width = 300
           end>
       end
       object Panel4: TPanel
         Left = 0
         Top = 0
-        Width = 1513
+        Width = 1648
         Height = 65
         Align = alTop
         TabOrder = 1
@@ -1221,7 +1227,7 @@ object StockIn_BC: TStockIn_BC
   object Panel3: TPanel
     Left = 0
     Top = 65
-    Width = 1521
+    Width = 1656
     Height = 65
     Align = alTop
     TabOrder = 2
@@ -1482,7 +1488,7 @@ object StockIn_BC: TStockIn_BC
   object Panel1: TPanel
     Left = 0
     Top = 130
-    Width = 1521
+    Width = 1656
     Height = 63
     Align = alTop
     TabOrder = 3
@@ -1913,7 +1919,11 @@ object StockIn_BC: TStockIn_BC
       
         'KCRKS_BC.DefectID, KCRKS_BC.CheckDate, KCRKS_BC.UserID, KCRKS_BC' +
         '.UserDate, KCRKS_BC.YN '
-      ',KCRKS_BC.RemainQty,KCRKS_BC.RorL,KCRKS_BC.KCBH'
+      
+        ',KCRKS_BC.RemainQty,KCRKS_BC.RorL,KCRKS_BC.KCBH,CASE WHEN KCRKS_' +
+        'BC.DefectID LIKE '#39'CF%'#39' THEN '#39'Repacking'#39' WHEN KCRKS_BC.DefectID L' +
+        'IKE '#39'Q%'#39' THEN '#39'TQC'#39' WHEN KCRKS_BC.DefectID LIKE '#39'RQ%'#39' THEN '#39'RQC'#39 +
+        ' ELSE '#39'Unknown'#39' END AS Source'
       'FROM KCRKS_BC'
       'LEFT JOIN DDZL ON DDZL.DDBH = KCRKS_BC.DDBH'
       
@@ -2012,6 +2022,11 @@ object StockIn_BC: TStockIn_BC
       FixedChar = True
       Size = 5
     end
+    object QKCRKSSource: TStringField
+      FieldName = 'Source'
+      FixedChar = True
+      Size = 9
+    end
   end
   object DS2: TDataSource
     DataSet = QKCRKS
@@ -2099,7 +2114,7 @@ object StockIn_BC: TStockIn_BC
       '    ,SUM(qcrd.Qty)-ISNULL(RK_BC.Qty,0) as RemainQty'
       
         #9'   , case when SUM(qcrd.Qty)-ISNULL(RK_BC.Qty,0)>0 then 0 else ' +
-        '1 end as YN, QCBLYY.VNSM '
+        '1 end as YN, QCBLYY.VNSM2'
       'FROM (select DISTINCT SCBH,GSBH from qcr where 1=1'
       '    AND qcr.GSBH = '#39'VDH'#39
       '    AND qcr.USERDATE >= '#39'2026-05-14'#39
@@ -2132,7 +2147,7 @@ object StockIn_BC: TStockIn_BC
       '    qcr.SCBH'
       '    ,qcr.DepNO,BDepartment.DepName '
       '    ,qcr.GSBH'
-      '    ,qcrd.YYBH,RK_BC.Qty,QCBLYY.VNSM, qcrd.CC, is_right'
+      '    ,qcrd.YYBH,RK_BC.Qty,QCBLYY.VNSM2, qcrd.CC, is_right'
       'Order by DepNO')
     UpdateObject = updtsql1
     Left = 193
@@ -2173,11 +2188,6 @@ object StockIn_BC: TStockIn_BC
     object QryPendingYN: TIntegerField
       FieldName = 'YN'
     end
-    object QryPendingVNSM: TStringField
-      FieldName = 'VNSM'
-      FixedChar = True
-      Size = 1
-    end
     object QryPendingSize: TStringField
       FieldName = 'Size'
       FixedChar = True
@@ -2190,6 +2200,11 @@ object StockIn_BC: TStockIn_BC
     end
     object QryPendingQty: TFloatField
       FieldName = 'Qty'
+    end
+    object QryPendingVNSM2: TStringField
+      FieldName = 'VNSM2'
+      FixedChar = True
+      Size = 255
     end
   end
   object ds3: TDataSource

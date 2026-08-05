@@ -314,7 +314,7 @@ uses DM3, QAStationP, Ontime1, QCIssue1, QCOntime1, QCDailyReport1, FeedbackWast
   DailyOutsourcingCheck_, IncomeMatRubberOutsole, IncomeMatMidInSoles,
   IncomeMatEvaPaintings, ProduceMatFailure, IncomeUpperMaterials,
   LeatherMatInspections, HumidityChecks, SoleWeekReports,
-  MonthlyReportMaterials, NonConformingMaterials;
+  MonthlyReportMaterials, NonConformingMaterials, NGMaterials;
 
 {$R *.dfm}
 //

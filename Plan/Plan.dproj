@@ -1,0 +1,915 @@
+﻿	<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+		<PropertyGroup>
+			<ProjectGuid>{94372AC5-5C5B-4596-BB4E-35EFADF4DADC}</ProjectGuid>
+			<MainSource>Plan.dpr</MainSource>
+			<Base>True</Base>
+			<Config Condition="'$(Config)'==''">Debug</Config>
+			<TargetedPlatforms>1</TargetedPlatforms>
+			<AppType>Application</AppType>
+			<FrameworkType>VCL</FrameworkType>
+			<ProjectVersion>13.4</ProjectVersion>
+			<Platform Condition="'$(Platform)'==''">Win32</Platform>
+		</PropertyGroup>
+		<PropertyGroup Condition="'$(Config)'=='Base' or '$(Base)'!=''">
+			<Base>true</Base>
+		</PropertyGroup>
+		<PropertyGroup Condition="('$(Platform)'=='Win64' and '$(Base)'=='true') or '$(Base_Win64)'!=''">
+			<Base_Win64>true</Base_Win64>
+			<CfgParent>Base</CfgParent>
+			<Base>true</Base>
+		</PropertyGroup>
+		<PropertyGroup Condition="('$(Platform)'=='Win32' and '$(Base)'=='true') or '$(Base_Win32)'!=''">
+			<Base_Win32>true</Base_Win32>
+			<CfgParent>Base</CfgParent>
+			<Base>true</Base>
+		</PropertyGroup>
+		<PropertyGroup Condition="'$(Config)'=='Release' or '$(Cfg_1)'!=''">
+			<Cfg_1>true</Cfg_1>
+			<CfgParent>Base</CfgParent>
+			<Base>true</Base>
+		</PropertyGroup>
+		<PropertyGroup Condition="'$(Config)'=='Debug' or '$(Cfg_2)'!=''">
+			<Cfg_2>true</Cfg_2>
+			<CfgParent>Base</CfgParent>
+			<Base>true</Base>
+		</PropertyGroup>
+		<PropertyGroup Condition="'$(Base)'!=''">
+			<DCC_UsePackage>vcl;rtl;vclx;indy;inet;xmlrtl;vclie;inetdbbde;inetdbxpress;dbrtl;dsnap;dsnapcon;vcldb;soaprtl;VclSmp;dbexpress;dbxcds;inetdb;bdertl;vcldbx;webdsnap;websnap;adortl;ibxpress;teeui;teedb;tee;dss;visualclx;visualdbclx;vclactnband;vclshlctrls;IntrawebDB_50_70;Intraweb_50_70;Rave50CLX;Rave50VCL;dclOfficeXP;$(DCC_UsePackage)</DCC_UsePackage>
+			<VerInfo_Keys>CompanyName=;FileDescription=;FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
+			<DCC_SymbolReferenceInfo>1</DCC_SymbolReferenceInfo>
+			<DCC_Namespace>Vcl;Vcl.Imaging;Vcl.Touch;Vcl.Samples;Vcl.Shell;System;Xml;Data;Datasnap;Web;Soap;Winapi;Bde;Data.Win;System.Win;$(DCC_Namespace)</DCC_Namespace>
+			<DCC_ExeOutput>../Bin</DCC_ExeOutput>
+			<DCC_ImageBase>00400000</DCC_ImageBase>
+			<DCC_K>false</DCC_K>
+			<DCC_N>true</DCC_N>
+			<DCC_S>false</DCC_S>
+			<VerInfo_Locale>2052</VerInfo_Locale>
+			<DCC_E>false</DCC_E>
+			<DCC_F>false</DCC_F>
+		</PropertyGroup>
+		<PropertyGroup Condition="'$(Base_Win64)'!=''">
+			<Icon_MainIcon>Plan_Icon.ico</Icon_MainIcon>
+		</PropertyGroup>
+		<PropertyGroup Condition="'$(Base_Win32)'!=''">
+			<VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
+			<Icon_MainIcon>Plan_Icon.ico</Icon_MainIcon>
+			<DCC_Namespace>Winapi;System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;Bde;$(DCC_Namespace)</DCC_Namespace>
+			<VerInfo_Locale>1033</VerInfo_Locale>
+			<Manifest_File>$(BDS)\bin\default_app.manifest</Manifest_File>
+			<VerInfo_Keys>CompanyName=;FileDescription=;FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
+		</PropertyGroup>
+		<PropertyGroup Condition="'$(Cfg_1)'!=''">
+			<DCC_LocalDebugSymbols>false</DCC_LocalDebugSymbols>
+			<DCC_DebugInformation>false</DCC_DebugInformation>
+			<DCC_SymbolReferenceInfo>0</DCC_SymbolReferenceInfo>
+			<DCC_Define>RELEASE;$(DCC_Define)</DCC_Define>
+		</PropertyGroup>
+		<PropertyGroup Condition="'$(Cfg_2)'!=''">
+			<DCC_Define>DEBUG;$(DCC_Define)</DCC_Define>
+			<DCC_Optimize>false</DCC_Optimize>
+			<DCC_GenerateStackFrames>true</DCC_GenerateStackFrames>
+		</PropertyGroup>
+		<ItemGroup>
+			<DelphiCompile Include="$(MainSource)">
+				<MainSource>MainSource</MainSource>
+			</DelphiCompile>
+			<DCCReference Include="source\main1.pas">
+				<Form>main</Form>
+			</DCCReference>
+			<DCCReference Include="source\ulogin.pas">
+				<Form>LOGIN</Form>
+			</DCCReference>
+			<DCCReference Include="source\DM3.pas">
+				<Form>DM2</Form>
+				<DesignClass>TDataModule</DesignClass>
+			</DCCReference>
+			<DCCReference Include="Source\OrderList1.pas">
+				<Form>OrderList</Form>
+			</DCCReference>
+			<DCCReference Include="Source\Prodsend1.pas">
+				<Form>Prodsend</Form>
+			</DCCReference>
+			<DCCReference Include="Source\ProdSend_Print1.pas">
+				<Form>ProdSend_Print</Form>
+			</DCCReference>
+			<DCCReference Include="Source\PlanDate1.pas">
+				<Form>PlanDate</Form>
+			</DCCReference>
+			<DCCReference Include="Source\ProdSend_LeanP1.pas">
+				<Form>ProdSend_LeanP</Form>
+			</DCCReference>
+			<DCCReference Include="Source\EmbroiderRep1.pas">
+				<Form>EmbroiderRep</Form>
+			</DCCReference>
+			<DCCReference Include="Source\EmbroiderSend1.pas">
+				<Form>EmbroiderSend</Form>
+			</DCCReference>
+			<DCCReference Include="Source\EmbroiderSend_ZS1.pas">
+				<Form>EmbroiderSend_ZS</Form>
+			</DCCReference>
+			<DCCReference Include="Source\EmbroiderSend_Print1.pas">
+				<Form>EmbroiderSend_Print</Form>
+			</DCCReference>
+			<DCCReference Include="Source\EmbroiderTrace1.pas">
+				<Form>EmbroiderTrace</Form>
+			</DCCReference>
+			<DCCReference Include="Source\ProductionOrder1.pas">
+				<Form>ProductionOrder</Form>
+			</DCCReference>
+			<DCCReference Include="Source\Departmenttype1.pas">
+				<Form>Departmenttype</Form>
+			</DCCReference>
+			<DCCReference Include="Source\DailyRep1.pas">
+				<Form>DailyRep</Form>
+			</DCCReference>
+			<DCCReference Include="Source\MonthCalendar1.pas">
+				<Form>MonthCalendar</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN331\ModelCapacity1.pas">
+				<Form>ModelCapacity</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN331\ModelCap_XX1.pas">
+				<Form>ModelCap_XX</Form>
+			</DCCReference>
+			<DCCReference Include="Source\OrderSpec1.pas">
+				<Form>OrderSpec</Form>
+			</DCCReference>
+			<DCCReference Include="Source\EmbroiderRep_Dep1.pas">
+				<Form>EmbroiderRep_Dep</Form>
+			</DCCReference>
+			<DCCReference Include="Source\EmbroiderRep_sczl1.pas">
+				<Form>EmbroiderRep_sczl</Form>
+			</DCCReference>
+			<DCCReference Include="Source\OnTime_sczl1.pas">
+				<Form>OnTime_sczl</Form>
+			</DCCReference>
+			<DCCReference Include="Source\Ontime1.pas">
+				<Form>Ontime</Form>
+			</DCCReference>
+			<DCCReference Include="Source\OnTime_Dep1.pas">
+				<Form>OnTime_Dep</Form>
+			</DCCReference>
+			<DCCReference Include="Source\Produceset1.pas">
+				<Form>Produceset</Form>
+			</DCCReference>
+			<DCCReference Include="Source\Produceset_size1.pas">
+				<Form>Produceset_size</Form>
+			</DCCReference>
+			<DCCReference Include="Source\OutputAdjust1.pas">
+				<Form>OutputAdjust</Form>
+			</DCCReference>
+			<DCCReference Include="Source\MonthReport1.pas">
+				<Form>MonthReport</Form>
+			</DCCReference>
+			<DCCReference Include="Source\Planoutput1.pas">
+				<Form>Planoutput</Form>
+			</DCCReference>
+			<DCCReference Include="Source\ProdTime1.pas">
+				<Form>ProdTime</Form>
+			</DCCReference>
+			<DCCReference Include="Source\OnTime_XH1.pas">
+				<Form>OnTime_XH</Form>
+			</DCCReference>
+			<DCCReference Include="Source\CapacityPer1.pas">
+				<Form>CapacityPer</Form>
+			</DCCReference>
+			<DCCReference Include="Source\ArticleType1.pas">
+				<Form>ArticleType</Form>
+			</DCCReference>
+			<DCCReference Include="Source\OrderCheck1.pas">
+				<Form>OrderCheck</Form>
+			</DCCReference>
+			<DCCReference Include="Source\OrderCheck_Det1.pas">
+				<Form>OrderCheck_Det</Form>
+			</DCCReference>
+			<DCCReference Include="Source\ProModel1.pas">
+				<Form>ProModel</Form>
+			</DCCReference>
+			<DCCReference Include="Source\ProModel_Mod1.pas">
+				<Form>ProModel_Mod</Form>
+			</DCCReference>
+			<DCCReference Include="Source\PlanDate_Dep1.pas">
+				<Form>PlanDate_Dep</Form>
+			</DCCReference>
+			<DCCReference Include="Source\PlanDate_DepS1.pas">
+				<Form>PlanDate_DepS</Form>
+			</DCCReference>
+			<DCCReference Include="Source\CalendarPre1.pas">
+				<Form>CalendarPre</Form>
+			</DCCReference>
+			<DCCReference Include="Source\DailyPro1.pas">
+				<Form>DailyPro</Form>
+			</DCCReference>
+			<DCCReference Include="Source\ModelCap_NO1.pas">
+				<Form>ModelCap_NO</Form>
+			</DCCReference>
+			<DCCReference Include="Source\Purtrace1.pas">
+				<Form>Purtrace</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SafeMaterial1.pas">
+				<Form>SafeMaterial</Form>
+			</DCCReference>
+			<DCCReference Include="Source\MaterialSetP_CL1.pas">
+				<Form>MaterialSetP_CL</Form>
+			</DCCReference>
+			<DCCReference Include="Source\MaterialSet1.pas">
+				<Form>MaterialSet</Form>
+			</DCCReference>
+			<DCCReference Include="Source\MaterialSetP1.pas">
+				<Form>MaterialSetP</Form>
+			</DCCReference>
+			<DCCReference Include="Source\Ontime_Check1.pas">
+				<Form>Ontime_Check</Form>
+			</DCCReference>
+			<DCCReference Include="..\production\Source\PSpecPrintssTW1.pas">
+				<Form>PSpecPrintssTW</Form>
+			</DCCReference>
+			<DCCReference Include="..\production\Source\PSpecPrintss1.pas">
+				<Form>PSpecPrintss</Form>
+			</DCCReference>
+			<DCCReference Include="Source\DailyActionPlan1.pas">
+				<Form>DailyActionPlan</Form>
+			</DCCReference>
+			<DCCReference Include="Source\Report6011.pas">
+				<Form>Report601</Form>
+			</DCCReference>
+			<DCCReference Include="Source\Report6021.pas">
+				<Form>Report602</Form>
+			</DCCReference>
+			<DCCReference Include="Source\Report6031.pas">
+				<Form>Report603</Form>
+			</DCCReference>
+			<DCCReference Include="Source\Report6041.pas">
+				<Form>Report604</Form>
+			</DCCReference>
+			<DCCReference Include="Source\Report6081.pas">
+				<Form>Report608</Form>
+			</DCCReference>
+			<DCCReference Include="Source\DailyActionStardard1.pas">
+				<Form>DailyActionStardard</Form>
+			</DCCReference>
+			<DCCReference Include="Source\DailyActionPlanP1.pas">
+				<Form>DailyActionPlanP</Form>
+			</DCCReference>
+			<DCCReference Include="Source\DailyActionWork1.pas">
+				<Form>DailyActionWork</Form>
+			</DCCReference>
+			<DCCReference Include="Source\MonthOutPutDep1.pas">
+				<Form>MonthOutPutDep</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN541\MonthOutPut1.pas">
+				<Form>MonthOutPut</Form>
+			</DCCReference>
+			<DCCReference Include="Source\OrderCheckOrd1.pas">
+				<Form>OrderCheckOrd</Form>
+			</DCCReference>
+			<DCCReference Include="Source\OrderCheckOrd_Det1.pas">
+				<Form>OrderCheckOrd_Det</Form>
+			</DCCReference>
+			<DCCReference Include="Source\OrderCheckSKU1.pas">
+				<Form>OrderCheckSKU</Form>
+			</DCCReference>
+			<DCCReference Include="Source\OrderCheckSku_Det1.pas">
+				<Form>OrderCheckSku_Det</Form>
+			</DCCReference>
+			<DCCReference Include="Source\OrderCheckCut1.pas">
+				<Form>OrderCheckCut</Form>
+			</DCCReference>
+			<DCCReference Include="Source\OrderCheckCus1.pas">
+				<Form>OrderCheckCus</Form>
+			</DCCReference>
+			<DCCReference Include="Source\OrderCheckCut_Det1.pas">
+				<Form>OrderCheckCut_Det</Form>
+			</DCCReference>
+			<DCCReference Include="Source\OrderCheckCus_Det1.pas">
+				<Form>OrderCheckCus_Det</Form>
+			</DCCReference>
+			<DCCReference Include="Source\OrderCheckCSD1.pas">
+				<Form>OrderCheckCSD</Form>
+			</DCCReference>
+			<DCCReference Include="Source\OrderCheckCSD_Det1.pas">
+				<Form>OrderCheckCSD_Det</Form>
+			</DCCReference>
+			<DCCReference Include="Source\OrderCheckETD1.pas">
+				<Form>OrderCheckETD</Form>
+			</DCCReference>
+			<DCCReference Include="Source\OrderCheckETD_Det1.pas">
+				<Form>OrderCheckETD_Det</Form>
+			</DCCReference>
+			<DCCReference Include="Source\OrderImport1.pas">
+				<Form>OrderImport</Form>
+			</DCCReference>
+			<DCCReference Include="Source\OrderImport_DD1.pas">
+				<Form>OrderImport_DD</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN71\ScanPrintBar1.pas">
+				<Form>ScanPrintBar</Form>
+			</DCCReference>
+			<DCCReference Include="Source\OrderPlan1.pas">
+				<Form>OrderPlan</Form>
+			</DCCReference>
+			<DCCReference Include="Source\OrderPlan_Dep1.pas">
+				<Form>OrderPlan_Dep</Form>
+			</DCCReference>
+			<DCCReference Include="Source\OrderPlan_Dep21.pas">
+				<Form>OrderPlan_Dep2</Form>
+			</DCCReference>
+			<DCCReference Include="Source\OrderPlan_Print1.pas">
+				<Form>OrderPlan_Print</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN74\ScankeyIn1.pas">
+				<Form>ScankeyIn</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN74\ScankeyIn_Dep1.pas">
+				<Form>ScankeyIn_Dep</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN74\ScankeyIn_Det1.pas">
+				<Form>ScankeyIn_Det</Form>
+			</DCCReference>
+			<DCCReference Include="Source\PlanDatediff1.pas">
+				<Form>PlanDatediff</Form>
+			</DCCReference>
+			<DCCReference Include="Source\ScanIn1.pas">
+				<Form>ScanIn</Form>
+			</DCCReference>
+			<DCCReference Include="Source\ScanIn_Dep1.pas">
+				<Form>ScanIn_Dep</Form>
+			</DCCReference>
+			<DCCReference Include="Source\ScanScreen1.pas">
+				<Form>ScanScreen</Form>
+			</DCCReference>
+			<DCCReference Include="Source\ScanScreenDep1.pas">
+				<Form>ScanScreenDep</Form>
+			</DCCReference>
+			<DCCReference Include="Source\ScanCheck1.pas">
+				<Form>ScanCheck</Form>
+			</DCCReference>
+			<DCCReference Include="Source\ScanAdjust3.pas">
+				<Form>ScanAdjust2</Form>
+			</DCCReference>
+			<DCCReference Include="Source\ScanAdjust2_Dep1.pas">
+				<Form>ScanAdjust2_Dep</Form>
+			</DCCReference>
+			<DCCReference Include="Source\ScanPerHour1.pas">
+				<Form>ScanPerHour</Form>
+			</DCCReference>
+			<DCCReference Include="Source\ScanImport1.pas">
+				<Form>ScanImport</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN32\ProdSendR1.pas">
+				<Form>ProdSendR</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN32\ProdSendR_Print1.pas">
+				<Form>ProdSendR_Print</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN32\ProdSendR_BW1.pas">
+				<Form>ProdSendR_BW</Form>
+			</DCCReference>
+			<DCCReference Include="Source\ScanDailyOrd1.pas">
+				<Form>ScanDailyOrd</Form>
+			</DCCReference>
+			<DCCReference Include="Source\PayableLit_Check1.pas">
+				<Form>PayableLit_Check</Form>
+			</DCCReference>
+			<DCCReference Include="Source\ScanRubStock1.pas">
+				<Form>ScanRubStock</Form>
+			</DCCReference>
+			<DCCReference Include="Source\BarcodeCheck1.pas">
+				<Form>BarcodeCheck</Form>
+			</DCCReference>
+			<DCCReference Include="..\QC\Source\OrderAnalysisp.pas">
+				<Form>OrderAnalysis</Form>
+			</DCCReference>
+			<DCCReference Include="Source\Graphicalp.pas">
+				<Form>Graphical</Form>
+			</DCCReference>
+			<DCCReference Include="Source\Unit1.pas">
+				<Form>Report608GX</Form>
+			</DCCReference>
+			<DCCReference Include="Source\Unit2.pas">
+				<Form>Report608inQty</Form>
+			</DCCReference>
+			<DCCReference Include="Source\Report609p.pas">
+				<Form>Report609</Form>
+			</DCCReference>
+			<DCCReference Include="Source\editplanP.pas">
+				<Form>editplan</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN392\checkplanP.pas">
+				<Form>checkplan</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SMDDLOCKP.pas">
+				<Form>SMDDLOCK</Form>
+			</DCCReference>
+			<DCCReference Include="Source\Report6032P.pas">
+				<Form>Report6032</Form>
+			</DCCReference>
+			<DCCReference Include="Source\OrderPack_Print1.pas">
+				<Form>OrderPack_Print</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN544\ConverseProductionSchedule1.pas">
+				<Form>ConverseProductionSchedule</Form>
+			</DCCReference>
+			<DCCReference Include="..\production\Source\SN16\PSPecPrintss_SP1.pas">
+				<Form>PSpecPrintss_SP</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN392\RTOVWeeklyScheduler1.pas">
+				<Form>RTOVWeeklyScheduler</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN535\DailyReportDetail1.pas">
+				<Form>DailyReportDetail</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN332\ModelDepartment_Dep1.pas">
+				<Form>ModelDepartment_Dep</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN332\ModelDepartment1.pas">
+				<Form>ModelDepartment</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN333\ModelProduction1.pas">
+				<Form>ModelProduction</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN333\ModelProduction_Dep1.pas">
+				<Form>ModelProduction_Dep</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN333\ModelProduction_XX1.pas">
+				<Form>ModelProduction_XX</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN545\MonthOutPutPOH1.pas">
+				<Form>MonthOutPutPOH</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN546\FactMonthOutPutPOH1.pas">
+				<Form>FactMonthOutPutPOH</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN545\ExcelSheetDlg1.pas">
+				<Form>ExcelSheetDlg</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN3B\PreArrange.pas">
+				<Form>F_PreArrange</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN3C\ScheduleGantt.pas">
+				<Form>F_ScheduleGantt</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN3B\NotYetRelease.pas">
+				<Form>F_NotYetRelease</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN2A1\DailyActualHour1.pas">
+				<Form>DailyActualHour</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN3B\SplitTheOrder.pas">
+				<Form>F_SplitTheOrder</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN2A2\ActualWord1.pas">
+				<Form>ActualWord</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN547\DepartmentDailyPPH1.pas">
+				<Form>DepartmentDailyPPH</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN3B\Department1.pas">
+				<Form>F_Department</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN3B\Shape1.pas">
+				<Form>F_Shape</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN3B\Process1.pas">
+				<Form>F_Process</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN6101\BuyNoPPH1.pas">
+				<Form>BuyNoPPH</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN6102\RyPPH1.pas">
+				<Form>RyPPH</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN6103\InWarePPH1.pas">
+				<Form>InWarePPH</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN7804\ScanPerHourPPH1.pas">
+				<Form>ScanPerHourPPH</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN7804\ScanPerHourPPHDet1.pas">
+				<Form>ScanPerHourPPHDet</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN6104\PlanPPHWeight1.pas">
+				<Form>PlanPPHWeight</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN7805\HourArticlePPH1.pas">
+				<Form>HourArticlePPH</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN7806\ArticleHourPPH1.pas">
+				<Form>ArticleHourPPH</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN722\ScanInBox1.pas">
+				<Form>ScanInBox</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN722\ScanInBox_RY1.pas">
+				<Form>ScanInBox_RY</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN722\ScanInBox_Dep1.pas">
+				<Form>ScanInBox_Dep</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN611\ArticlePPH1.pas">
+				<Form>ArticlePPH</Form>
+			</DCCReference>
+			<DCCReference Include="Source\ChiTietScan1.pas">
+				<Form>ChiTietScan</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN7801\DSDonVi1.pas">
+				<Form>DSDonVi</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN7801\ScanChiTiet1.pas">
+				<Form>ScanChiTiet</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN7801\ChuyenGio1.pas">
+				<Form>ChuyenGio</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN723\CDScan1.pas">
+				<Form>CDScan</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN5A2\CutDispatchRpt1.pas">
+				<Form>CutDispatchRpt</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN5A2\CutDispathchRptDet1.pas">
+				<Form>CutDispathchRptDet</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN723\CDScan_Det1.pas">
+				<Form>CDScan_Det</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN541\Dep_lean1.pas">
+				<Form>Dep_lean</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN5A3\StitchingSend1.pas">
+				<Form>StitchingSend</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN5A4\Cutting_Output_Report1.pas">
+				<Form>Cutting_Output_Report</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN5A1\CutMaterialRpt1.pas">
+				<Form>CutMaterialRpt</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN27\untClipboard.pas"/>
+			<DCCReference Include="Source\SN5A5\CutProcessRpt_Det1.pas">
+				<Form>CutProcessRpt_Det</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN5A5\CutProcessRpt1.pas">
+				<Form>CutProcessRpt</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN724\ProcessingListConfirm1.pas">
+				<Form>ProcessingListConfirm</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN723\CDScan_BDepartment1.pas">
+				<Form>CDScan_BDepartment</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN5A6\PartsTracking1.pas">
+				<Form>PartsTracking</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN5A7\CuttingMachineLoading1.pas">
+				<Form>CuttingMachineLoading</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN5A6\ShoesPartSegmentation1.pas">
+				<Form>ShoesPartSegmentation</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN2A3\InputOrderABC1.pas">
+				<Form>InputOrderABC</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN548\MonthIEOutPlan1.pas">
+				<Form>MonthIEOutPlan</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN7807\IEPerHour1.pas">
+				<Form>IEPerHour</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN2A4\IEPlanOutput1.pas">
+				<Form>IEPlanOutput</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN562\MatchingForm1.pas">
+				<Form>MatchingForm</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN6033\OrderPlanReport1.pas">
+				<Form>OrderPlanReport</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN6105\PlanPOHMonth1.pas">
+				<Form>PlanPOHMonth</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN3D2\SMDDDispatch1.pas">
+				<Form>SMDDDispatch</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN3D2\SMDDDispatch_DepID1.pas">
+				<Form>SMDDDispatch_DepID</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN3D2\SMDDDispatch_print1.pas">
+				<Form>SMDDDispatch_print</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN3D1\SMDDArrange1.pas">
+				<Form>SMDDArrange</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN612\TabletReport1.pas">
+				<Form>TabletReport</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN613\InnerBoxScanTickRpt1.pas">
+				<Form>InnerBoxScanTickRpt</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN725\InnerBoxScanTick_Dep1.pas">
+				<Form>InnerBoxScanTick_Dep</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN725\InnerBoxScanTick1.pas">
+				<Form>InnerBoxScanTick</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN2B\GBTest1.pas">
+				<Form>GBTest</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN3E\ScheduleUpload1.pas">
+				<Form>ScheduleUpload</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN11\PSpecPrintss_Price1.pas">
+				<Form>PSpecPrintss_Price</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN11\PSPecPrintss_SP_Price1.pas">
+				<Form>PSPecPrintss_SP_Price</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN11\PSpecPrintssTW_Price1.pas">
+				<Form>PSpecPrintssTW_Price</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN5A8\StitchingAssemblyTracking1.pas">
+				<Form>StitchingAssemblyTracking</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN91\Article_Data1.pas">
+				<Form>Article_Data</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN3E\SchedulePage1.pas">
+				<Form>SchedulePage</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN3E\RYDialog1.pas">
+				<Form>RYDialog</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN3E\ExportDialog1.pas">
+				<Form>ExportDialog</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN2B\DetailsGBTest1.pas">
+				<Form>DetailsGBTest</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN2B\ShowShoePic1.pas">
+				<Form>ShowShoePic</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN92\Attendance1.pas">
+				<Form>Attendance</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN3G\ShoeUpperInventory1.pas">
+				<Form>ShoeUpperInventory</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN91\Article_Copy1.pas">
+				<Form>Article_Copy</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN91\IE_CONGDOAN1.pas">
+				<Form>IE_CONGDOAN</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN91\IE_LOAIMAY1.pas">
+				<Form>IE_LOAIMAY</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN3E\ScheduleVersion1.pas">
+				<Form>ScheduleVersion</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN3G\UpperCycleDialog1.pas">
+				<Form>UpperCycleDialog</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN3G\UpperRYDialog1.pas">
+				<Form>UpperRYDialog</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN3G\ClosingInventory1.pas">
+				<Form>ClosingInventory</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN3G\ClosingWIP1.pas">
+				<Form>ClosingWIP</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN3G\OutsourcingLeadTime1.pas">
+				<Form>OutsourcingLeadTime</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN3G\LeanInventory1.pas">
+				<Form>LeanInventory</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN3G\RYTracking1.pas">
+				<Form>RYTracking</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN3G\ModelCuttingBom1.pas">
+				<Form>ModelCuttingBom</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN91\Article_TestDay1.pas">
+				<Form>Article_TestDay</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN93\Article_List1.pas">
+				<Form>Article_List</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN3G\RYSearchDlg1.pas">
+				<Form>RYSearchDlg</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN3G\LeanSelection1.pas">
+				<Form>LeanSelection</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN3G\Tips1.pas">
+				<Form>Tips</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN3H1\SP_ModelSetup1.pas">
+				<Form>SP_ModelSetup</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN3H2\SP_RYProgress1.pas">
+				<Form>SP_RYProgress</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN3H2\SP_RYTracking1.pas">
+				<Form>SP_RYTracking</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN3H3\SP_Printing_A51.pas">
+				<Form>SP_Printing_A5</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN3H4\SP_Printing_C91.pas">
+				<Form>SP_Printing_C9</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN3H5\SP_HeatPressing_A51.pas">
+				<Form>SP_HeatPressing_A5</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN3H2\EstWorkload1.pas">
+				<Form>EstWorkload</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN3H2\RY_BOM1.pas">
+				<Form>RY_BOM</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN3H6\SP_Embroidery1.pas">
+				<Form>SP_Embroidery</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN3E\LeanModelChanges1.pas">
+				<Form>LeanModelChanges</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN3I\CuttingTracking1.pas">
+				<Form>CuttingTracking</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN3E\SequenceCheck1.pas">
+				<Form>SequenceCheck</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN922\Worker_Attendance1.pas">
+				<Form>Worker_Attendance</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN3F\ProductionPlanTracking1.pas">
+				<Form>ProductionPlanTracking</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN3F\FindDlg1.pas">
+				<Form>FindDlg</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN3F\MatchedLeanSelection1.pas">
+				<Form>MatchedLeanSelection</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN3F\MaterialStatus1.pas">
+				<Form>MaterialStatus</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN3F\ExcelSheetSelection1.pas">
+				<Form>ExcelSheetSelection</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN3F\MaterialHistory1.pas">
+				<Form>MaterialHistory</Form>
+			</DCCReference>
+			<DCCReference Include="Source\N728\QRScanTotal1.pas">
+				<Form>QRScanTotal</Form>
+			</DCCReference>
+			<DCCReference Include="Source\N726\QRScanIn1.pas">
+				<Form>QRScanIn</Form>
+			</DCCReference>
+			<DCCReference Include="Source\N727\QRScanOut1.pas">
+				<Form>QRScanOut</Form>
+			</DCCReference>
+			<DCCReference Include="Source\N726\QRScanIn_Dep1.pas">
+				<Form>QRScanIn_Dep</Form>
+			</DCCReference>
+			<DCCReference Include="Source\N727\QRScanOut_Dep1.pas">
+				<Form>QRScanOut_Dep</Form>
+			</DCCReference>
+			<DCCReference Include="Source\N729\QRScanIsHours1.pas">
+				<Form>QRScanISHours</Form>
+			</DCCReference>
+			<DCCReference Include="Source\N72A\PrintQR1.pas">
+				<Form>PrintQR</Form>
+			</DCCReference>
+			<DCCReference Include="Source\N72A_Dep\QRScan_dep1.pas">
+				<Form>QRScan_Dep</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN3E\OneDayPlan1.pas">
+				<Form>OneDayPlan</Form>
+			</DCCReference>
+			<DCCReference Include="Source\N72B\ScanoutO1.pas">
+				<Form>ScanoutO</Form>
+			</DCCReference>
+			<DCCReference Include="Source\N72B\DepID1.pas">
+				<Form>DepID</Form>
+			</DCCReference>
+			<DCCReference Include="Source\N721\MaKe1.pas">
+				<Form>MaKe</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN3I\PlanPage1.pas">
+				<Form>PlanPage</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN3I\WeeklyShippingPlan1.pas">
+				<Form>WeeklyShippingPlan</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN3E\AssemblyRYDlg1.pas">
+				<Form>AssemblyRYDlg</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN3E\AssemblyCycleDlg1.pas">
+				<Form>AssemblyCycleDlg</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN3F\reason1.pas">
+				<Form>Reason</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN2W1\R_Hoachat_dp.pas">
+				<Form>R_hoachat</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN2W1\ScanCheckW.pas">
+				<Form>CheckScan</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN2W1\Canchitiet.pas">
+				<Form>Chitiet</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN2W1\CheckLean.pas">
+				<Form>CheckLean1</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN72C\ScanMakeO1.pas">
+				<Form>ScanMakeO</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN7808\ReportMakeO1.pas">
+				<Form>ReportMaKeO</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN7808\ChangeInfoO1.pas">
+				<Form>ChangeInfoO</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN27\SMDDSS1.pas">
+				<Form>SMDDSS2</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN2W1\Forluma1.pas">
+				<Form>Forluma</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN2W1\QRLabel1.pas">
+				<Form>QRLabel</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN2W1\PrintHC_CT1.pas">
+				<Form>PrintHC_CT</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN2W1\TONKHO1.pas">
+				<Form>TONKHO</Form>
+			</DCCReference>
+			<DCCReference Include="Source\SN2W1\baophe1.pas">
+				<Form>Baophe</Form>
+			</DCCReference>
+			<BuildConfiguration Include="Debug">
+				<Key>Cfg_2</Key>
+				<CfgParent>Base</CfgParent>
+			</BuildConfiguration>
+			<BuildConfiguration Include="Base">
+				<Key>Base</Key>
+			</BuildConfiguration>
+			<BuildConfiguration Include="Release">
+				<Key>Cfg_1</Key>
+				<CfgParent>Base</CfgParent>
+			</BuildConfiguration>
+		</ItemGroup>
+		<ProjectExtensions>
+			<Borland.Personality>Delphi.Personality.12</Borland.Personality>
+			<Borland.ProjectType/>
+			<BorlandProject>
+				<Delphi.Personality>
+					<Source>
+						<Source Name="MainSource">Plan.dpr</Source>
+					</Source>
+					<Language>
+						<Language Name="RootDir">..\..\..\ERP SOURCE CODE\Plan\</Language>
+					</Language>
+					<VersionInfo>
+						<VersionInfo Name="IncludeVerInfo">False</VersionInfo>
+						<VersionInfo Name="AutoIncBuild">False</VersionInfo>
+						<VersionInfo Name="MajorVer">1</VersionInfo>
+						<VersionInfo Name="MinorVer">0</VersionInfo>
+						<VersionInfo Name="Release">0</VersionInfo>
+						<VersionInfo Name="Build">0</VersionInfo>
+						<VersionInfo Name="Debug">False</VersionInfo>
+						<VersionInfo Name="PreRelease">False</VersionInfo>
+						<VersionInfo Name="Special">False</VersionInfo>
+						<VersionInfo Name="Private">False</VersionInfo>
+						<VersionInfo Name="DLL">False</VersionInfo>
+						<VersionInfo Name="Locale">2052</VersionInfo>
+						<VersionInfo Name="CodePage">936</VersionInfo>
+					</VersionInfo>
+					<VersionInfoKeys>
+						<VersionInfoKeys Name="CompanyName"/>
+						<VersionInfoKeys Name="FileDescription"/>
+						<VersionInfoKeys Name="FileVersion">1.0.0.0</VersionInfoKeys>
+						<VersionInfoKeys Name="InternalName"/>
+						<VersionInfoKeys Name="LegalCopyright"/>
+						<VersionInfoKeys Name="LegalTrademarks"/>
+						<VersionInfoKeys Name="OriginalFilename"/>
+						<VersionInfoKeys Name="ProductName"/>
+						<VersionInfoKeys Name="ProductVersion">1.0.0.0</VersionInfoKeys>
+						<VersionInfoKeys Name="Comments"/>
+					</VersionInfoKeys>
+				</Delphi.Personality>
+				<Platforms>
+					<Platform value="Win64">False</Platform>
+					<Platform value="Win32">True</Platform>
+				</Platforms>
+			</BorlandProject>
+			<ProjectFileVersion>12</ProjectFileVersion>
+		</ProjectExtensions>
+		<Import Condition="Exists('$(BDS)\Bin\CodeGear.Delphi.Targets')" Project="$(BDS)\Bin\CodeGear.Delphi.Targets"/>
+		<Import Condition="Exists('$(APPDATA)\Embarcadero\$(BDSAPPDATABASEDIR)\$(PRODUCTVERSION)\UserTools.proj')" Project="$(APPDATA)\Embarcadero\$(BDSAPPDATABASEDIR)\$(PRODUCTVERSION)\UserTools.proj"/>
+	</Project>

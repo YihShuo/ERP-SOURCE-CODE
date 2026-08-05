@@ -152,12 +152,13 @@ type
     Qry_rupdateQty: TFloatField;
     Qry_rupdateRemainQty: TFloatField;
     Qry_rupdateCFMDate: TDateTimeField;
-    QryPendingVNSM: TStringField;
     Label12: TLabel;
     ddbh: TEdit;
     QryPendingSize: TStringField;
     QryPendingRorL: TStringField;
     QryPendingQty: TFloatField;
+    QKCRKSSource: TStringField;
+    QryPendingVNSM2: TStringField;
     procedure BB1Click(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure BB2Click(Sender: TObject);
@@ -289,7 +290,7 @@ begin
     SQL.Clear;
     if (main.ServerIP = '192.168.71.7') then
       //SQL.Add('SELECT YYBH, CAST(dbo.fn_BoDauTiengViet(QCBLYY.VNSM) AS VARCHAR(1000)) AS ZWSM FROM QCBLYY')
-      SQL.Add('SELECT YYBH, VNSM AS ZWSM FROM QCBLYY')
+      SQL.Add('SELECT YYBH, VNSM2 AS ZWSM FROM QCBLYY')
     else
       SQL.Add('SELECT YYBH, ZWSM FROM QCBLYY');
     SQL.Add('WHERE GSBH = ''' + main.Edit2.Text + '''');
@@ -1093,7 +1094,7 @@ begin
     end;
     try
       WorkBook := eclApp.workbooks.Add;
-      for i:=0 to DBGridEh2.Columns.Count-1 do
+      for i:=0 to DBGridEh2.Columns.Count-2 do
       begin
         eclApp.Cells[1, i+1] := DBGridEh2.Columns[i].Title.Caption;
       end;
@@ -1102,7 +1103,7 @@ begin
       j := 2;
       while not QKCRKS.Eof do
       begin
-        for i:=0 to DBGridEh2.Columns.Count-1 do
+        for i:=0 to DBGridEh2.Columns.Count-2 do
         begin
           eclApp.Cells[j, i+1] := QKCRKS.FieldByName(DBGridEh2.Columns[i].FieldName).Value;
         end;
@@ -1204,7 +1205,7 @@ begin
     SQL.Add('        WHEN SUM(cd.Qty) - ISNULL(RK_BC.Qty, 0) > 0 THEN 0');
     SQL.Add('        ELSE 1');
     SQL.Add('    END AS YN,');
-    SQL.Add('    QCBLYY.VNSM');
+    SQL.Add('    QCBLYY.VNSM2');
     SQL.Add('FROM A');
     SQL.Add('INNER JOIN Combined_Data cd ON A.SCBH = cd.SCBH AND A.GSBH = cd.GSBH');
     SQL.Add('LEFT JOIN BDepartment ON BDepartment.ID = cd.DepNO');
@@ -1226,12 +1227,12 @@ begin
     SQL.Add('    cd.GSBH,');
     SQL.Add('    cd.YYBH,');
     SQL.Add('    RK_BC.Qty,');
-    SQL.Add('    QCBLYY.VNSM,');
+    SQL.Add('    QCBLYY.VNSM2,');
     SQL.Add('    cd.CC,');
     SQL.Add('    cd.is_right');
     SQL.Add('ORDER BY cd.DepNO;');
 
-
+    //old sql
     {sql.add('SELECT qcr.SCBH,');
     sql.add('    qcr.DepNO as DepID,');
     sql.add('    qcr.GSBH,');

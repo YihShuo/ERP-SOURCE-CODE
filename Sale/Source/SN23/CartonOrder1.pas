@@ -314,7 +314,7 @@ begin
         sql.Add('and exists (select DDBH from YWBZPO where YWBZPO.DDBH=YWDD.DDBH and surplus >0)');
     sql.add('group by YWDD.YSBH, XXZL.XieMing,DDZL.Pairs,XXZL.XieXing,xxzl.shehao,DDZL.KHBH,DDZL.ShipDate, ');
     sql.add('     DDZL.KHPO,LBZLS.YWSM,DDZL.YN,XXZL.Article, YWDD.GSBH,carton.nocarton,carton.modified ');
-    sql.add('order by YWDD.DDBH');
+    sql.add('order by YWDD.YSBH');
     //funcObj.WriteErrorLog(sql.Text);
     active:=true;
     if YWDD.fieldbyname('YN').AsString= '1' then

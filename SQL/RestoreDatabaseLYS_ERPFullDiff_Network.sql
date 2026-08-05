@@ -61,8 +61,8 @@ BEGIN
     RESTORE DATABASE LYS_ERP
     FROM DISK = ''' + @LatestFullFile + '''
     WITH 
-        MOVE ''LIY_ERP_Data'' TO ''C:\Program Files\Microsoft SQL Server\MSSQL10_50.MSSQLSERVER\MSSQL\DATA\LYS_ERP.mdf'',
-        MOVE ''LIY_ERP_Log''  TO ''C:\Program Files\Microsoft SQL Server\MSSQL10_50.MSSQLSERVER\MSSQL\DATA\LYS_ERP.ldf'',
+        MOVE ''LIY_ERP_Data'' TO ''C:\Program Files\Microsoft SQL Server\MSSQL17.MSSQLSERVER\MSSQL\DATA\LYS_ERP.mdf'',
+        MOVE ''LIY_ERP_Log''  TO ''C:\Program Files\Microsoft SQL Server\MSSQL17.MSSQLSERVER\MSSQL\DATA\LYS_ERP.ldf'',
         REPLACE,
         NORECOVERY,
         STATS = 10;';

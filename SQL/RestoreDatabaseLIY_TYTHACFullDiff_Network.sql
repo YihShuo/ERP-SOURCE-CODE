@@ -61,8 +61,8 @@ BEGIN
     RESTORE DATABASE LIY_TYTHAC
     FROM DISK = ''' + @LatestFullFile + '''
     WITH 
-        MOVE ''LIY_TYTHAC'' TO ''C:\Program Files\Microsoft SQL Server\MSSQL10_50.MSSQLSERVER\MSSQL\DATA\LIY_TYTHAC.mdf'',
-        MOVE ''LIY_TYTHAC_Log''  TO ''C:\Program Files\Microsoft SQL Server\MSSQL10_50.MSSQLSERVER\MSSQL\DATA\LIY_TYTHAC.ldf'',
+        MOVE ''LIY_TYTHAC'' TO ''C:\Program Files\Microsoft SQL Server\MSSQL17.MSSQLSERVER\MSSQL\DATA\LIY_TYTHAC.mdf'',
+        MOVE ''LIY_TYTHAC_Log''  TO ''C:\Program Files\Microsoft SQL Server\MSSQL17.MSSQLSERVER\MSSQL\DATA\LIY_TYTHAC.ldf'',
         REPLACE,
         NORECOVERY,
         STATS = 10;';
