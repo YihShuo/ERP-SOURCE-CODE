@@ -298,6 +298,15 @@ object MatQcCheck: TMatQcCheck
       Layout = blGlyphTop
       NumGlyphs = 2
     end
+    object btConfirm: TButton
+      Left = 912
+      Top = 8
+      Width = 75
+      Height = 25
+      Caption = 'Confirm'
+      TabOrder = 9
+      OnClick = btConfirmClick
+    end
   end
   object Panel2: TPanel
     Left = 0
@@ -851,6 +860,14 @@ object MatQcCheck: TMatQcCheck
       TabOrder = 21
       OnKeyPress = edtDefectsKeyPress
     end
+    object ckUnCheck: TCheckBox
+      Left = 1115
+      Top = 22
+      Width = 145
+      Height = 17
+      Caption = 'Uninspected Materials'
+      TabOrder = 22
+    end
   end
   object PageControl1: TPageControl
     Left = 0
@@ -1115,6 +1132,13 @@ object MatQcCheck: TMatQcCheck
             Title.Font.Style = []
             Title.TitleButton = True
             Width = 55
+          end
+          item
+            EditButtons = <>
+            FieldName = 'UninspectedMaterials'
+            Footers = <>
+            Title.Caption = 'QC Inspection|Uninspected Materials'
+            Width = 85
           end
           item
             ButtonStyle = cbsNone
@@ -1990,49 +2014,56 @@ object MatQcCheck: TMatQcCheck
     ModifySQL.Strings = (
       'update MaterialQCcheck'
       'set '
-      #9#9'ZSBH=:ZSBH,'
-      #9#9'RY=:RY,'
-      #9#9'Article=:Article,'
-      #9#9'CustPO=:CustPO,'
-      #9#9'Qty=:Qty,'
-      #9#9'Tracking=:Tracking,'
-      #9#9'QC_Check=:QC_Check,'
-      #9#9'QC_Reason=:QC_Reason,'
-      #9#9'QC_FinishDate=:QC_FinishDate,'
-      #9#9'Final_Status=:Final_Status,'
-      #9#9'Final_Remark=:Final_Remark,'
-      #9#9'UserDate=:UserDate,'
-      #9#9'UserID=:UserID,'
-      #9#9'Remark=:Remark,'
-      '                Settlement=:Settlement,'
-      '                Per_Defect=:Per_Defect,'
-      '                DefectName=:DefectName,'
-      #9#9'CLBH=:CLBH,'
-      #9#9'CGNO=:CGNO,'
-      #9#9'DateInput=:DateInput,'
-      #9#9'LB=:LB,'
-      '                SampleSent=:SampleSent,'
-      '                QC_Date=:QC_Date,'
-      '                QC_UserID=:QC_UserID,'
-      '                ManagerCheck=:ManagerCheck,'
-      #9#9'ManagerID=:ManagerID, '
-      #9#9'ManagerCFMDate=:ManagerCFMDate,'
-      '                QC_Method=:QC_Method'
+      'ZSBH=:ZSBH,'
+      'RY=:RY,'
+      'Article=:Article,'
+      'CustPO=:CustPO,'
+      'Qty=:Qty,'
+      'Tracking=:Tracking,'
+      'QC_Check=:QC_Check,'
+      'QC_Reason=:QC_Reason,'
+      'QC_FinishDate=:QC_FinishDate,'
+      'Final_Status=:Final_Status,'
+      'Final_Remark=:Final_Remark,'
+      'UserDate=:UserDate,'
+      'UserID=:UserID,'
+      'Remark=:Remark,'
+      'Settlement=:Settlement,'
+      'Per_Defect=:Per_Defect,'
+      'DefectName=:DefectName,'
+      'CLBH=:CLBH,'
+      'CGNO=:CGNO,'
+      'DateInput=:DateInput,'
+      'LB=:LB,'
+      'SampleSent=:SampleSent,'
+      'QC_Date=:QC_Date,'
+      'QC_UserID=:QC_UserID,'
+      'ManagerCheck=:ManagerCheck,'
+      'ManagerID=:ManagerID, '
+      'ManagerCFMDate=:ManagerCFMDate,'
+      'QC_Method=:QC_Method,'
+      'UninspectedMaterials =:UninspectedMaterials'
       'where No_ID=:No_ID')
     InsertSQL.Strings = (
       'INSERT INTO MaterialQCcheck '
       '(No_ID,GSBH,CLBH,CGNO,DateInput,LB,ZSBH,RY,Article'
-      ',CustPO,Qty,UserDate,UserID,YN,Remark,Hours,RKNO,Tracking'
-      ',SampleSent,ManagerCheck,ManagerID,ManagerCFMDate,QC_Method)'
+      
+        ',CustPO,Qty,UserDate,UserID,YN,Remark,Hours,RKNO,Tracking, Settl' +
+        'ement'
+      
+        ',SampleSent,ManagerCheck,ManagerID,ManagerCFMDate,QC_Method, Uni' +
+        'nspectedMaterials, QC_Check,Final_Status,'
+      'QC_Date, QC_UserID)'
       
         'VALUES (:No_ID,:GSBH,:CLBH,:CGNO,:DateInput,:LB,:ZSBH,:RY,:Artic' +
         'le'
       
         ',:CustPO,:Qty,getdate(),:UserID,:YN,:Remark,:Hours,:RKNO,:Tracki' +
-        'ng'
+        'ng, :Settlement'
       
         ',:SampleSent, :ManagerCheck,:ManagerID,:ManagerCFMDate,:QC_Metho' +
-        'd)')
+        'd, :UninspectedMaterials,:QC_Check,:Final_Status,'
+      ':QC_Date, :QC_UserID)')
     DeleteSQL.Strings = (
       'delete from MaterialQCcheck '
       'where NO_ID=:old_NO_ID')
@@ -2097,7 +2128,8 @@ object MatQcCheck: TMatQcCheck
         'N,      '
       
         '       clzl.YWPM as MaterialName,ZSZL.ZSYWJC as SupplierName,clz' +
-        'l.DWBH,ZSZL.ZSYWJC, mc.MaterialTestDate, mc.QC_Method'
+        'l.DWBH,ZSZL.ZSYWJC, mc.MaterialTestDate, mc.QC_Method, mc.Uninsp' +
+        'ectedMaterials'
       'from MaterialQCcheck mc'
       'left join clzl on clzl.CLDH = mc.CLBH'
       'left Join ZSZL on ZSZL.ZSDH =mc.ZSBH'
@@ -2358,6 +2390,9 @@ object MatQcCheck: TMatQcCheck
       FieldName = 'QC_Method'
       FixedChar = True
       Size = 200
+    end
+    object qry_QcUninspectedMaterials: TBooleanField
+      FieldName = 'UninspectedMaterials'
     end
   end
   object qry_App: TQuery

@@ -175,6 +175,9 @@ type
     OpenLabGL1: TMenuItem;
     qry_QcMaterialTestDate: TDateTimeField;
     qry_QcQC_Method: TStringField;
+    qry_QcUninspectedMaterials: TBooleanField;
+    btConfirm: TButton;
+    ckUnCheck: TCheckBox;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormDestroy(Sender: TObject);
     procedure Button1Click(Sender: TObject);
@@ -224,6 +227,7 @@ type
     procedure qry_QcManagerCheckChange(Sender: TField);
     procedure edtDefectsKeyPress(Sender: TObject; var Key: Char);
     procedure OpenLabGL1Click(Sender: TObject);
+    procedure btConfirmClick(Sender: TObject);
   private
     AppDir:string;
     { Private declarations }
@@ -287,7 +291,7 @@ begin
       SQL.Add('       mc.QC_Reason,mc.Per_Defect,mc.QC_FinishDate,mc.Settlement,mc.File_Name,mc.QC_Date,mc.QC_USERID,');
       SQL.Add('       mc.Lab_Check,mc.Lab_Reason,mc.Lab_Num,mc.Lab_Result,mc.DefectName,mc.Lab_FinishDate,mc.Lab_PDM_ID,mc.PDM_File_Name,mc.File_Name_Lab,mc.Comparision,');
       SQL.Add('       mc.Lab_DateRemark,mc.Lab_ConfirmDate,mc.Lab_UserID,mc.Lab_Date,mc.Final_Remark,mc.Final_Status,mc.UserDate,mc.UserID,mc.YN,      ');
-      SQL.Add('       clzl.YWPM as MaterialName,ZSZL.ZSYWJC as SupplierName,clzl.DWBH,ZSZL.ZSYWJC,mc.ManagerCheck,mc.ManagerID,mc.ManagerCFMDate, mc.MaterialTestDate, mc.QC_Method ');
+      SQL.Add('       clzl.YWPM as MaterialName,ZSZL.ZSYWJC as SupplierName,clzl.DWBH,ZSZL.ZSYWJC,mc.ManagerCheck,mc.ManagerID,mc.ManagerCFMDate, mc.MaterialTestDate, mc.QC_Method, mc.UninspectedMaterials ');
       sql.Add('from MaterialQCcheck mc');
       sql.Add('left join clzl on clzl.CLDH = mc.CLBH');
       sql.Add('left Join ZSZL on ZSZL.ZSDH =mc.ZSBH');
@@ -322,6 +326,10 @@ begin
 
       if chkNotesting.Checked then
         sql.Add('and isnull(Lab_Check,'''') = ''''');
+      if ckUnCheck.Checked then
+        sql.Add('and ISNULL(mc.UninspectedMaterials,0) = ''1'' ')
+      else
+        sql.Add('and ISNULL(mc.UninspectedMaterials,0) <> ''1'' ');
 
       if chkInspection.Checked or chkpass.Checked or chkFail.Checked then
         begin
@@ -348,7 +356,7 @@ begin
       SQL.Add('       mc.QC_Check,mc.RandomQty,mc.DefectQty,mc.QC_Reason,mc.Per_Defect,mc.QC_FinishDate,mc.Settlement,mc.File_Name,mc.QC_Date,mc.QC_USERID,');
       SQL.Add('       mc.Lab_Check,mc.Lab_Reason,mc.Lab_Num,mc.Lab_Result,mc.DefectName,mc.Lab_FinishDate,mc.Lab_PDM_ID,mc.PDM_File_Name,mc.File_Name_Lab,mc.Comparision,');
       SQL.Add('       mc.Lab_DateRemark,mc.Lab_ConfirmDate,mc.Lab_UserID,mc.Lab_Date,mc.Final_Remark,mc.Final_Status,mc.UserDate,mc.UserID,mc.YN, mc.MaterialTestDate, ');
-      SQL.Add('       clzl.YWPM,ZSZL.ZSYWJC,clzl.DWBH,ZSZL.ZSYWJC,mc.ManagerCheck,mc.ManagerID,mc.ManagerCFMDate, Leather_GradePX.DefectQty, mc.QC_Method ');
+      SQL.Add('       clzl.YWPM,ZSZL.ZSYWJC,clzl.DWBH,ZSZL.ZSYWJC,mc.ManagerCheck,mc.ManagerID,mc.ManagerCFMDate, Leather_GradePX.DefectQty, mc.QC_Method, mc.UninspectedMaterials ');
       sql.Add('order by mc.Userdate desc,mc.CLBH,LB asc');
       //funcObj.WriteErrorLog(sql.Text);
       active := true;
@@ -511,6 +519,18 @@ begin
                 end;
                 //
                 qry_Qc.edit;
+
+                if qry_Qc.FieldByName('UninspectedMaterials').Value = '1' then
+                begin
+                  qry_Qc.FieldByName('QC_UserID').Value := main.edit1.text;
+                  qry_Qc.FieldByName('Tracking').Value := '0';
+                  qry_Qc.FieldByName('Settlement').Value := 'Released';
+                  qry_Qc.FieldByName('QC_FinishDate').Value := Ndate;
+                  qry_Qc.FieldByName('QC_Date').Value := Ndate;
+                  qry_Qc.FieldByName('QC_Check').Value := 'Pass';
+                  qry_Qc.FieldByName('Final_Status').Value := 'Pass';
+                end;
+
                 qry_Qc.FieldByName('No_ID').Value:=No_ID;
                 qry_Qc.FieldByName('GSBH').Value:=main.Edit2.Text;
                 qry_Qc.fieldbyname('USERID').Value := main.edit1.text;
@@ -529,7 +549,9 @@ begin
                 begin
                   qry_Qc.edit;
                   if (qry_Qc.FieldByName('USERID').Value = main.edit1.Text) then
+                  begin
                     qry_Qc.fieldbyname('UserDate').Value := Ndate;
+                  end;
                   Upd_QC.apply(ukmodify);
                   //revise Qty in table Leather_QC N15
                   if flag = 3 then
@@ -833,6 +855,12 @@ begin
         end
       else
         begin
+          {if (qry_Qc.FieldByName('UninspectedMaterials').Value = '1')
+          and (qry_Qc.FieldByName('Final_Status').Value = '') then
+            begin
+              qry_Qc.FieldByName('QC_Check').Value := 'Pass';
+              qry_Qc.FieldByName('Final_Status').Value := 'Pass';
+            end;}
           qry_Qc.fieldbyname('QC_Date').Value := Ndate;
           qry_Qc.fieldbyname('QC_UserID').Value := main.edit1.text;
         end;
@@ -1469,6 +1497,31 @@ begin
 
   // mo file truc tiep
   ShellExecute(0, 'open', PChar(SourceFile), nil, nil, SW_SHOWNORMAL);
+end;
+
+procedure TMatQcCheck.btConfirmClick(Sender: TObject);
+begin
+  qry_Qc.RequestLive := true;
+  qry_Qc.CachedUpdates := true;
+  btnsave.Enabled := true;
+  btncancel.Enabled := true;
+
+  if not qry_Qc.Active then
+    qry_Qc.Open;
+  qry_Qc.DisableControls;
+  try
+    qry_Qc.First; // quay ve dong dau
+    while not qry_Qc.Eof do
+    begin
+      qry_Qc.Edit;
+      qry_Qc.FieldByName('ManagerID').AsString := Main.Edit1.Text;
+      qry_Qc.FieldByName('ManagerCFMDate').Value := NDate;
+      qry_Qc.Post; // Post chi vao cache, chua xuong SQL
+      qry_Qc.Next;
+    end;
+  finally
+    qry_Qc.EnableControls;
+  end;
 end;
 
 end.

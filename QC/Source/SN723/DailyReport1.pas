@@ -236,7 +236,7 @@ begin
         SQL.Add('    FROM MaterialQCcheck');
         SQL.Add(') AS S ON S.CLBH = mc.CLBH and S.No_ID = mc.No_ID');
         //sql.Add('where mc.GSBH = '''+main.Edit2.Text+''' and  left(mc.CLBH,1) not in (''F'',''W'')  ');
-        sql.Add(' where mc.GSBH = '''+main.Edit2.Text+''' and  ((mc.ZSBH = ''VA97'' and left(mc.CLBH,1) <> ''W'') or (mc.ZSBH <> ''VA97'' and left(mc.CLBH,1) not in (''F'',''W'')))  ');
+        sql.Add(' where mc.GSBH = '''+main.Edit2.Text+''' and ISNULL(mc.UninspectedMaterials, 0) <> ''1'' and  ((mc.ZSBH = ''VA97'' and left(mc.CLBH,1) <> ''W'') or (mc.ZSBH <> ''VA97'' and left(mc.CLBH,1) not in (''F'',''W'')))  ');
         if chkStore.Checked then
         begin
             sql.Add(' and CAST(DateInput AS DATE) between');

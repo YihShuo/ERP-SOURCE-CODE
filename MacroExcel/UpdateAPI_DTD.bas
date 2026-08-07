@@ -20,7 +20,7 @@ Sub UpdatePO_DTD()
     For i = 2 To LastRow
 
         KHPO = Trim(ws.Cells(i, 1).Value)
-		ApiDate = Trim(Format(ws.Cells(i, 2).Value, "yyyy-mm-dd"))
+        ApiDate = Trim(Format(ws.Cells(i, 2).Value, "yyyy-mm-dd"))
 
         Json = "{""date"":""" & ApiDate & """," & _
                """databaseType"":""A""," & _
@@ -42,7 +42,8 @@ Sub UpdatePO_DTD()
         On Error GoTo 0
 
 ContinueLoop:
-        Set Http = Nothing
+
+    Set Http = Nothing
 
     Next i
 
