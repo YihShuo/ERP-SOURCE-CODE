@@ -35,7 +35,6 @@ type
     QKCRKSGrade: TStringField;
     QKCRKSSize: TStringField;
     QKCRKSQty: TFloatField;
-    QKCRKSDefectID: TStringField;
     QSearch: TQuery;
     Panel3: TPanel;
     BD2: TBitBtn;
@@ -159,6 +158,7 @@ type
     QryPendingQty: TFloatField;
     QKCRKSSource: TStringField;
     QryPendingVNSM2: TStringField;
+    QKCRKSDefectID: TStringField;
     procedure BB1Click(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure BB2Click(Sender: TObject);
@@ -1329,8 +1329,9 @@ begin
       DBGridEh2.Columns[11].KeyList.Add(QryPending.FieldByName('DefectID').AsString);
       DBGridEh2.Columns[11].PickList.Add(QryPending.FieldByName('DefectID').AsString);
     end;
-    //  DBGridEh2.Columns[11].KeyList.Add(QryPending.FieldByName('DefectID').AsString);
-    QKCRKS.FieldByName('DefectID').Value := QryPending.FieldByName('DefectID').AsString;
+    //DBGridEh2.Columns[11].KeyList.Add(QryPending.FieldByName('DefectID').AsString);
+    //QKCRKS.FieldByName('DefectID').Value := QryPending.FieldByName('DefectID').AsString;
+    QKCRKS.FieldByName('DefectID').Value := Copy(QryPending.FieldByName('DefectID').AsString, 1, Length(QryPending.FieldByName('DefectID').AsString) - 1);
 
     QryPending.RequestLive := true;
     QryPending.CachedUpdates := true;

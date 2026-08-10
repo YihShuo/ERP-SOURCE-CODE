@@ -23,7 +23,7 @@ ResultData AS (
     GROUP BY X.KHPO, X.ARTICLE
 )
 -- Truy vấn từ CTE thứ 2 và thực hiện so sánh
-SELECT * 
+SELECT KHPO, ARTICLE, InQty, ISNULL(fg10, 0) fg10
 FROM ResultData
-WHERE InQty <> ISNULL(fg10, 0) and KHPO <> '' and fg10 is not null
-ORDER BY KHPO
+WHERE InQty <> ISNULL(fg10, 0) and KHPO <> ''
+ORDER BY KHPO;

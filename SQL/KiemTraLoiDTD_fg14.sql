@@ -24,6 +24,5 @@ ResultData AS (
 -- Truy vấn từ CTE thứ 2 và thực hiện so sánh
 SELECT * 
 FROM ResultData
-WHERE SB3Qty <> ISNULL(fg14, 0) and KHPO <> '' and fg14 is not null
-ORDER BY KHPO, EXEDATE;
-
+WHERE SB3Qty <> ISNULL(fg14, 0) and KHPO <> '' and EXEDATE >= '2026-01-01'
+ORDER BY EXEDATE desc;

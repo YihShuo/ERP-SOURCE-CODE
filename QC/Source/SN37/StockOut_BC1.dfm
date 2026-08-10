@@ -326,7 +326,7 @@ object StockOut_BC: TStockOut_BC
         Left = 0
         Top = 0
         Width = 1362
-        Height = 369
+        Height = 537
         Align = alClient
         DataSource = DS1
         Flat = False
@@ -1553,7 +1553,7 @@ object StockOut_BC: TStockOut_BC
     object QKCLLSDefectID: TStringField
       FieldName = 'DefectID'
       FixedChar = True
-      Size = 4
+      Size = 10
     end
     object QKCLLSRKNO: TStringField
       FieldName = 'RKNO'
@@ -1760,7 +1760,7 @@ object StockOut_BC: TStockOut_BC
     object Qry_rupdateDefectID: TStringField
       FieldName = 'DefectID'
       FixedChar = True
-      Size = 4
+      Size = 10
     end
     object Qry_rupdateKCBH: TStringField
       FieldName = 'KCBH'

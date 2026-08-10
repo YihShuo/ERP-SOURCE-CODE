@@ -1986,7 +1986,7 @@ object StockIn_BC: TStockIn_BC
     object QKCRKSDefectID: TStringField
       FieldName = 'DefectID'
       FixedChar = True
-      Size = 4
+      Size = 10
     end
     object QKCRKSUserID: TStringField
       FieldName = 'UserID'

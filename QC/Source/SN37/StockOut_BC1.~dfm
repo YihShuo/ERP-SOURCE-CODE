@@ -326,7 +326,7 @@ object StockOut_BC: TStockOut_BC
         Left = 0
         Top = 0
         Width = 1362
-        Height = 369
+        Height = 537
         Align = alClient
         DataSource = DS1
         Flat = False
@@ -749,6 +749,7 @@ object StockOut_BC: TStockOut_BC
             Footers = <>
           end
           item
+            Color = clYellow
             EditButtons = <>
             FieldName = 'RemainQty'
             Footers = <>
