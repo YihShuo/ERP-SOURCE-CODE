@@ -781,7 +781,7 @@ object ProducMatFailure: TProducMatFailure
     object Query1VisualCheck: TStringField
       FieldName = 'VisualCheck'
       FixedChar = True
-      Size = 255
+      Size = 2000
     end
     object Query1PhysCheck: TStringField
       FieldName = 'PhysCheck'
