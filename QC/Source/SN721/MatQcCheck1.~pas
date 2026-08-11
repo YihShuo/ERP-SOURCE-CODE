@@ -178,6 +178,7 @@ type
     qry_QcUninspectedMaterials: TBooleanField;
     btConfirm: TButton;
     ckUnCheck: TCheckBox;
+    ckUnconfirmed: TCheckBox;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormDestroy(Sender: TObject);
     procedure Button1Click(Sender: TObject);
@@ -351,6 +352,8 @@ begin
         sql.Add('and mc.UserID=''' + main.Edit1.Text + '''');
       if chkmanager.Checked then
         sql.Add('and mc.ManagerCheck=''1'' ');
+      if ckUnconfirmed.Checked then
+        sql.Add('and ISNULL(mc.ManagerCheck, ''0'') = ''0'' ');
         
       SQL.Add('group by mc.No_ID,mc.GSBH,mc.CLBH,mc.CGNO,mc.RKNO,mc.DateInput,mc.Hours ,mc.LB,mc.ZSBH,mc.RY,mc.Article,mc.CustPO,mc.Qty,mc.Remark,mc.Tracking,mc.SampleSent,');
       SQL.Add('       mc.QC_Check,mc.RandomQty,mc.DefectQty,mc.QC_Reason,mc.Per_Defect,mc.QC_FinishDate,mc.Settlement,mc.File_Name,mc.QC_Date,mc.QC_USERID,');

@@ -868,6 +868,14 @@ object MatQcCheck: TMatQcCheck
       Caption = 'Uninspected Materials'
       TabOrder = 22
     end
+    object ckUnconfirmed: TCheckBox
+      Left = 1115
+      Top = 40
+      Width = 97
+      Height = 17
+      Caption = 'Unconfirmed'
+      TabOrder = 23
+    end
   end
   object PageControl1: TPageControl
     Left = 0
@@ -1233,6 +1241,10 @@ object MatQcCheck: TMatQcCheck
             EditButtons = <>
             FieldName = 'QC_Method'
             Footers = <>
+            PickList.Strings = (
+              'Tra hang'
+              'Nha cung ung bu hang'
+              'Nha cung ung sua mau')
             Title.Caption = 'QC Inspection|Method'
             Title.Color = clMoneyGreen
             Width = 75
