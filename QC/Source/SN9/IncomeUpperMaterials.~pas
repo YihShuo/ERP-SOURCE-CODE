@@ -60,7 +60,6 @@ type
     Query1IQty: TIntegerField;
     Query1DeReason: TStringField;
     Query1DeQty: TIntegerField;
-    Query1InspecResult: TFloatField;
     Query1SendDate: TDateTimeField;
     Query1LabID: TStringField;
     Query1LabResult: TStringField;
@@ -84,6 +83,20 @@ type
     Query1Cont: TStringField;
     Label4: TLabel;
     edtBrand: TEdit;
+    Panel2: TPanel;
+    DBGridEh1: TDBGridEh;
+    QDetail: TQuery;
+    DSDetail: TDataSource;
+    QDetailReportID: TIntegerField;
+    QDetailRY: TStringField;
+    QDetailArticle: TStringField;
+    QDetailCustPO: TStringField;
+    QDetailRemark: TStringField;
+    QDetailYN: TStringField;
+    QDetailUserID: TStringField;
+    QDetailUserDate: TDateTimeField;
+    Query1InspecResult: TStringField;
+    UpDetail: TUpdateSQL;
     procedure DBGrid1CellClick(Column: TColumnEh);
     procedure Query1AfterOpen(DataSet: TDataSet);
     function GetUsernameByID(const AID: string): string;
@@ -105,6 +118,8 @@ type
     procedure DBGrid1KeyPress(Sender: TObject; var Key: Char);
     procedure bExcelClick(Sender: TObject);
     procedure BB2Click(Sender: TObject);
+    procedure DBGrid1Columns0EditButtonClick(Sender: TObject;
+      var Handled: Boolean);
   private
     { Private declarations }
   public
@@ -116,7 +131,7 @@ var
 
 implementation
 
-uses main1;
+uses main1, N721Detail;
 
 {$R *.dfm}
 
@@ -422,8 +437,17 @@ begin
   CachedUpdates:= true;
   Insert;
   end;
+
+  with QDetail do
+  begin
+  RequestLive :=  true;
+  CachedUpdates:= true;
+  Insert;
+  end;
+  
 bb4.enabled:=true;
 bb5.enabled:=true;
+DBGrid1.FieldColumns['ReportID'].ButtonStyle := cbsEllipsis;
 end;
 
 procedure TIncomeUpperMaterial.BB3Click(Sender: TObject);
@@ -451,9 +475,9 @@ begin
         case query1.updatestatus of
           usinserted:
             begin
-              if Query1.FieldByName('DDBH').IsNull then
+              if Query1.FieldByName('CLBH').IsNull then
               begin
-                query1.delete;
+                //query1.delete;
               end else
               begin
                 Query1.Edit;
@@ -575,7 +599,7 @@ procedure TIncomeUpperMaterial.bExFClick(Sender: TObject);
 var
   ExcelApp, Workbook, Worksheet, borderRange: OleVariant;
   StartRow, InsertRow: Integer;
-  DuongDanFile, SaveFile: string;
+  DuongDanFile, SaveFile, AppDir, SrcFile, DstFile: string;
   s: WideString;
   i, p: Integer;
   MaxHeight: Double;
@@ -907,6 +931,18 @@ with query1 do
   end;
 bb4.enabled:=true;
 bb5.enabled:=true;
+end;
+
+procedure TIncomeUpperMaterial.DBGrid1Columns0EditButtonClick(
+  Sender: TObject; var Handled: Boolean);
+begin
+if N721Detail1 <> nil then
+  N721Detail1.show
+else
+  begin
+    N721Detail1 := TN721Detail1.Create(self);
+    N721Detail1.show;
+  end;
 end;
 
 end.

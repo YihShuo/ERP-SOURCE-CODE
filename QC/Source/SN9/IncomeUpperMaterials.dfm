@@ -1,8 +1,8 @@
 object IncomeUpperMaterial: TIncomeUpperMaterial
-  Left = 216
-  Top = 156
+  Left = 368
+  Top = 107
   Width = 1305
-  Height = 675
+  Height = 869
   Caption = 'IncomeUpperMaterial'
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -504,7 +504,7 @@ object IncomeUpperMaterial: TIncomeUpperMaterial
     Left = 0
     Top = 200
     Width = 1289
-    Height = 436
+    Height = 312
     Align = alClient
     DataSource = DS1
     Flat = False
@@ -539,6 +539,7 @@ object IncomeUpperMaterial: TIncomeUpperMaterial
         FieldName = 'ReportID'
         Footers = <>
         Width = 80
+        OnEditButtonClick = DBGrid1Columns0EditButtonClick
       end
       item
         EditButtons = <>
@@ -737,6 +738,77 @@ object IncomeUpperMaterial: TIncomeUpperMaterial
         Footers = <>
       end>
   end
+  object Panel2: TPanel
+    Left = 0
+    Top = 512
+    Width = 1289
+    Height = 318
+    Align = alBottom
+    Caption = 'Panel2'
+    TabOrder = 2
+    object DBGridEh1: TDBGridEh
+      Left = 1
+      Top = 1
+      Width = 1287
+      Height = 316
+      Align = alClient
+      DataSource = DSDetail
+      Flat = False
+      FooterColor = clWindow
+      FooterFont.Charset = DEFAULT_CHARSET
+      FooterFont.Color = clWindowText
+      FooterFont.Height = -11
+      FooterFont.Name = 'MS Sans Serif'
+      FooterFont.Style = []
+      TabOrder = 0
+      TitleFont.Charset = DEFAULT_CHARSET
+      TitleFont.Color = clWindowText
+      TitleFont.Height = -11
+      TitleFont.Name = 'MS Sans Serif'
+      TitleFont.Style = []
+      Columns = <
+        item
+          EditButtons = <>
+          FieldName = 'ReportID'
+          Footers = <>
+        end
+        item
+          EditButtons = <>
+          FieldName = 'RY'
+          Footers = <>
+        end
+        item
+          EditButtons = <>
+          FieldName = 'Article'
+          Footers = <>
+        end
+        item
+          EditButtons = <>
+          FieldName = 'CustPO'
+          Footers = <>
+        end
+        item
+          EditButtons = <>
+          FieldName = 'Remark'
+          Footers = <>
+        end
+        item
+          EditButtons = <>
+          FieldName = 'YN'
+          Footers = <>
+        end
+        item
+          EditButtons = <>
+          FieldName = 'UserID'
+          Footers = <>
+        end
+        item
+          EditButtons = <>
+          FieldName = 'UserDate'
+          Footers = <>
+        end>
+    end
+  end
   object Query1: TQuery
     AfterOpen = Query1AfterOpen
     DatabaseName = 'DB'
@@ -799,9 +871,6 @@ object IncomeUpperMaterial: TIncomeUpperMaterial
     end
     object Query1DeQty: TIntegerField
       FieldName = 'DeQty'
-    end
-    object Query1InspecResult: TFloatField
-      FieldName = 'InspecResult'
     end
     object Query1SendDate: TDateTimeField
       FieldName = 'SendDate'
@@ -877,6 +946,10 @@ object IncomeUpperMaterial: TIncomeUpperMaterial
       FieldName = 'MatName'
       FixedChar = True
       Size = 200
+    end
+    object Query1InspecResult: TStringField
+      FieldName = 'InspecResult'
+      FixedChar = True
     end
   end
   object DS1: TDataSource
@@ -975,5 +1048,73 @@ object IncomeUpperMaterial: TIncomeUpperMaterial
     DatabaseName = 'DB'
     Left = 328
     Top = 400
+  end
+  object QDetail: TQuery
+    DatabaseName = 'DB'
+    DataSource = DS1
+    SQL.Strings = (
+      'select * from QC_UpperMatDetail'
+      'where ReportID = :ReportID')
+    UpdateObject = UpDetail
+    Left = 304
+    Top = 608
+    ParamData = <
+      item
+        DataType = ftInteger
+        Name = 'ReportID'
+        ParamType = ptUnknown
+        Size = 4
+      end>
+    object QDetailReportID: TIntegerField
+      FieldName = 'ReportID'
+    end
+    object QDetailRY: TStringField
+      FieldName = 'RY'
+      FixedChar = True
+      Size = 15
+    end
+    object QDetailArticle: TStringField
+      FieldName = 'Article'
+      FixedChar = True
+    end
+    object QDetailCustPO: TStringField
+      FieldName = 'CustPO'
+      FixedChar = True
+      Size = 15
+    end
+    object QDetailRemark: TStringField
+      FieldName = 'Remark'
+      FixedChar = True
+      Size = 50
+    end
+    object QDetailYN: TStringField
+      FieldName = 'YN'
+      FixedChar = True
+      Size = 10
+    end
+    object QDetailUserID: TStringField
+      FieldName = 'UserID'
+      FixedChar = True
+      Size = 15
+    end
+    object QDetailUserDate: TDateTimeField
+      FieldName = 'UserDate'
+    end
+  end
+  object DSDetail: TDataSource
+    DataSet = QDetail
+    Left = 352
+    Top = 608
+  end
+  object UpDetail: TUpdateSQL
+    InsertSQL.Strings = (
+      'insert into QC_UpperMatDetail'
+      '  (ReportID, RY, Article, CustPO, Remark, YN, UserID, UserDate)'
+      'values'
+      
+        '  (:ReportID, :RY, :Article, :CustPO, :Remark, :YN, GETDATE(), G' +
+        'ETDATE())')
+    Left = 256
+    Top = 624
   end
 end

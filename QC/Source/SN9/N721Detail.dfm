@@ -1,0 +1,634 @@
+object N721Detail1: TN721Detail1
+  Left = 568
+  Top = 271
+  Width = 735
+  Height = 485
+  Caption = 'N721Detail1'
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'MS Sans Serif'
+  Font.Style = []
+  OldCreateOrder = False
+  OnClose = FormClose
+  OnDestroy = FormDestroy
+  PixelsPerInch = 96
+  TextHeight = 13
+  object DBGridEh1: TDBGridEh
+    Left = 0
+    Top = 120
+    Width = 719
+    Height = 326
+    Align = alBottom
+    DataSource = DataSource1
+    Flat = False
+    FooterColor = clWindow
+    FooterFont.Charset = DEFAULT_CHARSET
+    FooterFont.Color = clWindowText
+    FooterFont.Height = -11
+    FooterFont.Name = 'MS Sans Serif'
+    FooterFont.Style = []
+    TabOrder = 0
+    TitleFont.Charset = DEFAULT_CHARSET
+    TitleFont.Color = clWindowText
+    TitleFont.Height = -11
+    TitleFont.Name = 'MS Sans Serif'
+    TitleFont.Style = []
+    OnDblClick = DBGridEh1DblClick
+    Columns = <
+      item
+        EditButtons = <>
+        FieldName = 'No_ID'
+        Footers = <>
+      end
+      item
+        EditButtons = <>
+        FieldName = 'GSBH'
+        Footers = <>
+      end
+      item
+        EditButtons = <>
+        FieldName = 'CLBH'
+        Footers = <>
+      end
+      item
+        EditButtons = <>
+        FieldName = 'CGNO'
+        Footers = <>
+      end
+      item
+        EditButtons = <>
+        FieldName = 'RKNO'
+        Footers = <>
+        Width = 100
+      end
+      item
+        EditButtons = <>
+        FieldName = 'DateInput'
+        Footers = <>
+      end
+      item
+        EditButtons = <>
+        FieldName = 'Hours'
+        Footers = <>
+      end
+      item
+        EditButtons = <>
+        FieldName = 'LB'
+        Footers = <>
+      end
+      item
+        EditButtons = <>
+        FieldName = 'ZSBH'
+        Footers = <>
+      end
+      item
+        EditButtons = <>
+        FieldName = 'RY'
+        Footers = <>
+      end
+      item
+        EditButtons = <>
+        FieldName = 'Article'
+        Footers = <>
+      end
+      item
+        EditButtons = <>
+        FieldName = 'CustPO'
+        Footers = <>
+      end
+      item
+        EditButtons = <>
+        FieldName = 'Qty'
+        Footers = <>
+      end
+      item
+        EditButtons = <>
+        FieldName = 'Remark'
+        Footers = <>
+      end
+      item
+        EditButtons = <>
+        FieldName = 'Tracking'
+        Footers = <>
+      end
+      item
+        EditButtons = <>
+        FieldName = 'SampleSent'
+        Footers = <>
+      end
+      item
+        EditButtons = <>
+        FieldName = 'QC_Check'
+        Footers = <>
+      end
+      item
+        EditButtons = <>
+        FieldName = 'RandomQty'
+        Footers = <>
+      end
+      item
+        EditButtons = <>
+        FieldName = 'DefectQty'
+        Footers = <>
+      end
+      item
+        EditButtons = <>
+        FieldName = 'QC_Reason'
+        Footers = <>
+      end
+      item
+        EditButtons = <>
+        FieldName = 'Per_Defect'
+        Footers = <>
+      end
+      item
+        EditButtons = <>
+        FieldName = 'QC_FinishDate'
+        Footers = <>
+      end
+      item
+        EditButtons = <>
+        FieldName = 'Settlement'
+        Footers = <>
+      end
+      item
+        EditButtons = <>
+        FieldName = 'File_Name'
+        Footers = <>
+      end
+      item
+        EditButtons = <>
+        FieldName = 'QC_Date'
+        Footers = <>
+      end
+      item
+        EditButtons = <>
+        FieldName = 'QC_USERID'
+        Footers = <>
+      end
+      item
+        EditButtons = <>
+        FieldName = 'Lab_Check'
+        Footers = <>
+      end
+      item
+        EditButtons = <>
+        FieldName = 'Lab_Reason'
+        Footers = <>
+      end
+      item
+        EditButtons = <>
+        FieldName = 'Lab_Num'
+        Footers = <>
+      end
+      item
+        EditButtons = <>
+        FieldName = 'Lab_Result'
+        Footers = <>
+      end
+      item
+        EditButtons = <>
+        FieldName = 'DefectName'
+        Footers = <>
+      end
+      item
+        EditButtons = <>
+        FieldName = 'Lab_FinishDate'
+        Footers = <>
+      end
+      item
+        EditButtons = <>
+        FieldName = 'Lab_PDM_ID'
+        Footers = <>
+      end
+      item
+        EditButtons = <>
+        FieldName = 'PDM_File_Name'
+        Footers = <>
+      end
+      item
+        EditButtons = <>
+        FieldName = 'File_Name_Lab'
+        Footers = <>
+      end
+      item
+        EditButtons = <>
+        FieldName = 'Comparision'
+        Footers = <>
+      end
+      item
+        EditButtons = <>
+        FieldName = 'Lab_DateRemark'
+        Footers = <>
+      end
+      item
+        EditButtons = <>
+        FieldName = 'Lab_ConfirmDate'
+        Footers = <>
+      end
+      item
+        EditButtons = <>
+        FieldName = 'Lab_UserID'
+        Footers = <>
+      end
+      item
+        EditButtons = <>
+        FieldName = 'Lab_Date'
+        Footers = <>
+      end
+      item
+        EditButtons = <>
+        FieldName = 'Final_Remark'
+        Footers = <>
+      end
+      item
+        EditButtons = <>
+        FieldName = 'Final_Status'
+        Footers = <>
+      end
+      item
+        EditButtons = <>
+        FieldName = 'UserDate'
+        Footers = <>
+      end
+      item
+        EditButtons = <>
+        FieldName = 'UserID'
+        Footers = <>
+      end
+      item
+        EditButtons = <>
+        FieldName = 'YN'
+        Footers = <>
+      end
+      item
+        EditButtons = <>
+        FieldName = 'MaterialName'
+        Footers = <>
+      end
+      item
+        EditButtons = <>
+        FieldName = 'SupplierName'
+        Footers = <>
+      end
+      item
+        EditButtons = <>
+        FieldName = 'DWBH'
+        Footers = <>
+      end
+      item
+        EditButtons = <>
+        FieldName = 'ZSYWJC'
+        Footers = <>
+      end
+      item
+        EditButtons = <>
+        FieldName = 'ManagerCheck'
+        Footers = <>
+      end
+      item
+        EditButtons = <>
+        FieldName = 'ManagerID'
+        Footers = <>
+      end
+      item
+        EditButtons = <>
+        FieldName = 'ManagerCFMDate'
+        Footers = <>
+      end
+      item
+        EditButtons = <>
+        FieldName = 'MaterialTestDate'
+        Footers = <>
+      end
+      item
+        EditButtons = <>
+        FieldName = 'QC_Method'
+        Footers = <>
+      end
+      item
+        EditButtons = <>
+        FieldName = 'UninspectedMaterials'
+        Footers = <>
+      end>
+  end
+  object BitBtn1: TBitBtn
+    Left = 328
+    Top = 40
+    Width = 75
+    Height = 25
+    Caption = 'BitBtn1'
+    TabOrder = 1
+    OnClick = BitBtn1Click
+  end
+  object Qmc: TQuery
+    DatabaseName = 'DB'
+    SQL.Strings = (
+      'Select '
+      
+        '       mc.No_ID,mc.GSBH,mc.CLBH,mc.CGNO,mc.RKNO,mc.DateInput,mc.' +
+        'Hours ,mc.LB,mc.ZSBH,mc.RY,mc.Article,mc.CustPO,mc.Qty,mc.Remark' +
+        ',mc.Tracking,mc.SampleSent,'
+      
+        '       mc.QC_Check, mc.RandomQty, ISNULL(mc.DefectQty, Leather_G' +
+        'radePX.DefectQty) as DefectQty, '
+      
+        '       mc.QC_Reason,mc.Per_Defect,mc.QC_FinishDate,mc.Settlement' +
+        ',mc.File_Name,mc.QC_Date,mc.QC_USERID,'
+      
+        '       mc.Lab_Check,mc.Lab_Reason,mc.Lab_Num,mc.Lab_Result,mc.De' +
+        'fectName,mc.Lab_FinishDate,mc.Lab_PDM_ID,mc.PDM_File_Name,mc.Fil' +
+        'e_Name_Lab,mc.Comparision,'
+      
+        '       mc.Lab_DateRemark,mc.Lab_ConfirmDate,mc.Lab_UserID,mc.Lab' +
+        '_Date,mc.Final_Remark,mc.Final_Status,mc.UserDate,mc.UserID,mc.Y' +
+        'N,      '
+      
+        '       clzl.YWPM as MaterialName,ZSZL.ZSYWJC as SupplierName,clz' +
+        'l.DWBH,ZSZL.ZSYWJC,mc.ManagerCheck,mc.ManagerID,mc.ManagerCFMDat' +
+        'e, mc.MaterialTestDate, mc.QC_Method, mc.UninspectedMaterials '
+      'from MaterialQCcheck mc'
+      'left join clzl on clzl.CLDH = mc.CLBH'
+      'left Join ZSZL on ZSZL.ZSDH =mc.ZSBH'
+      
+        'left join MaterialQCcheck_RY on mc.No_ID = MaterialQCcheck_RY.No' +
+        '_ID'
+      'left join Leather_QC on Leather_QC.ReportID = mc.No_ID'
+      
+        'left join (select ISNULL(SUM(DeQty),0) as DefectQty, No_ID from ' +
+        'Leather_GradeP group by No_ID) Leather_GradePX on Leather_QC.No_' +
+        'ID = Leather_GradePX.No_ID'
+      'where mc.GSBH='#39'VDH'#39' '
+      
+        'group by mc.No_ID,mc.GSBH,mc.CLBH,mc.CGNO,mc.RKNO,mc.DateInput,m' +
+        'c.Hours ,mc.LB,mc.ZSBH,mc.RY,mc.Article,mc.CustPO,mc.Qty,mc.Rema' +
+        'rk,mc.Tracking,mc.SampleSent,'
+      
+        '       mc.QC_Check,mc.RandomQty,mc.DefectQty,mc.QC_Reason,mc.Per' +
+        '_Defect,mc.QC_FinishDate,mc.Settlement,mc.File_Name,mc.QC_Date,m' +
+        'c.QC_USERID,'
+      
+        '       mc.Lab_Check,mc.Lab_Reason,mc.Lab_Num,mc.Lab_Result,mc.De' +
+        'fectName,mc.Lab_FinishDate,mc.Lab_PDM_ID,mc.PDM_File_Name,mc.Fil' +
+        'e_Name_Lab,mc.Comparision,'
+      
+        '       mc.Lab_DateRemark,mc.Lab_ConfirmDate,mc.Lab_UserID,mc.Lab' +
+        '_Date,mc.Final_Remark,mc.Final_Status,mc.UserDate,mc.UserID,mc.Y' +
+        'N, mc.MaterialTestDate, '
+      
+        '       clzl.YWPM,ZSZL.ZSYWJC,clzl.DWBH,ZSZL.ZSYWJC,mc.ManagerChe' +
+        'ck,mc.ManagerID,mc.ManagerCFMDate, Leather_GradePX.DefectQty, mc' +
+        '.QC_Method, mc.UninspectedMaterials '
+      'order by mc.Userdate desc,mc.CLBH,LB asc')
+    Left = 176
+    Top = 216
+    object QmcNo_ID: TIntegerField
+      FieldName = 'No_ID'
+    end
+    object QmcGSBH: TStringField
+      FieldName = 'GSBH'
+      FixedChar = True
+      Size = 4
+    end
+    object QmcCLBH: TStringField
+      FieldName = 'CLBH'
+      FixedChar = True
+      Size = 15
+    end
+    object QmcCGNO: TStringField
+      FieldName = 'CGNO'
+      FixedChar = True
+      Size = 11
+    end
+    object QmcRKNO: TStringField
+      FieldName = 'RKNO'
+      FixedChar = True
+      Size = 255
+    end
+    object QmcDateInput: TDateTimeField
+      FieldName = 'DateInput'
+    end
+    object QmcHours: TStringField
+      FieldName = 'Hours'
+      FixedChar = True
+      Size = 8
+    end
+    object QmcLB: TIntegerField
+      FieldName = 'LB'
+    end
+    object QmcZSBH: TStringField
+      FieldName = 'ZSBH'
+      FixedChar = True
+      Size = 6
+    end
+    object QmcRY: TStringField
+      FieldName = 'RY'
+      FixedChar = True
+      Size = 255
+    end
+    object QmcArticle: TStringField
+      FieldName = 'Article'
+      FixedChar = True
+      Size = 255
+    end
+    object QmcCustPO: TStringField
+      FieldName = 'CustPO'
+      FixedChar = True
+      Size = 255
+    end
+    object QmcQty: TCurrencyField
+      FieldName = 'Qty'
+    end
+    object QmcRemark: TStringField
+      FieldName = 'Remark'
+      FixedChar = True
+      Size = 100
+    end
+    object QmcTracking: TStringField
+      FieldName = 'Tracking'
+      FixedChar = True
+      Size = 10
+    end
+    object QmcSampleSent: TBooleanField
+      FieldName = 'SampleSent'
+    end
+    object QmcQC_Check: TStringField
+      FieldName = 'QC_Check'
+      FixedChar = True
+      Size = 10
+    end
+    object QmcRandomQty: TCurrencyField
+      FieldName = 'RandomQty'
+    end
+    object QmcDefectQty: TCurrencyField
+      FieldName = 'DefectQty'
+    end
+    object QmcQC_Reason: TStringField
+      FieldName = 'QC_Reason'
+      FixedChar = True
+      Size = 50
+    end
+    object QmcPer_Defect: TBooleanField
+      FieldName = 'Per_Defect'
+    end
+    object QmcQC_FinishDate: TDateTimeField
+      FieldName = 'QC_FinishDate'
+    end
+    object QmcSettlement: TStringField
+      FieldName = 'Settlement'
+      FixedChar = True
+      Size = 50
+    end
+    object QmcFile_Name: TStringField
+      FieldName = 'File_Name'
+      FixedChar = True
+      Size = 100
+    end
+    object QmcQC_Date: TDateTimeField
+      FieldName = 'QC_Date'
+    end
+    object QmcQC_USERID: TStringField
+      FieldName = 'QC_USERID'
+      FixedChar = True
+      Size = 10
+    end
+    object QmcLab_Check: TStringField
+      FieldName = 'Lab_Check'
+      FixedChar = True
+      Size = 50
+    end
+    object QmcLab_Reason: TStringField
+      FieldName = 'Lab_Reason'
+      FixedChar = True
+      Size = 50
+    end
+    object QmcLab_Num: TStringField
+      FieldName = 'Lab_Num'
+      FixedChar = True
+      Size = 50
+    end
+    object QmcLab_Result: TStringField
+      FieldName = 'Lab_Result'
+      FixedChar = True
+      Size = 50
+    end
+    object QmcDefectName: TStringField
+      FieldName = 'DefectName'
+      FixedChar = True
+      Size = 200
+    end
+    object QmcLab_FinishDate: TDateTimeField
+      FieldName = 'Lab_FinishDate'
+    end
+    object QmcLab_PDM_ID: TStringField
+      FieldName = 'Lab_PDM_ID'
+      FixedChar = True
+      Size = 50
+    end
+    object QmcPDM_File_Name: TStringField
+      FieldName = 'PDM_File_Name'
+      FixedChar = True
+      Size = 50
+    end
+    object QmcFile_Name_Lab: TStringField
+      FieldName = 'File_Name_Lab'
+      FixedChar = True
+      Size = 100
+    end
+    object QmcComparision: TStringField
+      FieldName = 'Comparision'
+      FixedChar = True
+    end
+    object QmcLab_DateRemark: TDateTimeField
+      FieldName = 'Lab_DateRemark'
+    end
+    object QmcLab_ConfirmDate: TDateTimeField
+      FieldName = 'Lab_ConfirmDate'
+    end
+    object QmcLab_UserID: TStringField
+      FieldName = 'Lab_UserID'
+      FixedChar = True
+      Size = 10
+    end
+    object QmcLab_Date: TDateTimeField
+      FieldName = 'Lab_Date'
+    end
+    object QmcFinal_Remark: TStringField
+      FieldName = 'Final_Remark'
+      FixedChar = True
+      Size = 50
+    end
+    object QmcFinal_Status: TStringField
+      FieldName = 'Final_Status'
+      FixedChar = True
+      Size = 10
+    end
+    object QmcUserDate: TDateTimeField
+      FieldName = 'UserDate'
+    end
+    object QmcUserID: TStringField
+      FieldName = 'UserID'
+      FixedChar = True
+      Size = 10
+    end
+    object QmcYN: TStringField
+      FieldName = 'YN'
+      FixedChar = True
+      Size = 1
+    end
+    object QmcMaterialName: TStringField
+      FieldName = 'MaterialName'
+      FixedChar = True
+      Size = 200
+    end
+    object QmcSupplierName: TStringField
+      FieldName = 'SupplierName'
+      FixedChar = True
+      Size = 40
+    end
+    object QmcDWBH: TStringField
+      FieldName = 'DWBH'
+      FixedChar = True
+      Size = 4
+    end
+    object QmcZSYWJC: TStringField
+      FieldName = 'ZSYWJC'
+      FixedChar = True
+      Size = 40
+    end
+    object QmcManagerCheck: TBooleanField
+      FieldName = 'ManagerCheck'
+    end
+    object QmcManagerID: TStringField
+      FieldName = 'ManagerID'
+      FixedChar = True
+      Size = 10
+    end
+    object QmcManagerCFMDate: TDateTimeField
+      FieldName = 'ManagerCFMDate'
+    end
+    object QmcMaterialTestDate: TDateTimeField
+      FieldName = 'MaterialTestDate'
+    end
+    object QmcQC_Method: TStringField
+      FieldName = 'QC_Method'
+      FixedChar = True
+      Size = 200
+    end
+    object QmcUninspectedMaterials: TBooleanField
+      FieldName = 'UninspectedMaterials'
+    end
+  end
+  object DataSource1: TDataSource
+    DataSet = Qmc
+    Left = 328
+    Top = 256
+  end
+  object Qmcrys: TQuery
+    DatabaseName = 'DB'
+    Left = 392
+    Top = 216
+  end
+end

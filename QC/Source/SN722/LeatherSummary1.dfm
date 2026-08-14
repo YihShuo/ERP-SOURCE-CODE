@@ -19671,7 +19671,7 @@ object LeatherSummary: TLeatherSummary
               Width = 89
               Height = 24
               Color = 13041606
-              ItemHeight = 0
+              ItemHeight = 16
               TabOrder = 7
             end
             object Button2: TButton
@@ -24597,7 +24597,7 @@ object LeatherSummary: TLeatherSummary
       '  Result = :Result,'
       '  YN = :YN,'
       '  UserID = :UserID,'
-      '  UserDate = :UserDate,'
+      '  UserDate = GETDATE(),'
       '  Inspector = :Inspector'
       'where'
       '  No_ID = :OLD_No_ID and'
@@ -24610,7 +24610,7 @@ object LeatherSummary: TLeatherSummary
       'values'
       
         '  (:No_ID, :Sequence, :Incoming, :Actual, :Result, :YN, :UserID,' +
-        ' :UserDate, '
+        ' GETDATE(),'
       '   :Inspector)')
     DeleteSQL.Strings = (
       'delete from Leather_Dimension'

@@ -165,7 +165,8 @@ uses
   NGMaterials in 'Source\SN9\NGMaterials.pas' {NGMaterial},
   ChemicalStockIns in 'ChemicalStockIns.pas' {ChemicalStockIn},
   ChemicalSearch in 'ChemicalSearch.pas' {ChemicalSearchs},
-  ChemicalStockOuts in 'ChemicalStockOuts.pas' {ChemicalStockOut};
+  ChemicalStockOuts in 'ChemicalStockOuts.pas' {ChemicalStockOut},
+  N721Detail in 'Source\SN9\N721Detail.pas' {N721Detail1};
 
 {$R *.res}
 
@@ -190,6 +191,7 @@ begin
   Application.Title := 'Lai Yih ERP system----QC';
   Application.CreateForm(TDM2, DM2);
   Application.CreateForm(Tmain, main);
+  Application.CreateForm(TN721Detail1, N721Detail1);
   //Application.CreateForm(TChemicalStockIn, ChemicalStockIn);
   //Application.CreateForm(TChemicalSearchs, ChemicalSearchs);
   //Application.CreateForm(TChemicalStockOut, ChemicalStockOut);
