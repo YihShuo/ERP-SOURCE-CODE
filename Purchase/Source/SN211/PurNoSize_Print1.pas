@@ -66,6 +66,12 @@ type
     QRDBText14: TQRDBText;
     NoteInfo: TQRLabel;
     L20: TQRLabel;
+    X1: TQRLabel;
+    X2: TQRLabel;
+    X3: TQRLabel;
+    X4: TQRLabel;
+    X5: TQRLabel;
+    QRLabel2: TQRLabel;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
@@ -163,7 +169,7 @@ begin
   if (main.edit2.Text = 'VA12') and (IsMark_Pink=true) then
     NoteInfo.Caption:=NoteInfo.Caption+'/CONVERSE Pink = CONV-0036';
 
-  if NoteInfo.Caption<>'' then NoteInfo.Enabled:=true;
+  //if NoteInfo.Caption<>'' then NoteInfo.Enabled:=true;
   //
 
   Mas.First;

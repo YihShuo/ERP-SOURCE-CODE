@@ -194,6 +194,7 @@ type
     SGDetSeason: TStringField;
     SGDetSerno: TIntegerField;
     Button3: TButton;
+    SGDetCostType: TStringField;
     procedure Button1Click(Sender: TObject);
     procedure SGMasAfterOpen(DataSet: TDataSet);
     procedure SGDetAfterOpen(DataSet: TDataSet);

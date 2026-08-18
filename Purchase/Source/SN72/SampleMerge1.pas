@@ -1235,7 +1235,7 @@ begin
       sql.add('  insert YPZLZLS2 ');
       sql.add('select  YPZLZLS.YPZLBH,ypzls.YPDH,ypzls.BWBH,IsNull(ypzls.CSBH,'''') as CSBH,');
       sql.add( ''''+'ZZZZZZZZZZ'+''''+' as MJBH,ypzls.CLBH,CLZL.CLZMLB as ZMLB,');
-      sql.add(''''+'ZZZZZZ'+''''+' as SIZE, round(YPZLZLS.Pairs*ypzls.CLSL+0.0499,1) as CLSL,ypzls.CLSL as  USAGE ,');
+      sql.add(''''+'ZZZZZZ'+''''+' as SIZE, YPZLZLS.Pairs*ypzls.CLSL as CLSL,ypzls.CLSL as  USAGE ,');
       sql.add(''''+main.edit1.text+''''+'  as USERID,');
       sql.add(''''+formatdatetime('yyyy/MM/dd',date)+''''+' as USERDATE,');
       sql.add(''''+'2'+''''+' as YN ');
@@ -1251,7 +1251,7 @@ begin
       sql.add('select  YPZLZLS.YPZLBH,ypzls.YPDH,ypzls.BWBH,');
       sql.add('case when  ((clzhzl_dev.zsdh is not null) and (clzhzl_dev.zsdh<>'''')) then clzhzl_dev.zsdh else clzhzl.zsdh end as zsdh ');
       sql.add(',ypzls.CLBH  as MJBH,CLZHZL.CLDH1 AS CLBH,CLZL.CLZMLB as ZMLB,');
-      sql.add(''''+'ZZZZZZ'+''''+' as SIZE, round(YPZLZLS.Pairs*ypzls.CLSL*CLZHZL.SYL+0.0499,1) as CLSL,ypzls.CLSL* CLZHZL.SYL as  USAGE ,');
+      sql.add(''''+'ZZZZZZ'+''''+' as SIZE, YPZLZLS.Pairs*ypzls.CLSL*CLZHZL.SYL as CLSL,ypzls.CLSL* CLZHZL.SYL as  USAGE ,');
       sql.add(''''+main.edit1.text+''''+'  as USERID,');
       sql.add(''''+formatdatetime('yyyy/MM/dd',date)+''''+' as USERDATE,');
       sql.add(''''+'2'+''''+' as YN ');
@@ -1269,13 +1269,13 @@ begin
       SQL.Add(' select CLZHZL2.YPZLBH,CLZHZL2.YPDH,CLZHZL2.BWBH,');
       SQL.Add('        case when  ((clzhzl_dev.zsdh is not null) and (clzhzl_dev.zsdh<>'''')) then clzhzl_dev.zsdh else clzhzl.zsdh end as zsdh,');
       SQL.Add('        CLZHZL2.CLBH  as MJBH,CLZHZL.CLDH1 AS CLBH,CLZL.CLZMLB as ZMLB,');
-      SQL.Add('        ''ZZZZZZ'' as SIZE, round(CLZHZL2.CLSL*CLZHZL.SYL,1) as CLSL,CLZHZL2.USAGE* CLZHZL.SYL as  USAGE ,');
+      SQL.Add('        ''ZZZZZZ'' as SIZE, CLZHZL2.CLSL*CLZHZL.SYL as CLSL,CLZHZL2.USAGE* CLZHZL.SYL as  USAGE ,');
       SQL.Add('        '''+main.edit1.text+'''  as USERID,'''+formatdatetime('yyyy/MM/dd',date)+''' as USERDATE,''2'' as YN ');
       SQL.Add('  from (');
       SQL.Add('select  YPZLZLS.YPZLBH,ypzls.YPDH,ypzls.BWBH,');
       SQL.Add('case when  ((clzhzl_dev.zsdh is not null) and (clzhzl_dev.zsdh<>'''')) then clzhzl_dev.zsdh else clzhzl.zsdh end as zsdh,');
       SQL.Add('ypzls.CLBH  as MJBH,CLZHZL.CLDH1 AS CLBH,CLZL.CLZMLB as ZMLB,');
-      SQL.Add('''ZZZZZZ'' as SIZE, round(YPZLZLS.Pairs*ypzls.CLSL*CLZHZL.SYL+0.0499,1) as CLSL,ypzls.CLSL* CLZHZL.SYL as  USAGE ,');
+      SQL.Add('''ZZZZZZ'' as SIZE, YPZLZLS.Pairs*ypzls.CLSL*CLZHZL.SYL as CLSL,ypzls.CLSL* CLZHZL.SYL as  USAGE ,');
       SQL.Add(''''+main.edit1.text+'''  as USERID,'''+formatdatetime('yyyy/MM/dd',date)+''' as USERDATE,''2'' as YN ');
       SQL.Add('  from YPZLZLS ');
       SQL.Add(' INNER join ypzls on ypzls.YPDH=YPZLZLS.YPDH ');
@@ -1289,6 +1289,48 @@ begin
       SQL.Add(' left join CLZL on CLZL.CLDH=CLZHZL.CLDH1 ');
       SQL.Add(' where CLZHZL.SYL>0 ');
       execsql;
+    //
+    // ----------------------------------------------------------------------
+      // --- BAT DAU DOAN XU LY LAM TRON VA BU TRU SAI SO TREN YPZLZLS2 (DA SUA) ---
+      // ----------------------------------------------------------------------
+      SQL.Clear;
+      SQL.Add('WITH TargetTotal AS (');
+      SQL.Add('    SELECT YPZLBH, CLBH, SUM(CLSL) AS ExactTotal');
+      SQL.Add('    FROM YPZLZLS2');
+      SQL.Add('    WHERE YPZLBH = :YPZLBH');
+      SQL.Add('    GROUP BY YPZLBH, CLBH');
+      SQL.Add('),');
+      SQL.Add('CalculatedDetails AS (');
+      SQL.Add('    SELECT d.YPZLBH, d.YPDH, d.BWBH, d.MJBH, d.CLBH, d.SIZE,');
+      SQL.Add('           ROUND(d.CLSL, 2) AS RoundedCLSL,');
+      SQL.Add('           SUM(ROUND(d.CLSL, 2)) OVER(PARTITION BY d.YPZLBH, d.CLBH) AS SumRoundedCLSL,');
+      SQL.Add('           ROW_NUMBER() OVER(PARTITION BY d.YPZLBH, d.CLBH ORDER BY d.CLSL DESC, d.YPDH, d.BWBH) AS rn');
+      SQL.Add('    FROM YPZLZLS2 d');
+      SQL.Add('    WHERE d.YPZLBH = :YPZLBH');
+      SQL.Add('),');
+      SQL.Add('FinalData AS (');
+      SQL.Add('    SELECT c.YPZLBH, c.YPDH, c.BWBH, c.MJBH, c.CLBH, c.SIZE,');
+      SQL.Add('           CASE WHEN c.rn = 1 THEN c.RoundedCLSL + (ROUND(t.ExactTotal, 2) - c.SumRoundedCLSL)');
+      SQL.Add('                ELSE c.RoundedCLSL END AS NewCLSL');
+      SQL.Add('    FROM CalculatedDetails c');
+      SQL.Add('    INNER JOIN TargetTotal t ON c.YPZLBH = t.YPZLBH AND c.CLBH = t.CLBH');
+      SQL.Add(')');
+      SQL.Add('UPDATE main');
+      SQL.Add('SET main.CLSL = fd.NewCLSL');
+      SQL.Add('FROM YPZLZLS2 main');
+      SQL.Add('INNER JOIN FinalData fd ');
+      SQL.Add('    ON main.YPZLBH = fd.YPZLBH ');
+      SQL.Add('   AND main.YPDH = fd.YPDH ');
+      SQL.Add('   AND main.BWBH = fd.BWBH ');
+      SQL.Add('   AND main.MJBH = fd.MJBH ');
+      SQL.Add('   AND main.CLBH = fd.CLBH ');
+      SQL.Add('   AND main.SIZE = fd.SIZE ');
+      SQL.Add('WHERE main.YPZLBH = :YPZLBH');
+      execsql;
+      // ----------------------------------------------------------------------
+      // --- KET THUC DOAN XU LY LAM TRON ---
+      // ----------------------------------------------------------------------
+
     //
     end;
     with YPZLZLS1 do
@@ -1581,7 +1623,7 @@ begin
   Qry_Purchase.Active:=false;
 end;
 
-procedure TSampleMerge.Button5Click(Sender: TObject);
+{procedure TSampleMerge.Button5Click(Sender: TObject);
 begin
   //上個月結盤點庫存用
   DBGridEh3.Columns[12].Title.Caption:='Stock';
@@ -1722,13 +1764,218 @@ begin
     active:=true;
   end;
 
+end;   }
+
+
+procedure TSampleMerge.Button5Click(Sender: TObject);
+begin
+  // Doi ten cot tren luoi giao dien
+  DBGridEh3.Columns[12].Title.Caption:='Stock';
+  
+  // Kiem tra an toan, neu chua luu Master thi dung lai
+  IF NOT YPZLZL.Active THEN
+  BEGIN
+    ABORT;
+  END;
+
+  // Dong truy van chi ti?t truoc khi load lai bang tong hop
+  Qry_Article.Active:=false;
+  
+  // TAT CAP NHAT GIAO DIEN DE TOI UU HIEU NANG RAM & CPU CLIENT
+  Qry_Summary.DisableControls;
+  try
+    with Qry_Summary do
+    begin
+      active:=false;                                            
+      sql.Clear;
+      
+      // ==========================================================
+      // 1. KHOI LENH SQL CUA QRY_SUMMARY (SU DUNG THAM SO :p_...)
+      // ==========================================================
+      sql.add('select YPZL_Mat.*,cg.recs,cg.cgno,IsNull(cg.PurQty,0) as PurQty,IsNull(kcuse.UseStock,0) as UseStock,kcuse.stock_memo,IsNull(kcuse_all.UseStock,0) as SafeStock, ');
+      sql.add('zszlSample.ZSDH_TW as ZSDH_VN,IsNull(KCCLMONTH.Qty,0) as StockQty,IsNull(MaterialMOQ.SampleLeadTime,14) as  SampleLeadTime, ');
+      sql.add('case when substring(YPZL_Mat.csbh,1,3) <> ''JNG'' and substring(YPZL_Mat.CLBH,1,1) <> ''W'' then ');
+      sql.add('(select isnull(sum(isnull(xqqty,0))-sum(isnull(qty,0)),0)+isnull((select sum(qty) from cgzls left join CGZL on CGZL.CGNO = cgzls.CGNO  where clbh = YPZL_Mat.CLBH and CGZL.GSBH = ''CDC'' ');
+      sql.add('and cgzls.cgno not in (select distinct cgno from CGZLInvoiceS where CLBH = YPZL_Mat.CLBH)),0) from CGZLInvoiceS ');
+      sql.add('where CLBH = YPZL_Mat.CLBH) else 0 end as onthewayqty,clzl_flex.cldhflex,CGNoNeedUseStock.CLBH as CLBH_NotUS,Isnull(CGNotYet.CLBH,''NotBuy'') as CLBH_NotBuy ');
+      
+      sql.add('from (select YPZLZLS2.YPZLBH,YPZLZLS2.CLBH,CLZL.YWPM as CLMC,clbzzl.bz as MatRemark');
+      sql.add('      ,CLZL.DWBH,ZSZL.ZSYWJC, ROUND(SUM(YPZLZLS2.CLSL), 0) AS CLSL,YPZLZLS2.CSBH,BUsers.UserName,IsNull(cg.NoBuy,0) as NoBuy,IsNull(cuse.NoUse,0) as NoUse');
+      sql.add('      FROM YPZLZLS2');
+      sql.add('      LEFT JOIN ZSZL on ZSZL.ZSDH=YPZLZLS2.CSBH');
+      sql.add('      LEFT JOIN YPZL on YPZL.YPDH=YPZLZLS2.YPDH');
+      sql.add('      LEFT JOIN CLZL   ON YPZLZLS2.CLBH = CLZL.cldh');
+      sql.add('      LEFT JOIN clbzzl on clzl.cldh=clbzzl.cldh and clbzzl.zybb=''E'' ');
+      
+      sql.add('      LEFT JOIN ZSZL_DEV on ZSZL_DEV.ZSDH=ZSZL.ZSDH and ZSZL_DEV.GSBH = :p_GSBH ');
+      sql.add('      LEFT JOIN BUsers on ZSZL_DEV.SamplePurchaser=BUsers.UserID');
+      sql.add('      left join zszlfilter on zszlfilter.zsdh=YPZLZLS2.CSBH');
+      sql.add('      left join clzlfilter on clzlfilter.cldh=YPZLZLS2.CLBH');
+      
+      // NGAT DONG CHO CAU LENH LEFT JOIN cg (NoBuy) QUA 255 KY TU
+      sql.add('      left join (select YPZLZLS2.CLBH,count(Distinct(YPZLZLS2.YPDH)) as NoBuy ');
+      sql.add('                 from YPZLZLS2,ypzl where ypzl.YPDH=YPZLZLS2.YPDH and YPZLZLS2.YPZLBH = :p_YPZLBH ');
+      sql.add('                 and not exists (select cs.zlbh from cgzlss cs where cs.clbh=YPZLZLS2.CLBH ');
+      sql.add('                 and cs.Stage=ypzl.kfjd and cs.zlbh=YPZL.YPDH and cs.Qty>0) ');
+      sql.add('                 group by YPZLZLS2.CLBH ) cg on YPZLZLS2.CLBH=cg.CLBH ');
+      
+      // NGAT DONG CHO CAU LENH LEFT JOIN cuse (NoUse) QUA 255 KY TU
+      sql.add('      left join (select YPZLZLS2.CLBH,count(Distinct(YPZLZLS2.YPDH)) as NoUse ');
+      sql.add('                 from YPZLZLS2,ypzl where ypzl.YPDH=YPZLZLS2.YPDH and YPZLZLS2.YPZLBH = :p_YPZLBH ');
+      sql.add('                 and not exists (select cuse.zlbh from cgkcuse cuse where cuse.clbh=YPZLZLS2.CLBH ');
+      sql.add('                 and  cuse.zlbh=YPZL.YPDH and cuse.Qty>0) ');
+      sql.add('                 group by YPZLZLS2.CLBH ) cuse on YPZLZLS2.CLBH=cuse.CLBH ');
+      
+      sql.add('      where CLZL.CLZMLB=''N'' and YPZLZLS2.YPZLBH = :p_YPZLBH ');
+      
+      // -- Dieu kien dong --
+      if Trim(Edit_MatNo.Text) <> '' then
+          sql.add('            and YPZLZLS2.CLBH like :p_MatNo ');
+      
+      if Trim(Edit_MatName.Text) <> '' then
+          sql.add('            and CLZL.ywpm like :p_MatName ');
+          
+      if (Radio_PurMat.Checked) or (Radio_Wait.Checked) then 
+      begin
+          sql.add('            and zszlfilter.zsdh is null ');
+          sql.add('            and clzlfilter.cldh is null ');
+      end;
+      
+      if (Radio_Wait.Checked) then 
+      begin
+          sql.add('              and (IsNull(cg.NoBuy,0)>0 or IsNull(cuse.NoUse,0)>0) ');
+      end;
+      
+      if Trim(Edit_Supplier.text) <> '' then
+          sql.add('            and ZSZL.ZSYWJC like :p_Supplier ');
+          
+      sql.add('          group by  YPZLZLS2.YPZLBH,YPZLZLS2.CLBH,cg.NoBuy,cuse.NoUse,CLZL.YWPM,CLZL.DWBH,ZSZL.ZSYWJC,YPZLZLS2.CSBH,BUsers.UserName,clzlfilter.cldh,clbzzl.bz');
+      sql.add('          ) YPZL_Mat');
+      
+      sql.add('left join (select cs.clbh,count(cs.clbh) as recs, min(cs.cgno) as cgno,sum(CS.Qty) as PurQty');
+      sql.add('            from cgzlss cs');
+      sql.add('            where exists (select ypzl.YPDH from YPZLZLS2,ypzl ');
+      sql.add('                          where ypzl.YPDH=YPZLZLS2.YPDH and YPZLZLS2.YPZLBH = :p_YPZLBH ');
+      sql.add('                                and cs.clbh=YPZLZLS2.CLBH and cs.Stage=ypzl.kfjd and cs.zlbh=YPZL.YPDH )  ');
+      sql.add('            group by cs.clbh ');
+      sql.add('           ) cg on cg.clbh=YPZL_Mat.CLBH ');
+      
+      sql.add('left join (select cgkcuse.clbh,sum(cgkcuse.qty) as UseStock,MAX(cgkcuse.memo) as stock_memo from cgkcuse ');
+      sql.add('            where exists (select YPDH from YPZLZLS2 ');
+      sql.add('                          where  YPZLZLS2.YPZLBH = :p_YPZLBH ');
+      sql.add('                                 and cgkcuse.clbh=YPZLZLS2.CLBH and cgkcuse.zlbh=YPZLZLS2.ypdh  )  ');
+      sql.add('                  and cgkcuse.GSBH = :p_GSBH ');
+      sql.add('            group by cgkcuse.clbh ');
+      sql.add('           ) kcuse on kcuse.clbh=YPZL_Mat.CLBH ');
+      
+      sql.add('left join (select cgkcuse.clbh,sum(cgkcuse.qty) as UseStock from cgkcuse ');
+      sql.add('            where cgkcuse.userdate>getdate()-45 ');
+      sql.add('                  and cgkcuse.GSBH = :p_GSBH ');
+      sql.add('            group by cgkcuse.clbh ');
+      sql.add('           ) kcuse_all on kcuse_all.clbh=YPZL_Mat.CLBH ');
+      
+      sql.add('left join ZSZL_DEV zszlSample on zszlSample.ZSDH=YPZL_Mat.csbh');
+      sql.add('and zszlSample.GSBH = :p_MainGSBH ');
+      
+      sql.add('left join ( ');
+      sql.add('  select KCCLDay.CLBH,KCCLDay.Qty from KCCLDay  ');
+      sql.add('  where KCCLDay.KCDay = :p_Today and KCCLDay.CKBH = :p_GSBH ');
+      sql.add(') KCCLMONTH on KCCLMONTH.CLBH=YPZL_Mat.CLBH  ');
+      
+      // NGAT DONG CHO CAU LENH LEFT JOIN MaterialMOQ CHO AN TOAN
+      sql.add('Left join (select CLBH,SampleLeadTime from ( select CLBH,SampleLeadTime,');
+      sql.add('           ROW_NUMBER() over (PARTITION BY CLBH ORDER BY Substring(Season,1,2) DESC,Substring(Season,3,1) ASC) as rn ');
+      sql.add('           from MaterialMOQ) A where A.rn=1 ) MaterialMOQ on MaterialMOQ.CLBH=YPZL_Mat.CLBH ');
+      
+      sql.add('left join clzl_flex on clzl_flex.CLDH=YPZL_Mat.CLBH');
+      sql.add('left join CGNoNeedUseStock on CGNoNeedUseStock.CLBH=YPZL_Mat.CLBH and CGNoNeedUseStock.GSBH = :p_MainGSBH ');
+      
+      // LOAI BO TABLE 2014, CHI LAY TABLE CHINH CHO GON
+      sql.add('left join ( Select CGZLS.CLBH  ');
+      sql.add('            From CGZLS ');
+      sql.add('            Left join CGZL on CGZLS.cgno=CGZL.CGNO ');
+      sql.add('            Where CGZL.GSBH = :p_MainGSBH and CGZLS.CLBH in ( Select CLBH From YPZLZLS2 Where YPZLZLS2.YPZLBH = :p_YPZLBH ) ');
+      sql.add('            Group by CGZLS.CLBH ) CGNotYet on CGNotYet.CLBH=YPZL_Mat.CLBH ');
+      
+      sql.add('where 1=1 ');
+      
+      if CKCLSL.Checked=true then
+          sql.add(' and YPZL_Mat.CLSL>0 ');
+          
+      IF Chk_Mine.Checked then
+          sql.add(' and zszlSample.SamplePurchaser = :p_UserID ');
+          
+      if (Radio_Wait.Checked) then
+      begin
+          sql.add(' and ( (CLSL>IsNULL(PurQty,0)) or ((IsNULL(PurQty,0)>0) and (YPZL_Mat.NoBuy>0)) or ((IsNULL(kcuse.UseStock,0)>0) and (YPZL_Mat.NoUse>0)) )  ');
+          sql.add(' and ( (CLSL>IsNULL(kcuse.UseStock,0)) or ((IsNULL(PurQty,0)>0) and (YPZL_Mat.NoBuy>0))  or ((IsNULL(kcuse.UseStock,0)>0) and (YPZL_Mat.NoUse>0)) ) ');
+      end;
+      
+      sql.add('order by YPZL_Mat.ZSYWJC ');
+
+      // ==========================================================
+      // 2. TRUYEN DU LIEU VAO THAM SO TRUOC KHI OPEN
+      // ==========================================================
+      ParamByName('p_YPZLBH').AsString   := YPZLZL.FieldByName('YPZLBH').AsString;
+      ParamByName('p_GSBH').AsString     := YPZLZL.FieldByName('GSBH').AsString;
+      ParamByName('p_MainGSBH').AsString := main.Edit2.Text;
+      ParamByName('p_Today').AsString    := FormatDateTime('YYYYMMDD', Date());
+      
+      if Trim(Edit_MatNo.Text) <> '' then
+         ParamByName('p_MatNo').AsString := Edit_MatNo.Text + '%';
+         
+      if Trim(Edit_MatName.Text) <> '' then
+         ParamByName('p_MatName').AsString := '%' + Edit_MatName.Text + '%';
+         
+      if Trim(Edit_Supplier.text) <> '' then
+         ParamByName('p_Supplier').AsString := '%' + Edit_Supplier.text + '%';
+         
+      if Chk_Mine.Checked then
+         ParamByName('p_UserID').AsString := main.Edit1.Text;
+
+      active:=true;
+    end;
+
+    // ==========================================================
+    // 3. KHOI LENH SQL CUA QRY_ARTICLE (D惿G MASTER-DETAIL CU)
+    // ==========================================================
+    with Qry_Article do
+    begin
+      active:=false;
+      sql.Clear;
+      sql.add('select YPZLZLS2.YPDH,Max(YPZLZLS2.BWBH) as BWBH,YPZLZLS2.CLBH,CLZL.DWBH,SUM(YPZLZLS2.CLSL) AS CLSL,kfxxzl.devcode,kfxxzl.ARTICLE ,ypzl.KFJD ');
+      sql.add('       ,YPZLZLS.PAIRS,IsNull(cgkcuse.qty,0) as UseStock,ypzl.YPCCO,kfxxzl.FD,IsNull(CGZLSS.Qty,0) as CGQty,ypzl.productionlocation,kfxxzl.YSSM  ');
+      sql.add('FROM YPZLZLS2 ');
+      sql.add('Inner JOIN YPZLZLS on YPZLZLS.YPZLBH=YPZLZLS2.YPZLBH and YPZLZLS.YPDH=YPZLZLS2.YPDH ');
+      sql.add('Inner JOIN CLZL   ON YPZLZLS2.CLBH = CLZL.cldh ');
+      sql.add('Inner JOIN ypzl  ON ypzl.YPDH=YPZLZLS2.YPDH ');
+      sql.add('Inner join kfxxzl on kfxxzl.xiexing=ypzl.xiexing and kfxxzl.shehao=ypzl.shehao ');
+      sql.Add(' left JOIN  (select ZLBH,Sum(Qty) as Qty, Stage from CGZLSS where  CGZLSS.CLBH=:CLBH  Group By ZLBH,CLBH,Stage) CGZLSS on CGZLSS.ZLBH=ypzl.YPDH and CGZLSS.Stage=ypzl.KFJD');
+      sql.add('left join cgkcuse on cgkcuse.zlbh=YPZLZLS2.ypdh and cgkcuse.clbh=YPZLZLS2.clbh and cgkcuse.GSBH='''+YPZLZL.FieldByName('GSBH').AsString+''' ');
+      sql.add('where  YPZLZLS2.CLBH=:CLBH ');
+      sql.add('       and YPZLZLS2.YPZLBH=:YPZLBH ');
+      sql.add('group by  YPZLZLS2.YPDH,YPZLZLS2.CLBH,CLZL.DWBH,kfxxzl.devcode,kfxxzl.ARTICLE  ,ypzl.KFJD ');
+      sql.add('         ,YPZLZLS.PAIRS ,cgkcuse.qty,ypzl.YPCCO,kfxxzl.FD,CGZLSS.Qty,ypzl.productionlocation,kfxxzl.YSSM    ');
+      sql.add('order by kfxxzl.devcode  ASC  ');
+      
+      // Giu nguyen cach active de bang con tu dong chay theo Master
+      if DBGridEh5.Visible=true then 
+         active:=true;
+    end;
+
+  finally
+    // MO LAI GIAO DIEN SAU KHI DU LIEU DA TAI XONG HOAN TOAN
+    Qry_Summary.EnableControls;
+  end;
 end;
+
 
 procedure TSampleMerge.DBGridEh3DrawColumnCell(Sender: TObject;
   const Rect: TRect; DataCol: Integer; Column: TColumnEh;
   State: TGridDrawState);
 begin
-  if ((Qry_Summary.FieldByName('UseStock').AsFloat+Qry_Summary.FieldByName('PurQty').AsFloat)<Qry_Summary.FieldByName('CLSL').AsFloat ) then
+  if ((Qry_Summary.FieldByName('UseStock').AsFloat+Qry_Summary.FieldByName('PurQty').AsFloat)< Qry_Summary.FieldByName('CLSL').AsFloat ) then
+ // if (Qry_Summary.FieldByName('UseStock').AsFloat + Qry_Summary.FieldByName('PurQty').AsFloat) < Round(Qry_Summary.FieldByName('CLSL').AsFloat) then
   begin
     DBGridEh3.canvas.font.color:=clred;
     DBGridEh3.defaultdrawcolumncell(rect,datacol,column,state);
@@ -2008,7 +2255,8 @@ begin
                sql.Add(','''+YPZLZL.fieldbyname('YPZLBH').AsString+'''');     //填Merge NO
                sql.Add(','''+main.edit1.Text+'''');
                sql.Add(','''+formatdatetime('yyyy/MM/dd',Ndate)+'''');
-               sql.Add(',''1'','+Qry_Summary.fieldbyname('CLSL').AsString +')');
+              /// sql.Add(',''1'','+Qry_Summary.fieldbyname('CLSL').AsString +')');
+              SQL.Add(',''1'',' + IntToStr(Round(Qry_Summary.FieldByName('CLSL').AsFloat)) + ')');
                execsql;
                active:=false;
              end;

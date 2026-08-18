@@ -3992,7 +3992,7 @@ object PurSample_Print_Tw_Approve: TPurSample_Print_Tw_Approve
     end
     object Query1Qty: TCurrencyField
       FieldName = 'Qty'
-      DisplayFormat = '#,##0.0'
+      DisplayFormat = '#,##0'
     end
     object Query1XXCC: TStringField
       FieldName = 'XXCC'

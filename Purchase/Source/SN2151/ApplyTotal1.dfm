@@ -1,6 +1,6 @@
 object ApplyTotal: TApplyTotal
-  Left = 367
-  Top = 231
+  Left = 210
+  Top = 227
   Width = 1357
   Height = 632
   Caption = 'Apply Total'
@@ -848,7 +848,7 @@ object ApplyTotal: TApplyTotal
     Top = 195
     Width = 1341
     Height = 398
-    ActivePage = TS3
+    ActivePage = TS4
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -1572,6 +1572,19 @@ object ApplyTotal: TApplyTotal
             Footers = <>
             ReadOnly = True
             Title.Caption = #24207#34399'|Serno'
+          end
+          item
+            EditButtons = <>
+            FieldName = 'CostType'
+            Footers = <>
+            PickList.Strings = (
+              '1.Trong ngan sach thang nay '#26412#26376#38928#31639#20839
+              '2.Ngoai ngan sach thang nay (Co) '#26412#26376#38928#31639#22806'('#26377')'
+              '3.Ngoai ngan sach thang nay (Khong) '#26412#26376#38928#31639#22806'('#27794#26377')'
+              '4.Bo sung ngan sach thang nay '#26412#26376#36861#21152#38928#31639)
+            Title.Caption = #36027#29992#39006#21029' | CostType'
+            Width = 400
+            WordWrap = False
           end>
       end
     end
@@ -2402,7 +2415,7 @@ object ApplyTotal: TApplyTotal
       
         #9'    ,IsNull((Select Sum(Qty) from KCCLDAY_BDepartment where Dep' +
         'ID='#39'ZZZZZZZZZZ'#39' and SGDHS.CLBH=CLBH),0.0) as ZZZQty'
-      #9#9',SGDHS.YM,SGDHS.Season,SGDHS.Serno'
+      #9#9',SGDHS.YM,SGDHS.Season,SGDHS.Serno,SGDHS.CostType'
       'from SGDHS'
       'left join SGDH on SGDH.SGNO=SGDHS.SGNO'
       'left join CLZL on CLZL.CLDH = SGDHS.CLBH'
@@ -2540,6 +2553,11 @@ object ApplyTotal: TApplyTotal
     object SGDetSerno: TIntegerField
       FieldName = 'Serno'
     end
+    object SGDetCostType: TStringField
+      FieldName = 'CostType'
+      FixedChar = True
+      Size = 140
+    end
   end
   object UPDet: TUpdateSQL
     ModifySQL.Strings = (
@@ -2558,7 +2576,8 @@ object ApplyTotal: TApplyTotal
       '  YN =:YN,'
       '  YM =:YM,'
       '  Season =:Season,'
-      '  Serno =:Serno'
+      '  Serno =:Serno,'
+      ' CostType =:CostType'
       'where'
       '  SGNO =:OLD_SGNO and '
       '  CLBH=:OLD_CLBH'
@@ -2567,11 +2586,12 @@ object ApplyTotal: TApplyTotal
       'insert into SGDHS'
       
         '  (SGNO, CLBH, SGQty, Qty, VNPrice, USPrice, YQdate, Memo, BJNO,' +
-        ' USERDATE, USERID, YN, YM, Season, Serno)'
+        ' USERDATE, USERID, YN, YM, Season, Serno,CostType)'
       'values'
       
         '  (:SGNO, :CLBH, :SGQty, :Qty, :VNPrice, :USPrice, :YQdate, :Mem' +
-        'o, :BJNO, :USERDATE, :USERID, :YN, :YM, :Season, :Serno)'
+        'o, :BJNO, :USERDATE, :USERID, :YN, :YM, :Season, :Serno, :CostTy' +
+        'pe)'
       '')
     DeleteSQL.Strings = (
       'delete from SGDHS'

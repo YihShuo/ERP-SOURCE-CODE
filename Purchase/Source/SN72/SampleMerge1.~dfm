@@ -2712,6 +2712,7 @@ object SampleMerge: TSampleMerge
               Width = 46
             end
             item
+              DisplayFormat = '#,##0'
               EditButtons = <>
               FieldName = 'CLSL'
               Footers = <>

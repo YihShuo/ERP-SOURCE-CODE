@@ -371,7 +371,7 @@ type
   public
     { Public declarations }
     Function ConvertStage(str:string):string;
-  end;                                                                         
+  end;
 
 var
   PurSample: TPurSample;
@@ -2470,7 +2470,10 @@ begin
              eclApp.Cells(j,1):=CGDet.FieldByName('CLBH').asstring+'('+CGDet.FieldByName('cldhflex').asstring+')';
              eclApp.Cells(j,2):=CGDet.FieldByName('YWPM').asstring;
              eclApp.Cells(j,3):=CGDet.FieldByName('DWBH').asstring;
-             eclApp.Cells(j,4):=CGDet.FieldByName('QTY').asstring;
+            // ysit 07/08/2026
+            // eclApp.Cells(j,4):=CGDet.FieldByName('QTY').asstring;
+            eclApp.Cells(j,4) := IntToStr(Round(CGDet.FieldByName('QTY').AsFloat));
+
              eclApp.Cells(j,5):=FD_ALL;//CGS.FieldByName('FD').asstring;
              eclApp.Cells(j,6):=ArticleALl;//≈„•‹Article
              eclApp.Cells(j,7):=CGS.FieldByName('XieMing').asstring+'/ '+CGS.FieldByName('memo').AsString;

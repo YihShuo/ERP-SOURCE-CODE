@@ -2051,7 +2051,7 @@ object PurSample_Print_Tw: TPurSample_Print_Tw
     end
     object MasQty: TCurrencyField
       FieldName = 'Qty'
-      DisplayFormat = '#,##0.0'
+      DisplayFormat = '#,##0'
     end
     object MasUSPrice: TCurrencyField
       FieldName = 'USPrice'
@@ -2131,9 +2131,9 @@ object PurSample_Print_Tw: TPurSample_Print_Tw
     DataSource = DataSource1
     SQL.Strings = (
       
-        'select CGZLSS.ZLBH,CGZLSS.Qty,CGZLSS.XXCC,KFXXZL.XIEMING,IsNull(' +
-        'KFXXZL.ARTICLE,'#39'ALL'#39') as ARTICLE,KFXXZL.FD,IsNull(KFXXZL.devcode' +
-        ','#39'ALL'#39') as ARTICLE1,CGZLSS.MEMO'
+        'select CGZLSS.ZLBH,round(CGZLSS.Qty,0) as qty,CGZLSS.XXCC,KFXXZL' +
+        '.XIEMING,IsNull(KFXXZL.ARTICLE,'#39'ALL'#39') as ARTICLE,KFXXZL.FD,IsNul' +
+        'l(KFXXZL.devcode,'#39'ALL'#39') as ARTICLE1,CGZLSS.MEMO'
       'from CGZLSS'
       'left join YPZL  on CGZLSS.ZLBH=YPZL.YPDH'
       

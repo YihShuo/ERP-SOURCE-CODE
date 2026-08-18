@@ -466,14 +466,14 @@ object IncomeUpperMaterial: TIncomeUpperMaterial
       Caption = 'Inspection date:'
       TabOrder = 21
     end
-    object btCopy: TButton
+    object btConfirm: TButton
       Left = 336
       Top = 144
       Width = 65
       Height = 49
-      Caption = 'Copy'
+      Caption = 'Confirm'
       TabOrder = 22
-      Visible = False
+      OnClick = btConfirmClick
     end
     object ckArrDate: TCheckBox
       Left = 8
@@ -510,7 +510,7 @@ object IncomeUpperMaterial: TIncomeUpperMaterial
     Flat = False
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
-    Font.Height = -13
+    Font.Height = -11
     Font.Name = 'MS Sans Serif'
     Font.Style = []
     FooterColor = clWindow
@@ -525,7 +525,7 @@ object IncomeUpperMaterial: TIncomeUpperMaterial
     TabOrder = 1
     TitleFont.Charset = DEFAULT_CHARSET
     TitleFont.Color = clWindowText
-    TitleFont.Height = -16
+    TitleFont.Height = -11
     TitleFont.Name = 'MS Sans Serif'
     TitleFont.Style = []
     TitleLines = 2
@@ -537,6 +537,7 @@ object IncomeUpperMaterial: TIncomeUpperMaterial
       item
         EditButtons = <>
         FieldName = 'ReportID'
+        Footer.ValueType = fvtCount
         Footers = <>
         Width = 80
         OnEditButtonClick = DBGrid1Columns0EditButtonClick
@@ -545,6 +546,20 @@ object IncomeUpperMaterial: TIncomeUpperMaterial
         EditButtons = <>
         FieldName = 'Cont'
         Footers = <>
+        Width = 100
+      end
+      item
+        EditButtons = <>
+        FieldName = 'zsywjc'
+        Footers = <>
+        Title.Caption = 'SupplierName'
+        Width = 100
+      end
+      item
+        EditButtons = <>
+        FieldName = 'ywpm'
+        Footers = <>
+        Title.Caption = 'MatName'
         Width = 100
       end
       item
@@ -570,47 +585,10 @@ object IncomeUpperMaterial: TIncomeUpperMaterial
       end
       item
         EditButtons = <>
-        FieldName = 'Supplier'
-        Footers = <>
-        Width = 100
-      end
-      item
-        EditButtons = <>
-        FieldName = 'MatName'
-        Footers = <>
-        ReadOnly = True
-        Title.Caption = 'Material name'
-        Width = 200
-      end
-      item
-        EditButtons = <>
-        FieldName = 'XieMing'
-        Footers = <>
-        ReadOnly = True
-        Title.Caption = 'Style Name'
-        Width = 150
-      end
-      item
-        EditButtons = <>
-        FieldName = 'ARTICLE'
-        Footers = <>
-        ReadOnly = True
-        Title.Caption = 'SKU'
-        Width = 100
-      end
-      item
-        EditButtons = <>
         FieldName = 'CLBH'
         Footers = <>
         Title.Caption = 'Material code'
         Width = 120
-      end
-      item
-        EditButtons = <>
-        FieldName = 'DDBH'
-        Footers = <>
-        Title.Caption = 'RY'
-        Width = 300
       end
       item
         EditButtons = <>
@@ -730,12 +708,24 @@ object IncomeUpperMaterial: TIncomeUpperMaterial
         EditButtons = <>
         FieldName = 'PreparedID'
         Footers = <>
-        Width = 200
+        Width = 124
       end
       item
         EditButtons = <>
         FieldName = 'PreparedDate'
         Footers = <>
+      end
+      item
+        EditButtons = <>
+        FieldName = 'No_ID'
+        Footers = <>
+        Visible = False
+      end
+      item
+        EditButtons = <>
+        FieldName = 'ZSBH'
+        Footers = <>
+        Visible = False
       end>
   end
   object Panel2: TPanel
@@ -769,8 +759,9 @@ object IncomeUpperMaterial: TIncomeUpperMaterial
       Columns = <
         item
           EditButtons = <>
-          FieldName = 'ReportID'
+          FieldName = 'No_ID'
           Footers = <>
+          Visible = False
         end
         item
           EditButtons = <>
@@ -784,6 +775,12 @@ object IncomeUpperMaterial: TIncomeUpperMaterial
         end
         item
           EditButtons = <>
+          FieldName = 'XieMing'
+          Footers = <>
+          Width = 200
+        end
+        item
+          EditButtons = <>
           FieldName = 'CustPO'
           Footers = <>
         end
@@ -791,21 +788,25 @@ object IncomeUpperMaterial: TIncomeUpperMaterial
           EditButtons = <>
           FieldName = 'Remark'
           Footers = <>
+          Width = 200
         end
         item
           EditButtons = <>
           FieldName = 'YN'
           Footers = <>
+          Visible = False
         end
         item
           EditButtons = <>
           FieldName = 'UserID'
           Footers = <>
+          Visible = False
         end
         item
           EditButtons = <>
           FieldName = 'UserDate'
           Footers = <>
+          Visible = False
         end>
     end
   end
@@ -813,15 +814,9 @@ object IncomeUpperMaterial: TIncomeUpperMaterial
     AfterOpen = Query1AfterOpen
     DatabaseName = 'DB'
     SQL.Strings = (
-      
-        'SELECT QC_UpperMat.*, DDZL.ARTICLE, xxzl.XieMing, clzl.ywpm as M' +
-        'atName'
-      'FROM QC_UpperMat'
-      'left join DDZL on DDZL.DDBH = QC_UpperMat.DDBH'
-      
-        'left join xxzl on DDZL.SheHao = xxzl.SheHao and xxzl.XieXing = D' +
-        'DZL.XieXing'
-      'left join clzl on clzl.cldh = QC_UpperMat.CLBH')
+      'select qu.*, clzl.ywpm, zszl.zsywjc from QC_UpperMat qu'
+      'inner join clzl on clzl.cldh = qu.CLBH'
+      'inner join zszl on zszl.zsdh = qu.ZSBH')
     UpdateObject = UpSQL1
     Left = 448
     Top = 400
@@ -848,29 +843,22 @@ object IncomeUpperMaterial: TIncomeUpperMaterial
       FieldName = 'CLBH'
       FixedChar = True
     end
-    object Query1Supplier: TStringField
-      FieldName = 'Supplier'
-      FixedChar = True
-      Size = 30
-    end
-    object Query1DDBH: TStringField
-      FieldName = 'DDBH'
-      FixedChar = True
-      Size = 200
-    end
-    object Query1RQty: TIntegerField
+    object Query1RQty: TCurrencyField
       FieldName = 'RQty'
+      currency = False
     end
-    object Query1IQty: TIntegerField
+    object Query1IQty: TCurrencyField
       FieldName = 'IQty'
+      currency = False
     end
     object Query1DeReason: TStringField
       FieldName = 'DeReason'
       FixedChar = True
       Size = 255
     end
-    object Query1DeQty: TIntegerField
+    object Query1DeQty: TCurrencyField
       FieldName = 'DeQty'
+      currency = False
     end
     object Query1SendDate: TDateTimeField
       FieldName = 'SendDate'
@@ -933,23 +921,26 @@ object IncomeUpperMaterial: TIncomeUpperMaterial
     object Query1PreparedDate: TDateTimeField
       FieldName = 'PreparedDate'
     end
-    object Query1ARTICLE: TStringField
-      FieldName = 'ARTICLE'
-      FixedChar = True
-    end
-    object Query1XieMing: TStringField
-      FieldName = 'XieMing'
-      FixedChar = True
-      Size = 50
-    end
-    object Query1MatName: TStringField
-      FieldName = 'MatName'
-      FixedChar = True
-      Size = 200
-    end
     object Query1InspecResult: TStringField
       FieldName = 'InspecResult'
       FixedChar = True
+    end
+    object Query1No_ID: TIntegerField
+      FieldName = 'No_ID'
+    end
+    object Query1ZSBH: TStringField
+      FieldName = 'ZSBH'
+      FixedChar = True
+    end
+    object Query1ywpm: TStringField
+      FieldName = 'ywpm'
+      FixedChar = True
+      Size = 200
+    end
+    object Query1zsywjc: TStringField
+      FieldName = 'zsywjc'
+      FixedChar = True
+      Size = 40
     end
   end
   object DS1: TDataSource
@@ -967,8 +958,6 @@ object IncomeUpperMaterial: TIncomeUpperMaterial
       '  ArrDate = :ArrDate,'
       '  Brand = :Brand,'
       '  CLBH = :CLBH,'
-      '  Supplier = :Supplier,'
-      '  DDBH = :DDBH,'
       '  RQty = :RQty,'
       '  IQty = :IQty,'
       '  DeReason = :DeReason,'
@@ -990,25 +979,25 @@ object IncomeUpperMaterial: TIncomeUpperMaterial
       '  LabUID = :LabUID,'
       '  LabChgDate = :LabChgDate,'
       '  PreparedID = :PreparedID,'
-      '  PreparedDate = :PreparedDate'
+      '  PreparedDate = :PreparedDate,'
+      '  No_ID = :No_ID,'
+      '  ZSBH = :ZSBH'
       'where'
       '  ReportID = :OLD_ReportID')
     InsertSQL.Strings = (
       'insert into QC_UpperMat'
-      
-        '  (ReportID, Cont, InspecDate, ArrDate, Brand, CLBH, Supplier, D' +
-        'DBH, RQty, IQty,'
+      '  (ReportID, Cont, InspecDate, ArrDate, Brand, CLBH, RQty, IQty,'
       
         '   DeReason, DeQty, InspecResult, SendDate, LabID, LabResult, Re' +
         'ject, SCFID, '
       
         '   SCFDate, LCFID, LCFDate, MSCFID, MSCFDate, YN, USERID, USERDa' +
         'te, LabUID, '
-      '   LabChgDate, PreparedID, PreparedDate)'
+      '   LabChgDate, PreparedID, PreparedDate, No_ID, ZSBH)'
       'values'
       
-        '  (:ReportID, :Cont, :InspecDate, :ArrDate, :Brand, :CLBH, :Supp' +
-        'lier, :DDBH, :RQty, '
+        '  (:ReportID, :Cont, :InspecDate, :ArrDate, :Brand, :CLBH, :RQty' +
+        ','
       
         '   :IQty, :DeReason, :DeQty, :InspecResult, :SendDate, :LabID, :' +
         'LabResult, '
@@ -1017,10 +1006,9 @@ object IncomeUpperMaterial: TIncomeUpperMaterial
         'te, :YN, '
       
         '   :USERID, :USERDate, :LabUID, :LabChgDate, :PreparedID, :Prepa' +
-        'redDate)')
+        'redDate, :No_ID, :ZSBH)')
     DeleteSQL.Strings = (
-      'update QC_UpperMat'
-      'set YN <> 0'
+      'delete from QC_UpperMat'
       'where'
       '  ReportID = :OLD_ReportID')
     Left = 528
@@ -1053,20 +1041,21 @@ object IncomeUpperMaterial: TIncomeUpperMaterial
     DatabaseName = 'DB'
     DataSource = DS1
     SQL.Strings = (
-      'select * from QC_UpperMatDetail'
-      'where ReportID = :ReportID')
+      'select mry.*, XieMing from MaterialQCcheck_RY mry'
+      'inner join xxzl on xxzl.ARTICLE = mry.Article'
+      'where No_ID = :No_ID')
     UpdateObject = UpDetail
     Left = 304
     Top = 608
     ParamData = <
       item
-        DataType = ftInteger
-        Name = 'ReportID'
+        DataType = ftFixedChar
+        Name = 'No_ID'
         ParamType = ptUnknown
-        Size = 4
+        Size = 21
       end>
-    object QDetailReportID: TIntegerField
-      FieldName = 'ReportID'
+    object QDetailNo_ID: TIntegerField
+      FieldName = 'No_ID'
     end
     object QDetailRY: TStringField
       FieldName = 'RY'
@@ -1099,6 +1088,11 @@ object IncomeUpperMaterial: TIncomeUpperMaterial
     end
     object QDetailUserDate: TDateTimeField
       FieldName = 'UserDate'
+    end
+    object QDetailXieMing: TStringField
+      FieldName = 'XieMing'
+      FixedChar = True
+      Size = 50
     end
   end
   object DSDetail: TDataSource

@@ -371,7 +371,7 @@ type
   public
     { Public declarations }
     Function ConvertStage(str:string):string;
-  end;                                                                         
+  end;
 
 var
   PurSample: TPurSample;
@@ -656,11 +656,11 @@ end;
 
 procedure TPurSample.BB3Click(Sender: TObject);
 begin
-  if (CGMas.FieldByName('Flowflag_TK').AsString<>'X') and (trim(CGMas.FieldByName('Flowflag_TK').AsString)<>'') then
+  {if (CGMas.FieldByName('Flowflag_TK').AsString<>'X') and (trim(CGMas.FieldByName('Flowflag_TK').AsString)<>'') then
   begin
     Showmessage('Da gui trinh ky. Khong the sua !');
     exit;
-  end;
+  end;  }
   if CGDet.recordcount=0 then
   begin
     with CGMas do
@@ -690,11 +690,11 @@ end;
 
 procedure TPurSample.BB4Click(Sender: TObject);
 begin
-  if (trim(CGMas.FieldByName('Flowflag_TK').AsString)<>'') then
+ { if (trim(CGMas.FieldByName('Flowflag_TK').AsString)<>'') then
   begin
     Showmessage('Da gui trinh ky. Khong the sua !');
     exit;
-  end;
+  end;  }
   with CGMas do
   begin
     requestlive:=true;
@@ -915,11 +915,11 @@ begin
     PC1.ActivePage:=TS4;
     abort;
   end;
-  if (trim(CGMas.FieldByName('Flowflag_TK').AsString)<>'') then
+  {if (trim(CGMas.FieldByName('Flowflag_TK').AsString)<>'') then
   begin
     Showmessage('Da gui trinh ky. Khong the sua !');
     exit;
-  end;
+  end; }
 
   with CGDet do
   begin
@@ -950,11 +950,11 @@ begin
     PC1.ActivePage:=TS4;
     abort;
   end;
-  if (CGMas.FieldByName('Flowflag_TK').AsString<>'X') and (trim(CGMas.FieldByName('Flowflag_TK').AsString)<>'') then
+  {if (CGMas.FieldByName('Flowflag_TK').AsString<>'X') and (trim(CGMas.FieldByName('Flowflag_TK').AsString)<>'') then
   begin
     Showmessage('Da gui trinh ky. Khong the sua !');
     exit;
-  end;
+  end;}
   if CGS.recordcount>0 then
   begin
     showmessage('Pls delete the order detail first.');
@@ -987,11 +987,11 @@ begin
     abort;
   end;
   
-  if (trim(CGMas.FieldByName('Flowflag_TK').AsString)<>'') then
+  {if (trim(CGMas.FieldByName('Flowflag_TK').AsString)<>'') then
   begin
     Showmessage('Da gui trinh ky. Khong the sua !');
     exit;
-  end;
+  end; }
 
   with CGDet do
   begin
@@ -1525,11 +1525,11 @@ begin
     abort;
   end;
   
-  if (CGMas.FieldByName('Flowflag_TK').AsString<>'X') and (trim(CGMas.FieldByName('Flowflag_TK').AsString)<>'') then
+  {if (CGMas.FieldByName('Flowflag_TK').AsString<>'X') and (trim(CGMas.FieldByName('Flowflag_TK').AsString)<>'') then
   begin
     Showmessage('Da gui trinh ky. Khong the sua !');
     exit;
-  end;
+  end; }
 
 
   if (((NDate-CGMas.FieldByName('USERDATE').value)>10) and ( formatdatetime('yyyy/MM/dd',NDate)>'2008/12/01'))  then
@@ -1764,11 +1764,11 @@ begin
     abort;
   end;
 
-  if (trim(CGMas.FieldByName('Flowflag_TK').AsString)<>'') then
+ { if (trim(CGMas.FieldByName('Flowflag_TK').AsString)<>'') then
   begin
     Showmessage('Da gui trinh ky. Khong the sua !');
     exit;
-  end;
+  end; }
 
   if not ((main.edit1.text='04233') or  (main.edit1.text='ERIC') OR (main.edit1.text='GLENN')) then
   begin
@@ -1843,11 +1843,11 @@ begin
     abort;
   end;
   
-  if (CGMas.FieldByName('Flowflag_TK').AsString<>'X') and (trim(CGMas.FieldByName('Flowflag_TK').AsString)<>'') then
+ { if (CGMas.FieldByName('Flowflag_TK').AsString<>'X') and (trim(CGMas.FieldByName('Flowflag_TK').AsString)<>'') then
   begin
     Showmessage('Da gui trinh ky. Khong the sua !');
     exit;
-  end;
+  end; }
 
   if (((NDate-CGMas.FieldByName('USERDATE').value)>10) and ( formatdatetime('yyyy/MM/dd',NDate)>'2008/12/01'))  then
   begin
@@ -2470,7 +2470,9 @@ begin
              eclApp.Cells(j,1):=CGDet.FieldByName('CLBH').asstring+'('+CGDet.FieldByName('cldhflex').asstring+')';
              eclApp.Cells(j,2):=CGDet.FieldByName('YWPM').asstring;
              eclApp.Cells(j,3):=CGDet.FieldByName('DWBH').asstring;
-             eclApp.Cells(j,4):=CGDet.FieldByName('QTY').asstring;
+            // eclApp.Cells(j,4):=CGDet.FieldByName('QTY').asstring;
+            eclApp.Cells(j,4) := IntToStr(Round(CGDet.FieldByName('QTY').AsFloat));
+
              eclApp.Cells(j,5):=FD_ALL;//CGS.FieldByName('FD').asstring;
              eclApp.Cells(j,6):=ArticleALl;//≈„•‹Article
              eclApp.Cells(j,7):=CGS.FieldByName('XieMing').asstring+'/ '+CGS.FieldByName('memo').AsString;

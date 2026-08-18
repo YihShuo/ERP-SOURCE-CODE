@@ -37,7 +37,7 @@ type
     edtSKU: TEdit;
     btClear: TButton;
     ckInsDate: TCheckBox;
-    btCopy: TButton;
+    btConfirm: TButton;
     DBGrid1: TDBGridEh;
     Query1: TQuery;
     DS1: TDataSource;
@@ -54,12 +54,7 @@ type
     Query1ArrDate: TDateTimeField;
     Query1Brand: TStringField;
     Query1CLBH: TStringField;
-    Query1Supplier: TStringField;
-    Query1DDBH: TStringField;
-    Query1RQty: TIntegerField;
-    Query1IQty: TIntegerField;
     Query1DeReason: TStringField;
-    Query1DeQty: TIntegerField;
     Query1SendDate: TDateTimeField;
     Query1LabID: TStringField;
     Query1LabResult: TStringField;
@@ -77,9 +72,6 @@ type
     Query1LabChgDate: TDateTimeField;
     Query1PreparedID: TStringField;
     Query1PreparedDate: TDateTimeField;
-    Query1ARTICLE: TStringField;
-    Query1XieMing: TStringField;
-    Query1MatName: TStringField;
     Query1Cont: TStringField;
     Label4: TLabel;
     edtBrand: TEdit;
@@ -87,7 +79,8 @@ type
     DBGridEh1: TDBGridEh;
     QDetail: TQuery;
     DSDetail: TDataSource;
-    QDetailReportID: TIntegerField;
+    Query1InspecResult: TStringField;
+    UpDetail: TUpdateSQL;
     QDetailRY: TStringField;
     QDetailArticle: TStringField;
     QDetailCustPO: TStringField;
@@ -95,8 +88,15 @@ type
     QDetailYN: TStringField;
     QDetailUserID: TStringField;
     QDetailUserDate: TDateTimeField;
-    Query1InspecResult: TStringField;
-    UpDetail: TUpdateSQL;
+    QDetailXieMing: TStringField;
+    QDetailNo_ID: TIntegerField;
+    Query1No_ID: TIntegerField;
+    Query1ZSBH: TStringField;
+    Query1ywpm: TStringField;
+    Query1zsywjc: TStringField;
+    Query1RQty: TCurrencyField;
+    Query1IQty: TCurrencyField;
+    Query1DeQty: TCurrencyField;
     procedure DBGrid1CellClick(Column: TColumnEh);
     procedure Query1AfterOpen(DataSet: TDataSet);
     function GetUsernameByID(const AID: string): string;
@@ -120,6 +120,15 @@ type
     procedure BB2Click(Sender: TObject);
     procedure DBGrid1Columns0EditButtonClick(Sender: TObject;
       var Handled: Boolean);
+    procedure PrintSign(
+      AWorksheet: OleVariant;
+      AQuery: TQuery;
+      AInsertRow: Integer;
+      const AIDField, ADateField: string;
+      ACol: Integer;
+      UseUserName: Boolean
+    );
+    procedure btConfirmClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -134,6 +143,75 @@ implementation
 uses main1, N721Detail;
 
 {$R *.dfm}
+
+procedure TIncomeUpperMaterial.PrintSign(
+  AWorksheet: OleVariant;
+  AQuery: TQuery;
+  AInsertRow: Integer;
+  const AIDField, ADateField: string;
+  ACol: Integer;
+  UseUserName: Boolean
+);
+var
+  s, SignFile: string;
+  Cell, MergeCell: OleVariant;
+  CellLeft, CellTop, CellWidth, CellHeight: Double;
+  PicWidth, PicHeight: Double;
+begin
+  if AQuery.FieldByName(AIDField).IsNull
+     or (Trim(AQuery.FieldByName(AIDField).AsString) = '') then
+    Exit;
+
+  Cell := AWorksheet.Cells[AInsertRow + 1, ACol];
+  MergeCell := Cell.MergeArea;
+
+  MergeCell.WrapText := True;
+  MergeCell.HorizontalAlignment := -4108; // xlCenter
+  MergeCell.VerticalAlignment := -4108;   // xlCenter
+
+  s := AQuery.FieldByName(AIDField).AsString;
+  s := StringReplace(s, '_', Chr(10), [rfReplaceAll]);
+
+  if UseUserName then
+  begin
+    Cell.Value :=
+      Chr(10) + Chr(10) + Chr(10) +
+      GetUsernameByID(AQuery.FieldByName(AIDField).AsString)
+      + Chr(10)
+      + FormatDateTime(
+          'dd-mm-yyyy',
+          AQuery.FieldByName(ADateField).AsDateTime
+        );
+
+    SignFile := ExtractFilePath(Application.ExeName) +
+                'Signatures\' +
+                Trim(AQuery.FieldByName(AIDField).AsString) +
+                '.bmp';
+
+    if FileExists(SignFile) then
+    begin
+      CellLeft   := MergeCell.Left;
+      CellTop    := MergeCell.Top;
+      CellWidth  := MergeCell.Width;
+      CellHeight := MergeCell.Height;
+
+      PicWidth  := CellWidth * 0.4;
+      PicHeight := CellHeight * 0.45;
+
+      AWorksheet.Shapes.AddPicture(
+        SignFile,
+        False,
+        True,
+        CellLeft + (CellWidth - PicWidth) / 2, // can giua ngang
+        CellTop + (CellHeight * 0.1),          // phia tren
+        PicWidth,
+        PicHeight
+      );
+    end;
+  end
+  else
+    Cell.Value := s;
+end;
 
 procedure TIncomeUpperMaterial.SetColumnsReadOnly;
 begin
@@ -163,8 +241,6 @@ if MenuCode.Text = 'N971' then
     DBGrid1.FieldColumns['ArrDate'].ReadOnly := True;
     DBGrid1.FieldColumns['Brand'].ReadOnly := True;
     DBGrid1.FieldColumns['CLBH'].ReadOnly := True;
-    DBGrid1.FieldColumns['Supplier'].ReadOnly := True;
-    DBGrid1.FieldColumns['DDBH'].ReadOnly := True;
     DBGrid1.FieldColumns['RQty'].ReadOnly := True;
     DBGrid1.FieldColumns['IQty'].ReadOnly := True;
     DBGrid1.FieldColumns['DeReason'].ReadOnly := True;
@@ -194,8 +270,6 @@ if MenuCode.Text = 'N971' then
     DBGrid1.FieldColumns['ArrDate'].ReadOnly := True;
     DBGrid1.FieldColumns['Brand'].ReadOnly := True;
     DBGrid1.FieldColumns['CLBH'].ReadOnly := True;
-    DBGrid1.FieldColumns['Supplier'].ReadOnly := True;
-    DBGrid1.FieldColumns['DDBH'].ReadOnly := True;
     DBGrid1.FieldColumns['RQty'].ReadOnly := True;
     DBGrid1.FieldColumns['IQty'].ReadOnly := True;
     DBGrid1.FieldColumns['DeReason'].ReadOnly := True;
@@ -225,8 +299,6 @@ if MenuCode.Text = 'N971' then
     DBGrid1.FieldColumns['ArrDate'].ReadOnly := True;
     DBGrid1.FieldColumns['Brand'].ReadOnly := True;
     DBGrid1.FieldColumns['CLBH'].ReadOnly := True;
-    DBGrid1.FieldColumns['Supplier'].ReadOnly := True;
-    DBGrid1.FieldColumns['DDBH'].ReadOnly := True;
     DBGrid1.FieldColumns['RQty'].ReadOnly := True;
     DBGrid1.FieldColumns['IQty'].ReadOnly := True;
     DBGrid1.FieldColumns['DeReason'].ReadOnly := True;
@@ -342,10 +414,10 @@ begin
   else
   begin
     LastID := QGetID.FieldByName('ReportID').AsString;
-    Seq := StrToInt(Copy(LastID, 5, 4)) + 1;
+    Seq := StrToInt(Copy(LastID, 5, 5)) + 1;
   end;
 
-  Result := Prefix + FormatFloat('0000', Seq);
+  Result := Prefix + FormatFloat('00000', Seq);
 end;
 
 procedure TIncomeUpperMaterial.DBGrid1CellClick(Column: TColumnEh);
@@ -354,15 +426,15 @@ if not Query1.Active then exit;
 if Query1.RecordCount = 0 then exit;
 if (Query1.RecordCount > 0)  and not Query1.CachedUpdates then
   begin
-    dtpInsDate.Date := Query1.FieldByName('InspecDate').AsDateTime;
-    edtSKU.Text := Query1.FieldByName('Article').AsString;
+    {dtpInsDate.Date := Query1.FieldByName('InspecDate').AsDateTime;
+    //edtSKU.Text := Query1.FieldByName('Article').AsString;
     edtRID.Text := Query1.FieldByName('ReportID').AsString;
-    edtDDBH.Text := Query1.FieldByName('DDBH').AsString;
+    //edtDDBH.Text := Query1.FieldByName('DDBH').AsString;
     edtMatID.Text := Query1.FieldByName('CLBH').AsString;
-    edtZSBH.Text := Query1.FieldByName('Supplier').AsString;
+    //edtZSBH.Text := Query1.FieldByName('Supplier').AsString;
     edtBrand.Text := Query1.FieldByName('Brand').AsString;
     dtpUSERDate.Date := Query1.FieldByName('USERDate').AsDateTime;
-    dtpArrDate.Date := Query1.FieldByName('ArrDate').AsDateTime;
+    dtpArrDate.Date := Query1.FieldByName('ArrDate').AsDateTime;}
   end;
 end;
 
@@ -374,8 +446,7 @@ begin
   bbt6.Enabled:=true;
   bExcel.Enabled := true;
   bExF.Enabled := true;
-  if MenuCode.Text = 'N931' then
-    btCopy.Visible := true;
+  QDetail.Active := true;
 end;
 
 procedure TIncomeUpperMaterial.Button1Click(Sender: TObject);
@@ -385,30 +456,10 @@ begin
   begin
     Active := false;
     SQL.Clear;
-    SQL.Add('SELECT');
-    SQL.Add('    QC_UpperMat_Cut.*,');
-    SQL.Add('    DDZL.ARTICLE,');
-    SQL.Add('    xxzl.XieMing,');
-    SQL.Add('    clzl.ywpm AS MatName');
-    SQL.Add('FROM');
-    SQL.Add('    (');
-    SQL.Add('        SELECT');
-    SQL.Add('            QC_UpperMat.*,');
-    SQL.Add('            CASE');
-    SQL.Add('                WHEN CHARINDEX('','', QC_UpperMat.DDBH) > 0');
-    SQL.Add('                THEN SUBSTRING(QC_UpperMat.DDBH, 1, CHARINDEX('','', QC_UpperMat.DDBH) - 1)');
-    SQL.Add('                ELSE QC_UpperMat.DDBH');
-    SQL.Add('            END AS DDBH_Cut');
-    SQL.Add('        FROM');
-    SQL.Add('            QC_UpperMat');
-    SQL.Add('    ) AS QC_UpperMat_Cut');
-    SQL.Add('LEFT JOIN');
-    SQL.Add('    DDZL ON DDZL.DDBH = QC_UpperMat_Cut.DDBH_Cut');
-    SQL.Add('LEFT JOIN');
-    SQL.Add('    xxzl ON DDZL.SheHao = xxzl.SheHao AND xxzl.XieXing = DDZL.XieXing');
-    SQL.Add('LEFT JOIN');
-    SQL.Add('    clzl ON clzl.cldh = QC_UpperMat_Cut.CLBH ');
-    SQL.Add('where QC_UpperMat_Cut.DDBH like '''+edtDDBH.Text+'%'' and QC_UpperMat_Cut.YN <> 0 ');
+    SQL.Add('select qu.*, clzl.ywpm, zszl.zsywjc from QC_UpperMat qu');
+    SQL.Add('left join clzl on clzl.cldh = qu.CLBH');
+    SQL.Add('left join zszl on zszl.zsdh = qu.ZSBH');
+    SQL.Add('where qu.YN <> 0 ');
     if ckInsDate.Checked then
       SQL.Add('and CAST(InspecDate as DATE) = '''+FormatDateTime('yyyy-mm-dd', dtpInsDate.Date)+''' ');
     if ckArrDate.Checked then
@@ -417,14 +468,14 @@ begin
       SQL.Add('and CLBH like '''+edtMatID.Text+'%'' ');
     if edtZSBH.Text <> '' then
       SQL.Add('and Supplier like '''+edtZSBH.Text+'%'' ');
-    if edtSKU.Text <> '' then
-      SQL.Add('and DDZL.Article like '''+edtSKU.Text+'%'' ');
+    {if edtSKU.Text <> '' then
+      SQL.Add('and DDZL.Article like '''+edtSKU.Text+'%'' ');}
     if edtRID.Text <> '' then
       SQL.Add('and ReportID like '''+edtRID.Text+'%'' ');
     if edtBrand.Text <> '' then
       SQL.Add('and Brand like '''+edtBrand.Text+'%'' ');
     if ckUSERDate.Checked then
-      SQL.Add('and CAST(QC_UpperMat_Cut.USERDate as DATE) = '''+FormatDateTime('yyyy-mm-dd', dtpUSERDate.Date)+''' ');
+      SQL.Add('and CAST(qu.USERDate as DATE) = '''+FormatDateTime('yyyy-mm-dd', dtpUSERDate.Date)+''' ');
     Active := true;
   end;
 end;
@@ -508,7 +559,7 @@ begin
                       Query1.FieldByName('USERID').Value := main.Edit1.Text;
                       Query1.FieldByName('USERDate').Value := FormatDateTime('yyyy-mm-dd', Now);
                     end;
-                  if MenuCode.Text = 'N975' then
+                  {if MenuCode.Text = 'N975' then
                     begin
                       Query1.FieldByName('LabUID').Value := main.Edit1.Text;
                       Query1.FieldByName('LabChgDate').Value := FormatDateTime('yyyy-mm-dd', Now);
@@ -524,7 +575,7 @@ begin
                   if MenuCode.Text = 'N974' then
                     begin
                       Query1.FieldByName('MSCFDate').Value := FormatDateTime('yyyy-mm-dd', Now);
-                    end;
+                    end;}
                   upsql1.apply(ukmodify);
                  end;
               end;
@@ -605,7 +656,7 @@ var
   MaxHeight: Double;
   SigS, SigMS, SigL, SigP: Boolean;
 begin
-  AppDir := ExtractFilePath(Application.ExeName);
+  {AppDir := ExtractFilePath(Application.ExeName);
 
   if not DirectoryExists(AppDir) then
     ForceDirectories(AppDir);
@@ -614,7 +665,7 @@ begin
   DstFile := IncludeTrailingPathDelimiter(AppDir) + 'A-QIP-WS001-01D.xlsx';
 
   if not CopyFile(PChar(SrcFile), PChar(DstFile), False) then
-    ShowMessage('Copy file that bai');
+    ShowMessage('Copy file that bai');}
 
   DuongDanFile := ExtractFilePath(ParamStr(0)) + 'A-QIP-WS001-01D.xlsx';
 
@@ -670,15 +721,15 @@ begin
           True);
 
       12: WriteCellAppend(Worksheet.Cells[2,i],
-          edtZSBH.Text,
+          Query1.FieldByName('zsywjc').AsString,
           True);
     end;
   end;
 
-  Query1.First;
+  QDetail.First;
   InsertRow := StartRow;
 
-  while not Query1.Eof do
+  while not QDetail.Eof do
   begin
     Worksheet.Rows[Format('%d:%d', [InsertRow, InsertRow])].Insert;
 
@@ -687,30 +738,40 @@ begin
     borderRange.Borders.Weight := 2;
 
 
-    Worksheet.Cells[InsertRow, 1].Value := Query1.FieldByName('MatName').AsString;
-    Worksheet.Cells[InsertRow, 2].Value := Query1.FieldByName('XieMing').AsString;
-    Worksheet.Cells[InsertRow, 3].Value := Query1.FieldByName('Article').AsString;
+    Worksheet.Cells[InsertRow, 1].Value := Query1.FieldByName('ywpm').AsString;
+    Worksheet.Cells[InsertRow, 2].Value := QDetail.FieldByName('XieMing').AsString;
+    Worksheet.Cells[InsertRow, 3].Value := QDetail.FieldByName('Article').AsString;
     Worksheet.Cells[InsertRow, 4].Value := Query1.FieldByName('CLBH').AsString;
-    Worksheet.Cells[InsertRow, 5].Value := Query1.FieldByName('DDBH').AsString;
+    Worksheet.Cells[InsertRow, 5].Value := QDetail.FieldByName('RY').AsString;
     Worksheet.Cells[InsertRow, 6].Value := Query1.FieldByName('RQty').AsString;
     Worksheet.Cells[InsertRow, 7].Value := Query1.FieldByName('IQty').AsString;
     Worksheet.Cells[InsertRow, 8].Value := Query1.FieldByName('DeQty').AsString;
     Worksheet.Cells[InsertRow, 9].Value := Query1.FieldByName('DeReason').AsString;
     Worksheet.Cells[InsertRow, 10].Value := Query1.FieldByName('InspecResult').AsString;
-    Worksheet.Cells[InsertRow, 11].Value := FormatDateTime('dd-mm-yyyy', Query1.FieldByName('SendDate').AsDateTime);
+
+    if Trim(Query1.FieldByName('SendDate').AsString) <> '' then
+      Worksheet.Cells[InsertRow, 11].Value := FormatDateTime('dd-mm-yyyy', Query1.FieldByName('SendDate').AsDateTime)
+    else
+      Worksheet.Cells[InsertRow, 11].Value := '';
+
     Worksheet.Cells[InsertRow, 12].Value := Query1.FieldByName('LabID').AsString;
     Worksheet.Cells[InsertRow, 13].Value := Query1.FieldByName('LabResult').AsString;
     Worksheet.Cells[InsertRow, 14].Value := Query1.FieldByName('Reject').AsString;
     Worksheet.Rows[InsertRow].AutoFit;
 
     Inc(InsertRow);
-    Query1.Next;
+    QDetail.Next;
   end;
 
   Worksheet.Rows[Format('%d:%d', [InsertRow, InsertRow])].Delete;
 
+  PrintSign(Worksheet, Query1, InsertRow, 'MSCFID', 'MSCFDate', 1, True);
+  PrintSign(Worksheet, Query1, InsertRow, 'SCFID',  'SCFDate',  3, True);
+  PrintSign(Worksheet, Query1, InsertRow, 'LCFID',  'LCFDate',  6, True);
+  PrintSign(Worksheet, Query1, InsertRow, 'PreparedID', 'PreparedDate', 11, True);
+
   //Kiem tra ky KCS Super
-  Query1.First;
+  {Query1.First;
   SigS := false;
   while not Query1.Eof do
   begin
@@ -775,7 +836,7 @@ begin
     Worksheet.Cells[InsertRow + 1, 12].WrapText := True;
     Worksheet.Cells[InsertRow + 1, 12].Value := Query1.FieldByName('PreparedID').AsString
     + Chr(10) + FormatDateTime('dd-mm-yyyy', Query1.FieldByName('PreparedDate').AsDateTime);
-  end;
+  end;}
 
   if cbPDF.Checked then
   begin
@@ -818,6 +879,7 @@ begin
     begin
       Query1.Edit;
       Query1.FieldByName('SCFID').AsString := main.Edit1.Text;
+      Query1.FieldByName('SCFDate').Value := FormatDateTime('yyyy-mm-dd', Now);
       Query1.Post;
     end;
 
@@ -825,6 +887,7 @@ begin
     begin
       Query1.Edit;
       Query1.FieldByName('LCFID').AsString := main.Edit1.Text;
+      Query1.FieldByName('LCFDate').Value := FormatDateTime('yyyy-mm-dd', Now);
       Query1.Post;
     end;
 
@@ -832,6 +895,7 @@ begin
     begin
       Query1.Edit;
       Query1.FieldByName('MSCFID').AsString := main.Edit1.Text;
+      Query1.FieldByName('MSCFDate').Value := FormatDateTime('yyyy-mm-dd', Now);
       Query1.Post;
     end;
 
@@ -942,6 +1006,48 @@ else
   begin
     N721Detail1 := TN721Detail1.Create(self);
     N721Detail1.show;
+  end;
+end;
+
+procedure TIncomeUpperMaterial.btConfirmClick(Sender: TObject);
+begin
+  Query1.RequestLive := true;
+  Query1.CachedUpdates := true;
+  BB4.Enabled := true;
+  BB5.Enabled := true;
+
+  if not Query1.Active then
+    Query1.Open;
+  Query1.DisableControls;
+  try
+    Query1.First; // quay ve dong dau
+    while not Query1.Eof do
+    begin
+      if MenuCode.Text = 'N972' then
+      begin
+        Query1.Edit;
+        Query1.FieldByName('SCFID').AsString := Main.Edit1.Text;
+        Query1.FieldByName('SCFDate').Value := FormatDateTime('yyyy-mm-dd', Now);
+        Query1.Post; // Post chi vao cache, chua xuong SQL
+        Query1.Next;
+      end else if MenuCode.Text = 'N973' then
+      begin
+        Query1.Edit;
+        Query1.FieldByName('LCFID').AsString := Main.Edit1.Text;
+        Query1.FieldByName('LCFDate').Value := FormatDateTime('yyyy-mm-dd', Now);
+        Query1.Post; // Post chi vao cache, chua xuong SQL
+        Query1.Next;
+      end else if MenuCode.Text = 'N974' then
+      begin
+        Query1.Edit;
+        Query1.FieldByName('MSCFID').AsString := Main.Edit1.Text;
+        Query1.FieldByName('MSCFDate').Value := FormatDateTime('yyyy-mm-dd', Now);
+        Query1.Post; // Post chi vao cache, chua xuong SQL
+        Query1.Next;
+      end;
+    end;
+  finally
+    Query1.EnableControls;
   end;
 end;
 

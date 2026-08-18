@@ -1,7 +1,7 @@
 object N721Detail1: TN721Detail1
   Left = 568
   Top = 271
-  Width = 735
+  Width = 731
   Height = 485
   Caption = 'N721Detail1'
   Color = clBtnFace
@@ -12,14 +12,57 @@ object N721Detail1: TN721Detail1
   Font.Style = []
   OldCreateOrder = False
   OnClose = FormClose
+  OnCreate = FormCreate
   OnDestroy = FormDestroy
   PixelsPerInch = 96
   TextHeight = 13
+  object Label1: TLabel
+    Left = 64
+    Top = 40
+    Width = 31
+    Height = 13
+    Caption = 'CLBH:'
+  end
+  object Label2: TLabel
+    Left = 64
+    Top = 72
+    Width = 32
+    Height = 13
+    Caption = 'ZSBH:'
+  end
+  object Label3: TLabel
+    Left = 296
+    Top = 40
+    Width = 34
+    Height = 13
+    Caption = 'CGNO:'
+  end
+  object Label4: TLabel
+    Left = 296
+    Top = 72
+    Width = 34
+    Height = 13
+    Caption = 'RKNO:'
+  end
+  object Label5: TLabel
+    Left = 64
+    Top = 8
+    Width = 21
+    Height = 13
+    Caption = 'SID:'
+  end
+  object Label6: TLabel
+    Left = 296
+    Top = 8
+    Width = 18
+    Height = 13
+    Caption = 'RY:'
+  end
   object DBGridEh1: TDBGridEh
     Left = 0
-    Top = 120
-    Width = 719
-    Height = 326
+    Top = 144
+    Width = 715
+    Height = 302
     Align = alBottom
     DataSource = DataSource1
     Flat = False
@@ -29,6 +72,8 @@ object N721Detail1: TN721Detail1
     FooterFont.Height = -11
     FooterFont.Name = 'MS Sans Serif'
     FooterFont.Style = []
+    FooterRowCount = 1
+    SumList.Active = True
     TabOrder = 0
     TitleFont.Charset = DEFAULT_CHARSET
     TitleFont.Color = clWindowText
@@ -40,17 +85,22 @@ object N721Detail1: TN721Detail1
       item
         EditButtons = <>
         FieldName = 'No_ID'
+        Footer.ValueType = fvtCount
         Footers = <>
+        Title.Caption = 'SID'
+        Width = 50
       end
       item
         EditButtons = <>
         FieldName = 'GSBH'
         Footers = <>
+        Width = 35
       end
       item
         EditButtons = <>
         FieldName = 'CLBH'
         Footers = <>
+        Width = 70
       end
       item
         EditButtons = <>
@@ -61,12 +111,13 @@ object N721Detail1: TN721Detail1
         EditButtons = <>
         FieldName = 'RKNO'
         Footers = <>
-        Width = 100
+        Width = 70
       end
       item
         EditButtons = <>
         FieldName = 'DateInput'
         Footers = <>
+        Width = 70
       end
       item
         EditButtons = <>
@@ -77,6 +128,7 @@ object N721Detail1: TN721Detail1
         EditButtons = <>
         FieldName = 'LB'
         Footers = <>
+        Width = 20
       end
       item
         EditButtons = <>
@@ -87,26 +139,31 @@ object N721Detail1: TN721Detail1
         EditButtons = <>
         FieldName = 'RY'
         Footers = <>
+        Width = 100
       end
       item
         EditButtons = <>
         FieldName = 'Article'
         Footers = <>
+        Width = 100
       end
       item
         EditButtons = <>
         FieldName = 'CustPO'
         Footers = <>
+        Width = 100
       end
       item
         EditButtons = <>
         FieldName = 'Qty'
         Footers = <>
+        Width = 65
       end
       item
         EditButtons = <>
         FieldName = 'Remark'
         Footers = <>
+        Width = 200
       end
       item
         EditButtons = <>
@@ -314,14 +371,90 @@ object N721Detail1: TN721Detail1
         Footers = <>
       end>
   end
-  object BitBtn1: TBitBtn
-    Left = 328
-    Top = 40
-    Width = 75
-    Height = 25
-    Caption = 'BitBtn1'
+  object btSearch: TBitBtn
+    Left = 560
+    Top = 8
+    Width = 70
+    Height = 70
+    Caption = 'Search'
     TabOrder = 1
-    OnClick = BitBtn1Click
+    OnClick = btSearchClick
+  end
+  object edCLBH: TEdit
+    Left = 96
+    Top = 40
+    Width = 193
+    Height = 21
+    CharCase = ecUpperCase
+    TabOrder = 2
+  end
+  object edZSBH: TEdit
+    Left = 96
+    Top = 72
+    Width = 193
+    Height = 21
+    CharCase = ecUpperCase
+    TabOrder = 3
+  end
+  object edCGNO: TEdit
+    Left = 336
+    Top = 40
+    Width = 209
+    Height = 21
+    CharCase = ecUpperCase
+    TabOrder = 4
+  end
+  object edRKNO: TEdit
+    Left = 336
+    Top = 72
+    Width = 209
+    Height = 21
+    CharCase = ecUpperCase
+    TabOrder = 5
+  end
+  object edSID: TEdit
+    Left = 96
+    Top = 8
+    Width = 193
+    Height = 21
+    CharCase = ecUpperCase
+    TabOrder = 6
+  end
+  object edRY: TEdit
+    Left = 336
+    Top = 8
+    Width = 209
+    Height = 21
+    CharCase = ecUpperCase
+    TabOrder = 7
+  end
+  object ckDateInput: TCheckBox
+    Left = 64
+    Top = 104
+    Width = 97
+    Height = 17
+    Caption = 'Received Date:'
+    Checked = True
+    State = cbChecked
+    TabOrder = 8
+  end
+  object dtpRD: TDateTimePicker
+    Left = 160
+    Top = 104
+    Width = 129
+    Height = 21
+    Date = 46252.403209641200000000
+    Time = 46252.403209641200000000
+    TabOrder = 9
+  end
+  object btInsertAll: TButton
+    Left = 560
+    Top = 80
+    Width = 70
+    Height = 25
+    Caption = 'Insert All'
+    TabOrder = 10
+    OnClick = btInsertAllClick
   end
   object Qmc: TQuery
     DatabaseName = 'DB'
@@ -440,6 +573,7 @@ object N721Detail1: TN721Detail1
     end
     object QmcQty: TCurrencyField
       FieldName = 'Qty'
+      currency = False
     end
     object QmcRemark: TStringField
       FieldName = 'Remark'
@@ -623,12 +757,12 @@ object N721Detail1: TN721Detail1
   end
   object DataSource1: TDataSource
     DataSet = Qmc
-    Left = 328
-    Top = 256
+    Left = 144
+    Top = 216
   end
   object Qmcrys: TQuery
     DatabaseName = 'DB'
-    Left = 392
+    Left = 208
     Top = 216
   end
 end

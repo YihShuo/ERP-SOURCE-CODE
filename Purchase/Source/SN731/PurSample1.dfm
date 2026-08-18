@@ -1,6 +1,6 @@
 object PurSample: TPurSample
-  Left = 371
-  Top = 122
+  Left = 201
+  Top = 134
   Width = 1717
   Height = 697
   Caption = 'PurSample'
@@ -1791,6 +1791,7 @@ object PurSample: TPurSample
             end
             item
               Color = clMoneyGreen
+              DisplayFormat = '#,##0'
               EditButtons = <>
               FieldName = 'Qty'
               Font.Charset = DEFAULT_CHARSET

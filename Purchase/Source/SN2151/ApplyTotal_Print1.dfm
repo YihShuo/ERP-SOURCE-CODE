@@ -1,6 +1,6 @@
 object ApplyTotal_Print: TApplyTotal_Print
-  Left = 422
-  Top = 310
+  Left = 351
+  Top = 227
   Width = 1300
   Height = 740
   Caption = 'ApplyTotal_Print'
@@ -1189,7 +1189,7 @@ object ApplyTotal_Print: TApplyTotal_Print
       object QRDBText3: TQRDBText
         Left = 143
         Top = 38
-        Width = 554
+        Width = 618
         Height = 30
         Frame.Color = clBlack
         Frame.DrawTop = False
@@ -1200,7 +1200,7 @@ object ApplyTotal_Print: TApplyTotal_Print
           79.375000000000000000
           378.354166666666700000
           100.541666666666700000
-          1465.791666666667000000)
+          1635.125000000000000000)
         Alignment = taLeftJustify
         AlignToBand = False
         AutoSize = False

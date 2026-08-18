@@ -134,6 +134,12 @@ type
     QRLabel27: TQRLabel;
     QRLabel28: TQRLabel;
     QRLabel29: TQRLabel;
+    X1: TQRLabel;
+    X2: TQRLabel;
+    X3: TQRLabel;
+    X4: TQRLabel;
+    X5: TQRLabel;
+    QRLabel30: TQRLabel;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
@@ -284,7 +290,7 @@ begin
   if (main.edit2.Text = 'VA12') and (IsMark_Pink=true) then
     NoteInfo.Caption:=NoteInfo.Caption+'/CONVERSE Pink = CONV-0036';
 
-  if NoteInfo.Caption<>'' then NoteInfo.Enabled:=true;
+  //if NoteInfo.Caption<>'' then NoteInfo.Enabled:=true;
   //
   Mas.First;
   if messagedlg('Just for Print not for Mail?',mtinformation,[mbYes,mbNo],0)=mrYes then

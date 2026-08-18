@@ -4,7 +4,8 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, QRCtrls, QuickRpt, ExtCtrls, DB, DBTables, QRPDFFilt, IniFiles;
+  Dialogs, QRCtrls, QuickRpt, ExtCtrls, DB, DBTables, QRPDFFilt, IniFiles,
+  StdCtrls;
 
 type
   TPurNoSizeTW_Print = class(TForm)
@@ -74,6 +75,12 @@ type
     L12: TQRLabel;
     QRDBText13: TQRDBText;
     L20: TQRLabel;
+    QRLabel2: TQRLabel;
+    X2: TQRLabel;
+    X1: TQRLabel;
+    X3: TQRLabel;
+    X4: TQRLabel;
+    X5: TQRLabel;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
@@ -204,8 +211,8 @@ begin
     NoteInfo.Caption:=NoteInfo.Caption+'/CONVERSE Navy = CONV-0033';
   if (main.edit2.Text = 'VA12') and (IsMark_Pink=true) then
     NoteInfo.Caption:=NoteInfo.Caption+'/CONVERSE Pink = CONV-0036';
-
-  if NoteInfo.Caption<>'' then NoteInfo.Enabled:=true;
+  //ys 23072026
+  //if NoteInfo.Caption<>'' then NoteInfo.Enabled:=true;
   //
   Mas.First;
   if messagedlg('Just for Print not for Mail?',mtinformation,[mbYes,mbNo],0)=mrYes then

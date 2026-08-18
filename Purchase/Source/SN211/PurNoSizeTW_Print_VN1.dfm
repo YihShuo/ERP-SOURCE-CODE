@@ -1,6 +1,6 @@
 object PurNoSizeTW_Print_VN: TPurNoSizeTW_Print_VN
-  Left = 458
-  Top = 209
+  Left = 873
+  Top = 205
   Width = 1178
   Height = 727
   Caption = 'PurNoSizeTW_Print_VN'
@@ -81,7 +81,7 @@ object PurNoSizeTW_Print_VN: TPurNoSizeTW_Print_VN
       Left = 38
       Top = 38
       Width = 793
-      Height = 155
+      Height = 199
       Frame.Color = clBlack
       Frame.DrawTop = False
       Frame.DrawBottom = False
@@ -99,14 +99,14 @@ object PurNoSizeTW_Print_VN: TPurNoSizeTW_Print_VN
       ForceNewPage = False
       ParentFont = False
       Size.Values = (
-        410.104166666666700000
+        526.520833333333300000
         2098.145833333333000000)
       PreCaluculateBandHeight = False
       KeepOnOnePage = False
       BandType = rbPageHeader
       object QPage1: TQRLabel
         Left = 693
-        Top = 129
+        Top = 153
         Width = 31
         Height = 17
         Frame.Color = clBlack
@@ -117,7 +117,7 @@ object PurNoSizeTW_Print_VN: TPurNoSizeTW_Print_VN
         Size.Values = (
           44.979166666666670000
           1833.562500000000000000
-          341.312500000000000000
+          404.812500000000000000
           82.020833333333330000)
         Alignment = taLeftJustify
         AlignToBand = False
@@ -168,7 +168,7 @@ object PurNoSizeTW_Print_VN: TPurNoSizeTW_Print_VN
       end
       object QRSysData2: TQRSysData
         Left = 651
-        Top = 129
+        Top = 153
         Width = 33
         Height = 17
         Frame.Color = clBlack
@@ -179,7 +179,7 @@ object PurNoSizeTW_Print_VN: TPurNoSizeTW_Print_VN
         Size.Values = (
           44.979166666666670000
           1722.437500000000000000
-          341.312500000000000000
+          404.812500000000000000
           87.312500000000000000)
         Alignment = taRightJustify
         AlignToBand = False
@@ -197,7 +197,7 @@ object PurNoSizeTW_Print_VN: TPurNoSizeTW_Print_VN
       end
       object QRDBText3: TQRDBText
         Left = 429
-        Top = 131
+        Top = 155
         Width = 35
         Height = 17
         Frame.Color = clBlack
@@ -208,7 +208,7 @@ object PurNoSizeTW_Print_VN: TPurNoSizeTW_Print_VN
         Size.Values = (
           44.979166666666670000
           1135.062500000000000000
-          346.604166666666700000
+          410.104166666666700000
           92.604166666666670000)
         Alignment = taLeftJustify
         AlignToBand = False
@@ -229,7 +229,7 @@ object PurNoSizeTW_Print_VN: TPurNoSizeTW_Print_VN
       end
       object QRDBText8: TQRDBText
         Left = 673
-        Top = 47
+        Top = 71
         Width = 42
         Height = 17
         Frame.Color = clBlack
@@ -240,7 +240,7 @@ object PurNoSizeTW_Print_VN: TPurNoSizeTW_Print_VN
         Size.Values = (
           44.979166666666670000
           1780.645833333333000000
-          124.354166666666700000
+          187.854166666666700000
           111.125000000000000000)
         Alignment = taLeftJustify
         AlignToBand = False
@@ -261,7 +261,7 @@ object PurNoSizeTW_Print_VN: TPurNoSizeTW_Print_VN
       end
       object QRDBText9: TQRDBText
         Left = 70
-        Top = 81
+        Top = 105
         Width = 50
         Height = 17
         Frame.Color = clBlack
@@ -272,7 +272,7 @@ object PurNoSizeTW_Print_VN: TPurNoSizeTW_Print_VN
         Size.Values = (
           44.979166666666670000
           185.208333333333300000
-          214.312500000000000000
+          277.812500000000000000
           132.291666666666700000)
         Alignment = taLeftJustify
         AlignToBand = False
@@ -359,7 +359,7 @@ object PurNoSizeTW_Print_VN: TPurNoSizeTW_Print_VN
       end
       object L6: TQRLabel
         Left = 622
-        Top = 46
+        Top = 70
         Width = 48
         Height = 17
         Frame.Color = clBlack
@@ -370,7 +370,7 @@ object PurNoSizeTW_Print_VN: TPurNoSizeTW_Print_VN
         Size.Values = (
           44.979166666666670000
           1645.708333333333000000
-          121.708333333333300000
+          185.208333333333300000
           127.000000000000000000)
         Alignment = taLeftJustify
         AlignToBand = False
@@ -390,7 +390,7 @@ object PurNoSizeTW_Print_VN: TPurNoSizeTW_Print_VN
       end
       object L7: TQRLabel
         Left = 404
-        Top = 131
+        Top = 155
         Width = 22
         Height = 17
         Frame.Color = clBlack
@@ -401,7 +401,7 @@ object PurNoSizeTW_Print_VN: TPurNoSizeTW_Print_VN
         Size.Values = (
           44.979166666666670000
           1068.916666666667000000
-          346.604166666666700000
+          410.104166666666700000
           58.208333333333330000)
         Alignment = taLeftJustify
         AlignToBand = False
@@ -421,7 +421,7 @@ object PurNoSizeTW_Print_VN: TPurNoSizeTW_Print_VN
       end
       object L5: TQRLabel
         Left = 623
-        Top = 99
+        Top = 123
         Width = 111
         Height = 17
         Frame.Color = clBlack
@@ -432,7 +432,7 @@ object PurNoSizeTW_Print_VN: TPurNoSizeTW_Print_VN
         Size.Values = (
           44.979166666666670000
           1648.354166666667000000
-          261.937500000000000000
+          325.437500000000000000
           293.687500000000000000)
         Alignment = taLeftJustify
         AlignToBand = False
@@ -452,7 +452,7 @@ object PurNoSizeTW_Print_VN: TPurNoSizeTW_Print_VN
       end
       object L4: TQRLabel
         Left = 404
-        Top = 99
+        Top = 107
         Width = 110
         Height = 17
         Frame.Color = clBlack
@@ -463,7 +463,7 @@ object PurNoSizeTW_Print_VN: TPurNoSizeTW_Print_VN
         Size.Values = (
           44.979166666666670000
           1068.916666666667000000
-          261.937500000000000000
+          283.104166666666700000
           291.041666666666700000)
         Alignment = taLeftJustify
         AlignToBand = False
@@ -483,7 +483,7 @@ object PurNoSizeTW_Print_VN: TPurNoSizeTW_Print_VN
       end
       object L3: TQRLabel
         Left = 9
-        Top = 81
+        Top = 105
         Width = 57
         Height = 17
         Frame.Color = clBlack
@@ -494,7 +494,7 @@ object PurNoSizeTW_Print_VN: TPurNoSizeTW_Print_VN
         Size.Values = (
           44.979166666666670000
           23.812500000000000000
-          214.312500000000000000
+          277.812500000000000000
           150.812500000000000000)
         Alignment = taLeftJustify
         AlignToBand = False
@@ -603,7 +603,7 @@ object PurNoSizeTW_Print_VN: TPurNoSizeTW_Print_VN
       end
       object L8: TQRLabel
         Left = 404
-        Top = 80
+        Top = 136
         Width = 378
         Height = 17
         Frame.Color = clBlack
@@ -614,7 +614,7 @@ object PurNoSizeTW_Print_VN: TPurNoSizeTW_Print_VN
         Size.Values = (
           44.979166666666670000
           1068.916666666667000000
-          211.666666666666700000
+          359.833333333333300000
           1000.125000000000000000)
         Alignment = taLeftJustify
         AlignToBand = False
@@ -636,7 +636,7 @@ object PurNoSizeTW_Print_VN: TPurNoSizeTW_Print_VN
       end
       object L9: TQRLabel
         Left = 404
-        Top = 64
+        Top = 88
         Width = 47
         Height = 17
         Frame.Color = clBlack
@@ -647,7 +647,7 @@ object PurNoSizeTW_Print_VN: TPurNoSizeTW_Print_VN
         Size.Values = (
           44.979166666666670000
           1068.916666666667000000
-          169.333333333333300000
+          232.833333333333300000
           124.354166666666700000)
         Alignment = taLeftJustify
         AlignToBand = False
@@ -745,7 +745,7 @@ object PurNoSizeTW_Print_VN: TPurNoSizeTW_Print_VN
       end
       object L12: TQRLabel
         Left = 9
-        Top = 61
+        Top = 85
         Width = 48
         Height = 17
         Frame.Color = clBlack
@@ -756,7 +756,7 @@ object PurNoSizeTW_Print_VN: TPurNoSizeTW_Print_VN
         Size.Values = (
           44.979166666666670000
           23.812500000000000000
-          161.395833333333300000
+          224.895833333333300000
           127.000000000000000000)
         Alignment = taLeftJustify
         AlignToBand = False
@@ -776,7 +776,7 @@ object PurNoSizeTW_Print_VN: TPurNoSizeTW_Print_VN
       end
       object QRDBText13: TQRDBText
         Left = 64
-        Top = 61
+        Top = 85
         Width = 50
         Height = 17
         Frame.Color = clBlack
@@ -787,7 +787,7 @@ object PurNoSizeTW_Print_VN: TPurNoSizeTW_Print_VN
         Size.Values = (
           44.979166666666670000
           169.333333333333300000
-          161.395833333333300000
+          224.895833333333300000
           132.291666666666700000)
         Alignment = taLeftJustify
         AlignToBand = False
@@ -808,7 +808,7 @@ object PurNoSizeTW_Print_VN: TPurNoSizeTW_Print_VN
       end
       object L_address: TQRLabel
         Left = 9
-        Top = 101
+        Top = 125
         Width = 384
         Height = 36
         Frame.Color = clBlack
@@ -819,7 +819,7 @@ object PurNoSizeTW_Print_VN: TPurNoSizeTW_Print_VN
         Size.Values = (
           95.250000000000000000
           23.812500000000000000
-          267.229166666666700000
+          330.729166666666700000
           1016.000000000000000000)
         Alignment = taLeftJustify
         AlignToBand = False
@@ -839,7 +839,7 @@ object PurNoSizeTW_Print_VN: TPurNoSizeTW_Print_VN
       end
       object QRLabel2: TQRLabel
         Left = 622
-        Top = 62
+        Top = 86
         Width = 29
         Height = 17
         Frame.Color = clBlack
@@ -850,7 +850,7 @@ object PurNoSizeTW_Print_VN: TPurNoSizeTW_Print_VN
         Size.Values = (
           44.979166666666670000
           1645.708333333333000000
-          164.041666666666700000
+          227.541666666666700000
           76.729166666666670000)
         Alignment = taLeftJustify
         AlignToBand = False
@@ -870,7 +870,7 @@ object PurNoSizeTW_Print_VN: TPurNoSizeTW_Print_VN
       end
       object QRDBText15: TQRDBText
         Left = 655
-        Top = 62
+        Top = 86
         Width = 43
         Height = 17
         Frame.Color = clBlack
@@ -881,7 +881,7 @@ object PurNoSizeTW_Print_VN: TPurNoSizeTW_Print_VN
         Size.Values = (
           44.979166666666670000
           1733.020833333333000000
-          164.041666666666700000
+          227.541666666666700000
           113.770833333333300000)
         Alignment = taLeftJustify
         AlignToBand = False
@@ -902,7 +902,7 @@ object PurNoSizeTW_Print_VN: TPurNoSizeTW_Print_VN
       end
       object QRLabel3: TQRLabel
         Left = 622
-        Top = 129
+        Top = 153
         Width = 30
         Height = 17
         Frame.Color = clBlack
@@ -913,7 +913,7 @@ object PurNoSizeTW_Print_VN: TPurNoSizeTW_Print_VN
         Size.Values = (
           44.979166666666670000
           1645.708333333333000000
-          341.312500000000000000
+          404.812500000000000000
           79.375000000000000000)
         Alignment = taLeftJustify
         AlignToBand = False
@@ -931,10 +931,196 @@ object PurNoSizeTW_Print_VN: TPurNoSizeTW_Print_VN
         WordWrap = True
         FontSize = 10
       end
+      object X1: TQRLabel
+        Left = 24
+        Top = 174
+        Width = 70
+        Height = 12
+        Frame.Color = clBlack
+        Frame.DrawTop = False
+        Frame.DrawBottom = False
+        Frame.DrawLeft = False
+        Frame.DrawRight = False
+        Size.Values = (
+          31.750000000000000000
+          63.500000000000000000
+          460.375000000000000000
+          185.208333333333300000)
+        Alignment = taLeftJustify
+        AlignToBand = False
+        AutoSize = True
+        AutoStretch = False
+        Caption = 'MATERIAL CODE'
+        Color = clWhite
+        Font.Charset = ANSI_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -8
+        Font.Name = 'Times New Roman'
+        Font.Style = [fsBold]
+        ParentFont = False
+        Transparent = False
+        WordWrap = True
+        FontSize = 6
+      end
+      object X2: TQRLabel
+        Left = 136
+        Top = 174
+        Width = 102
+        Height = 12
+        Frame.Color = clBlack
+        Frame.DrawTop = False
+        Frame.DrawBottom = False
+        Frame.DrawLeft = False
+        Frame.DrawRight = False
+        Size.Values = (
+          31.750000000000000000
+          359.833333333333300000
+          460.375000000000000000
+          269.875000000000000000)
+        Alignment = taLeftJustify
+        AlignToBand = False
+        AutoSize = True
+        AutoStretch = False
+        Caption = 'MATERIAL DESCRIPTION'
+        Color = clWhite
+        Font.Charset = ANSI_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -8
+        Font.Name = 'Times New Roman'
+        Font.Style = [fsBold]
+        ParentFont = False
+        Transparent = False
+        WordWrap = True
+        FontSize = 6
+      end
+      object X3: TQRLabel
+        Left = 400
+        Top = 174
+        Width = 21
+        Height = 12
+        Frame.Color = clBlack
+        Frame.DrawTop = False
+        Frame.DrawBottom = False
+        Frame.DrawLeft = False
+        Frame.DrawRight = False
+        Size.Values = (
+          31.750000000000000000
+          1058.333333333333000000
+          460.375000000000000000
+          55.562500000000000000)
+        Alignment = taLeftJustify
+        AlignToBand = False
+        AutoSize = True
+        AutoStretch = False
+        Caption = 'UNIT'
+        Color = clWhite
+        Font.Charset = ANSI_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -8
+        Font.Name = 'Times New Roman'
+        Font.Style = [fsBold]
+        ParentFont = False
+        Transparent = False
+        WordWrap = True
+        FontSize = 6
+      end
+      object X4: TQRLabel
+        Left = 448
+        Top = 174
+        Width = 62
+        Height = 12
+        Frame.Color = clBlack
+        Frame.DrawTop = False
+        Frame.DrawBottom = False
+        Frame.DrawLeft = False
+        Frame.DrawRight = False
+        Size.Values = (
+          31.750000000000000000
+          1185.333333333333000000
+          460.375000000000000000
+          164.041666666666700000)
+        Alignment = taLeftJustify
+        AlignToBand = False
+        AutoSize = True
+        AutoStretch = False
+        Caption = 'QTY ORDERED'
+        Color = clWhite
+        Font.Charset = ANSI_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -8
+        Font.Name = 'Times New Roman'
+        Font.Style = [fsBold]
+        ParentFont = False
+        Transparent = False
+        WordWrap = True
+        FontSize = 6
+      end
+      object X5: TQRLabel
+        Left = 640
+        Top = 174
+        Width = 13
+        Height = 12
+        Frame.Color = clBlack
+        Frame.DrawTop = False
+        Frame.DrawBottom = False
+        Frame.DrawLeft = False
+        Frame.DrawRight = False
+        Size.Values = (
+          31.750000000000000000
+          1693.333333333333000000
+          460.375000000000000000
+          34.395833333333330000)
+        Alignment = taLeftJustify
+        AlignToBand = False
+        AutoSize = True
+        AutoStretch = False
+        Caption = 'RY'
+        Color = clWhite
+        Font.Charset = ANSI_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -8
+        Font.Name = 'Times New Roman'
+        Font.Style = [fsBold]
+        ParentFont = False
+        Transparent = False
+        WordWrap = True
+        FontSize = 6
+      end
+      object QRLabel30: TQRLabel
+        Left = 335
+        Top = 63
+        Width = 70
+        Height = 25
+        Frame.Color = clBlack
+        Frame.DrawTop = False
+        Frame.DrawBottom = False
+        Frame.DrawLeft = False
+        Frame.DrawRight = False
+        Size.Values = (
+          66.145833333333330000
+          886.354166666666700000
+          166.687500000000000000
+          185.208333333333300000)
+        Alignment = taCenter
+        AlignToBand = False
+        AutoSize = True
+        AutoStretch = False
+        Caption = #37319#36092#21934
+        Color = clWhite
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -21
+        Font.Name = 'Arial'
+        Font.Style = [fsBold]
+        ParentFont = False
+        Transparent = False
+        WordWrap = True
+        FontSize = 16
+      end
     end
     object DetailBand1: TQRBand
       Left = 38
-      Top = 193
+      Top = 237
       Width = 793
       Height = 32
       Frame.Color = clBlack
@@ -1203,7 +1389,7 @@ object PurNoSizeTW_Print_VN: TPurNoSizeTW_Print_VN
     end
     object PageFooterBand1: TQRBand
       Left = 38
-      Top = 225
+      Top = 269
       Width = 793
       Height = 399
       Frame.Color = clBlack
@@ -2373,7 +2559,7 @@ object PurNoSizeTW_Print_VN: TPurNoSizeTW_Print_VN
     end
     object QRBand1: TQRBand
       Left = 38
-      Top = 624
+      Top = 668
       Width = 793
       Height = 26
       Frame.Color = clBlack
