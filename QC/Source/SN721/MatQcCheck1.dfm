@@ -1244,7 +1244,8 @@ object MatQcCheck: TMatQcCheck
             PickList.Strings = (
               'Tra hang'
               'Nha cung ung bu hang'
-              'Nha cung ung sua mau')
+              'Nha cung ung sua mau'
+              'Nha cung ung tai che')
             Title.Caption = 'QC Inspection|Method'
             Title.Color = clMoneyGreen
             Width = 75

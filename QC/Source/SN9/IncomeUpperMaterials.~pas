@@ -709,11 +709,11 @@ begin
           False);
 
       2: WriteCellAppend(Worksheet.Cells[2,i],
-          FormatDateTime('dd-mm-yyyy', dtpArrDate.Date),
+          FormatDateTime('dd-mm-yyyy', Query1.FieldByName('ArrDate').AsDateTime),
           True);
 
       5: WriteCellAppend(Worksheet.Cells[2,i],
-          FormatDateTime('dd-mm-yyyy', dtpInsDate.Date),
+          FormatDateTime('dd-mm-yyyy', Query1.FieldByName('InspecDate').AsDateTime),
           True);
 
       9: WriteCellAppend(Worksheet.Cells[2,i],
@@ -725,6 +725,21 @@ begin
           True);
     end;
   end;
+
+  Worksheet.Cells[5, 6].Value := Query1.FieldByName('RQty').AsString;
+  Worksheet.Cells[5, 7].Value := Query1.FieldByName('IQty').AsString;
+  Worksheet.Cells[5, 8].Value := Query1.FieldByName('DeQty').AsString;
+  Worksheet.Cells[5, 9].Value := Query1.FieldByName('DeReason').AsString;
+  Worksheet.Cells[5, 10].Value := Query1.FieldByName('InspecResult').AsString;
+
+  if Trim(Query1.FieldByName('SendDate').AsString) <> '' then
+    Worksheet.Cells[5, 11].Value := FormatDateTime('dd-mm-yyyy', Query1.FieldByName('SendDate').AsDateTime)
+  else
+    Worksheet.Cells[5, 11].Value := '';
+
+  Worksheet.Cells[5, 12].Value := Query1.FieldByName('LabID').AsString;
+  Worksheet.Cells[5, 13].Value := Query1.FieldByName('LabResult').AsString;
+  Worksheet.Cells[5, 14].Value := Query1.FieldByName('Reject').AsString;
 
   QDetail.First;
   InsertRow := StartRow;
@@ -743,7 +758,7 @@ begin
     Worksheet.Cells[InsertRow, 3].Value := QDetail.FieldByName('Article').AsString;
     Worksheet.Cells[InsertRow, 4].Value := Query1.FieldByName('CLBH').AsString;
     Worksheet.Cells[InsertRow, 5].Value := QDetail.FieldByName('RY').AsString;
-    Worksheet.Cells[InsertRow, 6].Value := Query1.FieldByName('RQty').AsString;
+    {Worksheet.Cells[InsertRow, 6].Value := Query1.FieldByName('RQty').AsString;
     Worksheet.Cells[InsertRow, 7].Value := Query1.FieldByName('IQty').AsString;
     Worksheet.Cells[InsertRow, 8].Value := Query1.FieldByName('DeQty').AsString;
     Worksheet.Cells[InsertRow, 9].Value := Query1.FieldByName('DeReason').AsString;
@@ -756,7 +771,7 @@ begin
 
     Worksheet.Cells[InsertRow, 12].Value := Query1.FieldByName('LabID').AsString;
     Worksheet.Cells[InsertRow, 13].Value := Query1.FieldByName('LabResult').AsString;
-    Worksheet.Cells[InsertRow, 14].Value := Query1.FieldByName('Reject').AsString;
+    Worksheet.Cells[InsertRow, 14].Value := Query1.FieldByName('Reject').AsString;}
     Worksheet.Rows[InsertRow].AutoFit;
 
     Inc(InsertRow);

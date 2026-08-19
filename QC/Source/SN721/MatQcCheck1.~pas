@@ -353,7 +353,7 @@ begin
       if chkmanager.Checked then
         sql.Add('and mc.ManagerCheck=''1'' ');
       if ckUnconfirmed.Checked then
-        sql.Add('and ISNULL(mc.ManagerCheck, ''0'') = ''0'' ');
+        sql.Add('and mc.ManagerID is null ');
         
       SQL.Add('group by mc.No_ID,mc.GSBH,mc.CLBH,mc.CGNO,mc.RKNO,mc.DateInput,mc.Hours ,mc.LB,mc.ZSBH,mc.RY,mc.Article,mc.CustPO,mc.Qty,mc.Remark,mc.Tracking,mc.SampleSent,');
       SQL.Add('       mc.QC_Check,mc.RandomQty,mc.DefectQty,mc.QC_Reason,mc.Per_Defect,mc.QC_FinishDate,mc.Settlement,mc.File_Name,mc.QC_Date,mc.QC_USERID,');
