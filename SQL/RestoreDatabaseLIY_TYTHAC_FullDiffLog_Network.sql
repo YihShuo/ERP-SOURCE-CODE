@@ -14,9 +14,9 @@ GO
 -- ============================================================================
 -- BƯỚC 2: KHAI BÁO BIẾN VÀ TÌM FILE FULL, DIFF, LOG
 -- ============================================================================
-DECLARE @FullFolder  NVARCHAR(500) = N'\\192.168.71.7\SQL_Backup\LYS_ERP\Full\';
-DECLARE @DiffFolder  NVARCHAR(500) = N'\\192.168.71.7\SQL_Backup\LYS_ERP\Diff\';
-DECLARE @LogFolder   NVARCHAR(500) = N'\\192.168.71.7\SQL_Backup\LYS_ERP\Log\';
+DECLARE @FullFolder  NVARCHAR(500) = N'\\192.168.71.7\SQL_Backup\LIY_TYTHAC\Full\';
+DECLARE @DiffFolder  NVARCHAR(500) = N'\\192.168.71.7\SQL_Backup\LIY_TYTHAC\Diff\';
+DECLARE @LogFolder   NVARCHAR(500) = N'\\192.168.71.7\SQL_Backup\LIY_TYTHAC\Log\';
 
 DECLARE @LatestFullFile NVARCHAR(500);
 DECLARE @LatestDiffFile NVARCHAR(500);
@@ -53,7 +53,7 @@ INSERT INTO #LogFiles (FileName)
 SELECT FileName 
 FROM #FileList 
 WHERE IsFile = 1 
-  AND FileName LIKE 'LYS_ERP_LOG_%.trn'
+  AND FileName LIKE 'LIY_TYTHAC_LOG_%.trn'
   -- Chỉ lấy các file Log có chuỗi YYYY-MM-DD_HHMMSS >= ngày_hôm_nay_040000
   AND SUBSTRING(FileName, CHARINDEX('20', FileName), 17) >= @StartLogTimeStamp
 ORDER BY FileName ASC; -- Bắt buộc sắp xếp thời gian tăng dần
@@ -70,18 +70,18 @@ BEGIN
     PRINT N'-> Bắt đầu lọc các File LOG từ mốc: ' + @StartLogTimeStamp;
 
     -- A. Ngắt kết nối Database hiện tại
-    ALTER DATABASE LYS_ERP SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
+    ALTER DATABASE LIY_TYTHAC SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
 
     -- B. Restore FULL (WITH NORECOVERY)
     DECLARE @Sql NVARCHAR(MAX);
-    SET @Sql = 'RESTORE DATABASE LYS_ERP FROM DISK = ''' + @LatestFullFile + ''' WITH '
-             + 'MOVE ''LIY_ERP_Data'' TO ''C:\Program Files\Microsoft SQL Server\MSSQL17.MSSQLSERVER\MSSQL\DATA\LYS_ERP.mdf'', '
-             + 'MOVE ''LIY_ERP_Log'' TO ''C:\Program Files\Microsoft SQL Server\MSSQL17.MSSQLSERVER\MSSQL\DATA\LYS_ERP.ldf'', '
+    SET @Sql = 'RESTORE DATABASE LIY_TYTHAC FROM DISK = ''' + @LatestFullFile + ''' WITH '
+             + 'MOVE ''LIY_TYTHAC'' TO ''C:\Program Files\Microsoft SQL Server\MSSQL17.MSSQLSERVER\MSSQL\DATA\LIY_TYTHAC.mdf'', '
+             + 'MOVE ''LIY_TYTHAC_Log'' TO ''C:\Program Files\Microsoft SQL Server\MSSQL17.MSSQLSERVER\MSSQL\DATA\LIY_TYTHAC.ldf'', '
              + 'REPLACE, NORECOVERY, STATS = 10;';
     EXEC sp_executesql @Sql;
 
     -- C. Restore DIFF (WITH NORECOVERY)
-    SET @Sql = 'RESTORE DATABASE LYS_ERP FROM DISK = ''' + @LatestDiffFile + ''' WITH NORECOVERY, STATS = 10;';
+    SET @Sql = 'RESTORE DATABASE LIY_TYTHAC FROM DISK = ''' + @LatestDiffFile + ''' WITH NORECOVERY, STATS = 10;';
     EXEC sp_executesql @Sql;
 
     -- D. Restore lần lượt từng File Log từ 04:00:00 trở đi
@@ -99,7 +99,7 @@ BEGIN
             
             PRINT N'    [+] Restoring Log (' + CAST(@CurrentID AS NVARCHAR(10)) + N'/' + CAST(@MaxID AS NVARCHAR(10)) + N'): ' + @LogFileName;
             
-            SET @Sql = 'RESTORE LOG LYS_ERP FROM DISK = ''' + @LogFolder + @LogFileName + ''' WITH NORECOVERY, STATS = 10;';
+            SET @Sql = 'RESTORE LOG LIY_TYTHAC FROM DISK = ''' + @LogFolder + @LogFileName + ''' WITH NORECOVERY, STATS = 10;';
             EXEC sp_executesql @Sql;
 
             SET @CurrentID = @CurrentID + 1;
@@ -112,11 +112,11 @@ BEGIN
 
     -- E. Mở Database hoàn tất (RECOVERY)
     PRINT N'-> Đang đưa Database về trạng thái RECOVERY (sẵn sàng sử dụng)...';
-    RESTORE DATABASE LYS_ERP WITH RECOVERY;
+    RESTORE DATABASE LIY_TYTHAC WITH RECOVERY;
 
     -- F. Cho phép truy cập lại bình thường
-    ALTER DATABASE LYS_ERP SET MULTI_USER;
-    PRINT N'=== HOÀN TẤT RESTORE DATABASE LYS_ERP (FULL + DIFF + LOGS) ===';
+    ALTER DATABASE LIY_TYTHAC SET MULTI_USER;
+    PRINT N'=== HOÀN TẤT RESTORE DATABASE LIY_TYTHAC (FULL + DIFF + LOGS) ===';
 
     DROP TABLE #LogFiles;
 END
