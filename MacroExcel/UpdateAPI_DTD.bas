@@ -14,6 +14,10 @@ Sub UpdatePO_DTD()
     Dim Http As Object
 
     Set ws = ActiveSheet
+    
+    ws.Cells(1, 3).Value = "JSON"
+    ws.Cells(1, 4).Value = "Status"
+    ws.Cells(1, 5).Value = "ResponseText"
 
     LastRow = ws.Cells(ws.Rows.Count, 1).End(xlUp).Row
 
