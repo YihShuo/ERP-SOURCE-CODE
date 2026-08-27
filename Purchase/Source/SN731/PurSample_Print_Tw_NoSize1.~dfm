@@ -3904,7 +3904,7 @@ object PurSample_Print_Tw_NoSize: TPurSample_Print_Tw_NoSize
     end
     object Query1Qty: TCurrencyField
       FieldName = 'Qty'
-      DisplayFormat = '#,##0.0'
+      DisplayFormat = '#,##0'
     end
     object Query1CATEGORY: TMemoField
       FieldName = 'CATEGORY'

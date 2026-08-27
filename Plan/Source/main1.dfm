@@ -572,7 +572,7 @@ object main: Tmain
         OnClick = SN71Click
       end
       object SN72: TMenuItem
-        Caption = 'N72 San Production'
+        Caption = 'N72 Scan Production'
         Hint = 'SN62'
         object SN721: TMenuItem
           Caption = 'N721 Scan Production BarCode'

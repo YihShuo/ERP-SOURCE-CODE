@@ -1,7 +1,7 @@
 object SuppNew: TSuppNew
-  Left = 329
-  Top = 307
-  Width = 1667
+  Left = 219
+  Top = 259
+  Width = 1472
   Height = 584
   Caption = 'SuppNew'
   Color = clBtnFace
@@ -23,14 +23,14 @@ object SuppNew: TSuppNew
   object Panel2: TPanel
     Left = 0
     Top = 65
-    Width = 1651
+    Width = 1456
     Height = 480
     Align = alClient
     TabOrder = 0
     object DBGrid1: TDBGridEh
       Left = 1
       Top = 57
-      Width = 1649
+      Width = 1454
       Height = 422
       Align = alClient
       DataSource = DS1
@@ -54,6 +54,7 @@ object SuppNew: TSuppNew
       TitleFont.Height = -16
       TitleFont.Name = 'Arial'
       TitleFont.Style = []
+      OnGetCellParams = DBGrid1GetCellParams
       Columns = <
         item
           EditButtons = <>
@@ -217,7 +218,7 @@ object SuppNew: TSuppNew
     object Panel3: TPanel
       Left = 1
       Top = 1
-      Width = 1649
+      Width = 1454
       Height = 56
       Align = alTop
       Font.Charset = DEFAULT_CHARSET
@@ -258,6 +259,13 @@ object SuppNew: TSuppNew
         Font.Style = []
         ParentFont = False
       end
+      object Label3: TLabel
+        Left = 432
+        Top = 16
+        Width = 51
+        Height = 20
+        Caption = 'Status:'
+      end
       object Edit1: TEdit
         Left = 80
         Top = 16
@@ -275,7 +283,7 @@ object SuppNew: TSuppNew
         TabOrder = 1
       end
       object Button1: TButton
-        Left = 448
+        Left = 656
         Top = 12
         Width = 89
         Height = 33
@@ -289,12 +297,27 @@ object SuppNew: TSuppNew
         TabOrder = 2
         OnClick = Button1Click
       end
+      object cbStop: TComboBox
+        Left = 488
+        Top = 16
+        Width = 145
+        Height = 28
+        Style = csDropDownList
+        ItemHeight = 20
+        ItemIndex = 0
+        TabOrder = 3
+        Text = 'ALL'
+        Items.Strings = (
+          'ALL'
+          'Lock'
+          'NotLock')
+      end
     end
   end
   object Panel1: TPanel
     Left = 0
     Top = 0
-    Width = 1651
+    Width = 1456
     Height = 65
     Align = alTop
     TabOrder = 1

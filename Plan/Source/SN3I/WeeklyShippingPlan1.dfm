@@ -1,6 +1,6 @@
 object WeeklyShippingPlan: TWeeklyShippingPlan
-  Left = 150
-  Top = 132
+  Left = 339
+  Top = 226
   Width = 1457
   Height = 675
   Caption = 'Weekly Shipping Plan'
@@ -18,6 +18,9 @@ object WeeklyShippingPlan: TWeeklyShippingPlan
   OnClose = FormClose
   OnCreate = FormCreate
   OnDestroy = FormDestroy
+  DesignSize = (
+    1441
+    636)
   PixelsPerInch = 96
   TextHeight = 16
   object Splitter1: TSplitter
@@ -621,6 +624,26 @@ object WeeklyShippingPlan: TWeeklyShippingPlan
         Width = 70
       end>
   end
+  object ImageBox: TPanel
+    Left = 516
+    Top = -13
+    Width = 181
+    Height = 107
+    Anchors = []
+    BevelOuter = bvNone
+    BorderWidth = 1
+    Color = clBlack
+    TabOrder = 5
+    Visible = False
+    object ShoeImage: TImage
+      Left = 1
+      Top = 1
+      Width = 179
+      Height = 105
+      Align = alClient
+      Stretch = True
+    end
+  end
   object Query1: TQuery
     DatabaseName = 'DB'
     DataSource = DS2
@@ -799,6 +822,11 @@ object WeeklyShippingPlan: TWeeklyShippingPlan
   object QDelCarton: TQuery
     DatabaseName = 'DB'
     Left = 144
+    Top = 200
+  end
+  object QueryPic: TQuery
+    DatabaseName = 'DB'
+    Left = 176
     Top = 200
   end
 end

@@ -144,7 +144,7 @@ begin
     sql.clear;
     sql.add('select PerHours.dates,PerHours.DepNo,PerHours.DepName,PerHours.GXLB,SCBZCL.PlanQty ,PerDay.TotQty, (PerDay.TotQty-SCBZCL.PlanQty) as Variance');
     // 20230520 add percent
-    sql.add('       ,(PerDay.TotQty*100/SCBZCL.PlanQty) as Person');
+    sql.add('       ,(PerDay.TotQty*100/NULLIF(SCBZCL.PlanQty,0)) as Person');
      while not QTemp.eof do
      begin
          sql.add(',sum(case  when Hours='+''''+Qtemp.FieldByName('Hours').asstring+'''');

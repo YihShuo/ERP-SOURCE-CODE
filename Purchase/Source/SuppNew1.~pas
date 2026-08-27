@@ -56,6 +56,8 @@ type
     N1: TMenuItem;
     N2: TMenuItem;
     Query1TYJH: TStringField;
+    cbStop: TComboBox;
+    Label3: TLabel;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure BB1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -73,6 +75,8 @@ type
     procedure FormDestroy(Sender: TObject);
     procedure N1Click(Sender: TObject);
     procedure N2Click(Sender: TObject);
+    procedure DBGrid1GetCellParams(Sender: TObject; Column: TColumnEh;
+      AFont: TFont; var Background: TColor; State: TGridDrawState);
   private
     { Private declarations }
   public
@@ -228,6 +232,10 @@ begin
     sql.add('and ZSYWJC like ');
     sql.add(''''+'%'+edit2.Text+'%'+'''');
     sql.add('and YN='+''''+'2'+'''');
+    if cbStop.Text = 'Lock' then
+      SQL.Add('and TYJH = ''Y'' ')
+    else if cbStop.Text = 'NotLock' then
+      SQL.Add('and ISNULL(TYJH,''N'') <> ''Y'' ');
     sql.add('order by ZSDH');
     active:=true;
   end;
@@ -338,27 +346,59 @@ end;
 
 procedure TSuppNew.N1Click(Sender: TObject);
 begin
-  with query1 do
+  with Query1 do
   begin
-    if recordcount>0 then
+    if not Active then
+      Exit;
+
+    if RecordCount > 0 then
     begin
-      edit;
-      fieldbyname('TYJH').Value:='Y';
+      if MessageDlg('Ban co muon khoa NCU nay khong?',
+        mtConfirmation, [mbYes, mbNo], 0) = mrYes then
+      begin
+        CachedUpdates := true;
+        Edit;
+        FieldByName('TYJH').AsString := 'Y';
+        Post;
+        UpSQL1.Apply(ukModify);
+        CachedUpdates := false;
+        Active:=false;
+        Active:=true;
+      end;
     end;
   end;
 end;
 
 procedure TSuppNew.N2Click(Sender: TObject);
 begin
-
-  with query1 do
+  with Query1 do
   begin
-    if recordcount>0 then
+    if not Active then
+      Exit;
+
+    if RecordCount > 0 then
     begin
-      edit;
-      fieldbyname('TYJH').Value:='N';
+      if MessageDlg('Ban co muon mo khoa NCU nay khong?',
+        mtConfirmation, [mbYes, mbNo], 0) = mrYes then
+      begin
+        CachedUpdates := true;
+        Edit;
+        FieldByName('TYJH').AsString := 'N';
+        Post;
+        UpSQL1.Apply(ukModify);
+        CachedUpdates := false;
+        Active:=false;
+        Active:=true;
+      end;
     end;
   end;
+end;
+
+procedure TSuppNew.DBGrid1GetCellParams(Sender: TObject; Column: TColumnEh;
+  AFont: TFont; var Background: TColor; State: TGridDrawState);
+begin
+  if Query1.FieldByName('TYJH').Value = 'Y' then
+  DBGrid1.Canvas.Font.Color := clRed;
 end;
 
 end.

@@ -6,7 +6,7 @@ object DM2: TDM2
   Height = 249
   Width = 309
   object DBshipping: TDatabase
-    AliasName = 'LYS_ERPnew'
+    AliasName = 'T'
     DatabaseName = 'DB'
     Params.Strings = (
       'USER NAME=tyxuan'

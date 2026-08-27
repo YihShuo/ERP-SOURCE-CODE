@@ -1291,20 +1291,20 @@ begin
       execsql;
     //
     // ----------------------------------------------------------------------
-      // --- BAT DAU DOAN XU LY LAM TRON VA BU TRU SAI SO TREN YPZLZLS2 ---
+      // --- BAT DAU DOAN XU LY LAM TRON VA BU TRU SAI SO TREN YPZLZLS2 (DA SUA) ---
       // ----------------------------------------------------------------------
       SQL.Clear;
       SQL.Add('WITH TargetTotal AS (');
-      SQL.Add('    SELECT YPZLBH, YPDH, CLBH, SUM(CLSL) AS ExactTotal');
+      SQL.Add('    SELECT YPZLBH, CLBH, SUM(CLSL) AS ExactTotal');
       SQL.Add('    FROM YPZLZLS2');
       SQL.Add('    WHERE YPZLBH = :YPZLBH');
-      SQL.Add('    GROUP BY YPZLBH, YPDH, CLBH');
+      SQL.Add('    GROUP BY YPZLBH, CLBH');
       SQL.Add('),');
       SQL.Add('CalculatedDetails AS (');
       SQL.Add('    SELECT d.YPZLBH, d.YPDH, d.BWBH, d.MJBH, d.CLBH, d.SIZE,');
       SQL.Add('           ROUND(d.CLSL, 2) AS RoundedCLSL,');
-      SQL.Add('           SUM(ROUND(d.CLSL, 2)) OVER(PARTITION BY d.YPZLBH, d.YPDH, d.CLBH) AS SumRoundedCLSL,');
-      SQL.Add('           ROW_NUMBER() OVER(PARTITION BY d.YPZLBH, d.YPDH, d.CLBH ORDER BY d.CLSL DESC, d.BWBH) AS rn');
+      SQL.Add('           SUM(ROUND(d.CLSL, 2)) OVER(PARTITION BY d.YPZLBH, d.CLBH) AS SumRoundedCLSL,');
+      SQL.Add('           ROW_NUMBER() OVER(PARTITION BY d.YPZLBH, d.CLBH ORDER BY d.CLSL DESC, d.YPDH, d.BWBH) AS rn');
       SQL.Add('    FROM YPZLZLS2 d');
       SQL.Add('    WHERE d.YPZLBH = :YPZLBH');
       SQL.Add('),');
@@ -1313,7 +1313,7 @@ begin
       SQL.Add('           CASE WHEN c.rn = 1 THEN c.RoundedCLSL + (ROUND(t.ExactTotal, 2) - c.SumRoundedCLSL)');
       SQL.Add('                ELSE c.RoundedCLSL END AS NewCLSL');
       SQL.Add('    FROM CalculatedDetails c');
-      SQL.Add('    INNER JOIN TargetTotal t ON c.YPZLBH = t.YPZLBH AND c.YPDH = t.YPDH AND c.CLBH = t.CLBH');
+      SQL.Add('    INNER JOIN TargetTotal t ON c.YPZLBH = t.YPZLBH AND c.CLBH = t.CLBH');
       SQL.Add(')');
       SQL.Add('UPDATE main');
       SQL.Add('SET main.CLSL = fd.NewCLSL');

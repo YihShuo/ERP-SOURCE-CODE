@@ -1,6 +1,6 @@
 object ScanPerHour: TScanPerHour
-  Left = 890
-  Top = 85
+  Left = 690
+  Top = 117
   Width = 1015
   Height = 500
   Caption = 'ScanPerHour'

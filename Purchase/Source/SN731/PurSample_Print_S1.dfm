@@ -1623,7 +1623,7 @@ object PurSample_Print_S: TPurSample_Print_S
     end
     object MasQty: TCurrencyField
       FieldName = 'Qty'
-      DisplayFormat = '#,##0'
+      DisplayFormat = '#,##0.00'
     end
     object MasUSPrice: TCurrencyField
       FieldName = 'USPrice'

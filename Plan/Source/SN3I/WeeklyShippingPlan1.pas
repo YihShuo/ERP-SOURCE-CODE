@@ -69,6 +69,9 @@ type
     Query1Con_No: TStringField;
     QCarton: TQuery;
     QDelCarton: TQuery;
+    ShoeImage: TImage;
+    QueryPic: TQuery;
+    ImageBox: TPanel;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormDestroy(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -83,6 +86,7 @@ type
     procedure Delete1Click(Sender: TObject);
     procedure PopupMenu1Popup(Sender: TObject);
     procedure InsertShippingPlanCarton;
+//    procedure Query1AfterScroll(DataSet: TDataSet);
   private
     { Private declarations }
   public
@@ -90,6 +94,7 @@ type
     DateList: array of string;
     InvoiceList: array of string;
     UploadPage: array of string;
+    IsExport: Boolean; // <-- Thêm dòng này vào dây
   end;
 
 var
@@ -98,7 +103,7 @@ var
 implementation
 
 uses
-  main1, PlanPage1;
+  main1, PlanPage1, ShowShoePic1;
 
 {$R *.dfm}
 
@@ -219,6 +224,56 @@ begin
           end;
         end;
 
+        QCarton.UnPrepare;
+      end else
+      begin
+        //====================================================
+        // Xoa du lieu cu
+        //====================================================
+        QDelCarton.Close;
+        QDelCarton.SQL.Clear;
+        QDelCarton.SQL.Add('DELETE FROM ShippingPlanCarton');
+        QDelCarton.SQL.Add('WHERE RY = ''' + Query1.FieldByName('RY').AsString + '''');
+        QDelCarton.SQL.Add('AND PlateID = ''' + Query1.FieldByName('PlateID').AsString + '''');
+
+        if Query1.FieldByName('Con_No').IsNull then
+          QDelCarton.SQL.Add('AND Con_No = '''' ')
+        else
+          QDelCarton.SQL.Add('AND Con_No = ''' + Query1.FieldByName('Con_No').AsString + ''' ');
+
+        QDelCarton.ExecSQL;
+
+        //====================================================
+        // Chuan bi INSERT
+        //====================================================
+        QCarton.Close;
+        QCarton.SQL.Clear;
+        QCarton.SQL.Add('INSERT INTO ShippingPlanCarton');
+        QCarton.SQL.Add('(RY, Con_No, PlateID, CartonNo, UserID, UserDate, YN)');
+        QCarton.SQL.Add('VALUES (:RY, :Con_No, :PlateID, :CartonNo, :UserID, GETDATE(), ''1'')');
+        QCarton.Prepare;
+
+        for i := 1 to Query1.FieldByName('Cartons').AsInteger do
+          begin
+            QCarton.ParamByName('RY').AsString :=
+              Query1.FieldByName('RY').AsString;
+
+            if Query1.FieldByName('Con_No').IsNull then
+              QCarton.ParamByName('Con_No').Clear
+            else
+              QCarton.ParamByName('Con_No').Value :=
+                Query1.FieldByName('Con_No').Value;
+
+            QCarton.ParamByName('PlateID').Value :=
+              Query1.FieldByName('PlateID').Value;
+
+            QCarton.ParamByName('CartonNo').Value := i;
+
+            QCarton.ParamByName('UserID').AsString :=
+              Main.Edit1.Text;
+
+            QCarton.ExecSQL;
+          end;
         QCarton.UnPrepare;
       end;
 
@@ -862,5 +917,71 @@ begin
   else
     Delete1.Visible := false;
 end;
+
+//xu hinh anh .
+{procedure TWeeklyShippingPlan.Query1AfterScroll(DataSet: TDataSet);
+var
+  ShoePic: string;
+  BasePath: string;
+  ImgNameFromDB: string;
+begin
+  if IsExport = false then
+  begin
+    // 1. Khai bao duong dan goc
+    BasePath := '\\192.168.84.55\Bom New\';
+
+    // 2. Chay queryPic de lay duong dan luu trong Database
+    with queryPic do
+    begin
+      Active := False;
+      SQL.Clear; // Da them dau cham phay
+      
+      // SQL Server 2008 R2 dung SELECT TOP 1 la chuan
+      SQL.Add('select top 1 xxzl.IMGName from xxzl inner join ddzl on xxzl.xiexing=ddzl.xiexing and xxzl.shehao=ddzl.shehao');
+      
+      // Khuyen nghi dung QuotedStr va FieldByName de tranh loi chuoi
+      // Thay vi dung: query1.FieldValues(RY).value (sai cu phap Delphi)
+      SQL.Add(' where ddzl.ddbh = ' + QuotedStr(query1.FieldByName('RY').AsString));
+      Active := True;
+    end;
+
+    // 3. Xu ly ket qua tra ve tu cau query
+    if not queryPic.IsEmpty then
+    begin
+      ImgNameFromDB := queryPic.FieldByName('IMGName').AsString;
+      
+      // Neu ImgNameFromDB = 'Y:\HOKA\S27\1162533...jpg'
+      // Dung ham Copy de cat bo 3 ky tu dau, lay tu ky tu thu 4 tro di
+      // Ket qua se la: 'HOKA\S27\1162533...jpg'
+      if Length(ImgNameFromDB) > 3 then
+        ImgNameFromDB := Copy(ImgNameFromDB, 4, MaxInt);
+        
+      // Noi voi BasePath de ra duong dan mang hoan chinh
+      ShoePic := IncludeTrailingPathDelimiter(BasePath) + ImgNameFromDB;
+    end
+    else
+    begin
+      ShoePic := ''; // Truong hop queryPic khong tim thay record nao
+    end;
+
+    // 4. Logic xu ly load anh
+    // Them dieu kien ShoePic <> '' de tranh loi kiem tra file rong
+    if (ShoePic <> '') and FileExists(ShoePic) then
+    begin
+       ShoeImage.Picture.LoadFromFile(ShoePic);
+
+       if ShowShoePic = nil then
+         ShowShoePic := TShowShoePic.Create(self);
+
+       ShowShoePic.ShoeImage.Picture.LoadFromFile(ShoePic);
+    end
+    else
+    begin
+       ShoeImage.Picture.Bitmap := nil;
+       if ShowShoePic <> nil then
+         ShowShoePic.ShoeImage.Picture.Bitmap := nil;
+    end;
+  end;
+end;}
 
 end.

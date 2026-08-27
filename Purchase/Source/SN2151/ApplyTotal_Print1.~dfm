@@ -613,7 +613,6 @@ object ApplyTotal_Print: TApplyTotal_Print
         Top = 71
         Width = 59
         Height = 15
-        Enabled = False
         Frame.Color = clBlack
         Frame.DrawTop = False
         Frame.DrawBottom = False
@@ -646,7 +645,6 @@ object ApplyTotal_Print: TApplyTotal_Print
         Top = 71
         Width = 72
         Height = 15
-        Enabled = False
         Frame.Color = clBlack
         Frame.DrawTop = False
         Frame.DrawBottom = False
@@ -679,7 +677,6 @@ object ApplyTotal_Print: TApplyTotal_Print
         Top = 71
         Width = 49
         Height = 15
-        Enabled = False
         Frame.Color = clBlack
         Frame.DrawTop = False
         Frame.DrawBottom = False
@@ -712,7 +709,6 @@ object ApplyTotal_Print: TApplyTotal_Print
         Top = 37
         Width = 60
         Height = 15
-        Enabled = False
         Frame.Color = clBlack
         Frame.DrawTop = False
         Frame.DrawBottom = False
@@ -745,7 +741,6 @@ object ApplyTotal_Print: TApplyTotal_Print
         Top = 71
         Width = 67
         Height = 15
-        Enabled = False
         Frame.Color = clBlack
         Frame.DrawTop = False
         Frame.DrawBottom = False
@@ -778,7 +773,6 @@ object ApplyTotal_Print: TApplyTotal_Print
         Top = 71
         Width = 46
         Height = 15
-        Enabled = False
         Frame.Color = clBlack
         Frame.DrawTop = False
         Frame.DrawBottom = False
@@ -843,7 +837,6 @@ object ApplyTotal_Print: TApplyTotal_Print
         Top = 70
         Width = 20
         Height = 13
-        Enabled = False
         Frame.Color = clBlack
         Frame.DrawTop = False
         Frame.DrawBottom = False
@@ -875,7 +868,6 @@ object ApplyTotal_Print: TApplyTotal_Print
         Top = 70
         Width = 20
         Height = 13
-        Enabled = False
         Frame.Color = clBlack
         Frame.DrawTop = False
         Frame.DrawBottom = False
@@ -907,7 +899,6 @@ object ApplyTotal_Print: TApplyTotal_Print
         Top = 70
         Width = 20
         Height = 13
-        Enabled = False
         Frame.Color = clBlack
         Frame.DrawTop = False
         Frame.DrawBottom = False
@@ -939,7 +930,6 @@ object ApplyTotal_Print: TApplyTotal_Print
         Top = 37
         Width = 20
         Height = 13
-        Enabled = False
         Frame.Color = clBlack
         Frame.DrawTop = False
         Frame.DrawBottom = False

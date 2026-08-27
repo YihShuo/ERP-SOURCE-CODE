@@ -1,4 +1,4 @@
-USE LYS_ERP
+USE LYS_ERP;
 WITH RawData AS (
     SELECT 
         I.INV_NO, 
@@ -66,20 +66,21 @@ RandomizedData AS (
     LEFT JOIN ALPR_DB..ALPR_Records A 
         ON YWCP.BIEN_SO COLLATE DATABASE_DEFAULT = A.Plate_Id COLLATE DATABASE_DEFAULT 
         AND YWCP.CON_NO COLLATE DATABASE_DEFAULT = A.CON_NO COLLATE DATABASE_DEFAULT
+        AND CAST(YWCP.EXEDATE as date) = CAST(A.outtime as date)
         AND A.Exfty_Date >= '2026-01-01' 
         AND A.Type = 1 
         AND A.outtime IS NOT NULL
     WHERE A.ID IS NULL 
 )
 
-SELECT 
+SELECT
     InTime,
     OutTime,
     BIEN_SO Plate1,
     BIEN_SO Plate2,
     BIEN_SO Plate3,
-    STUFFED_INV_NO as Packing_List,
-    '' as Inovice_no,
+    STUFFED_INV_NO as PackingList_Barcode,
+    '1' as Invoice_no,
     CON_NO,
     REPLACE(EXEDATE_DATE,'-','\') as zDate,
     BIEN_SO +'_'+ REPLACE(RIGHT(CONVERT(VARCHAR(50),OutTime,120), 8),':','') as zTime,
@@ -87,4 +88,5 @@ SELECT
     null as UserUpdate,
     '1' as Type
 FROM RandomizedData
+WHERE CAST(InTime as date) < CAST(GETDATE() as date)
 ORDER BY EXEDATE_GOC DESC;

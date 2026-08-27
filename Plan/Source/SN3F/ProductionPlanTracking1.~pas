@@ -3056,7 +3056,7 @@ begin
     SQL.Add('LEFT JOIN XXZL ON XXZL.XieXing = DDZL.XieXing AND XXZL.SheHao = DDZL.SheHao');
     SQL.Add('WHERE SC.schedule_date BETWEEN ''' + FormatDateTime('yyyy/MM/dd', StartOfTheMonth(DTP5.DateTime)) + ''' AND ''' + FormatDateTime('yyyy/MM/dd', EndOfTheMonth(DTP6.DateTime)) + ''' AND SC.building_no = ''' + CB_Building_UB.Text + ''' AND SC.lean_no = ''' + CB_Lean_UB.Text + '''');
 
-    // --- 3. T?O B?NG T?M #SMDD ---
+    // --- 3. T?O B?NG T?M #SMDD (Ðã fix l?i nhân b?n s? lu?ng b?ng DISTINCT DDBH) ---
     SQL.Add('SELECT SC.Building, SC.Lean, SC.schedule_date, SC.ry_index, SC.DDBH, SC.Article, SC.XieMing, SC.Pairs, SC.ShipDate, SMDD.GXLB');
     QTemp.First;
     while not QTemp.Eof do
@@ -3066,10 +3066,10 @@ begin
     end;
     SQL.Add('INTO #SMDD FROM #SC AS SC');
     SQL.Add('LEFT JOIN (');
-    SQL.Add(' SELECT SC.DDBH, ''Total'' AS GXLB, DDZLS.CC AS Size, DDZLS.Quantity AS Pairs FROM #SC AS SC');
+    SQL.Add(' SELECT SC.DDBH, ''Total'' AS GXLB, DDZLS.CC AS Size, DDZLS.Quantity AS Pairs FROM (SELECT DISTINCT DDBH FROM #SC) AS SC');
     SQL.Add('  LEFT JOIN DDZLS ON DDZLS.DDBH = SC.DDBH');
     SQL.Add('  UNION ALL');
-    SQL.Add('  SELECT SC.DDBH, Section.Name AS GXLB, SMDDSS.XXCC AS Size, SUM(SMDDSS.Qty * SMDDSS.okCTS) AS Finished FROM #SC AS SC');
+    SQL.Add('  SELECT SC.DDBH, Section.Name AS GXLB, SMDDSS.XXCC AS Size, SUM(SMDDSS.Qty * SMDDSS.okCTS) AS Finished FROM (SELECT DISTINCT DDBH FROM #SC) AS SC');
     SQL.Add('  LEFT JOIN (');
     SQL.Add('    SELECT ''S'' AS GXLB, ''Upper'' AS Name UNION ALL SELECT ''O'' AS GXLB, ''Bottom'' AS Name');
     SQL.Add('  ) AS Section ON 1 = 1');
@@ -3079,8 +3079,8 @@ begin
     SQL.Add(') AS SMDD ON SMDD.DDBH = SC.DDBH');
     SQL.Add('GROUP BY SC.Building, SC.Lean, SC.schedule_date, SC.ry_index, SC.DDBH, SC.Article, SC.XieMing, SC.Pairs, SC.ShipDate, SMDD.GXLB');
 
-    // --- 4. T?O B?NG T?M #Dispatch (Ðã s?a l?i khóa ZLBH t?i dây) ---
-    SQL.Add('SELECT ZLBH AS DDBH'); // Thay d?i DDBH thành ZLBH AS DDBH
+    // --- 4. T?O B?NG T?M #Dispatch (Ðã fix l?i liên k?t khóa ZLBH) ---
+    SQL.Add('SELECT ZLBH AS DDBH'); 
     QTemp.First;
     while not QTemp.Eof do
     begin
@@ -3088,8 +3088,8 @@ begin
       QTemp.Next;
     end;
     SQL.Add('INTO #Dispatch FROM SMDDS_Dispatch');
-    SQL.Add('WHERE ZLBH IN (SELECT DISTINCT DDBH FROM #SC)'); // Thay d?i di?u ki?n IN sang ZLBH
-    SQL.Add('GROUP BY ZLBH'); // Thay d?i GROUP BY sang ZLBH
+    SQL.Add('WHERE ZLBH IN (SELECT DISTINCT DDBH FROM #SC)'); 
+    SQL.Add('GROUP BY ZLBH'); 
 
     // --- 5. T?NG H?P (UNION ALL) ---
     SQL.Add('SELECT *, ROW_NUMBER() OVER(ORDER BY Building, Lean, schedule_date, ry_index, CASE SMDD.GXLB ');

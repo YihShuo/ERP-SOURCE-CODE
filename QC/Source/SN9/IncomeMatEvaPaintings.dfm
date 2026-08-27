@@ -479,7 +479,7 @@ object IncomeMatEvaPainting: TIncomeMatEvaPainting
     Left = 0
     Top = 161
     Width = 1503
-    Height = 263
+    Height = 135
     Align = alClient
     DataSource = DS1
     Flat = False
@@ -631,16 +631,16 @@ object IncomeMatEvaPainting: TIncomeMatEvaPainting
   end
   object Panel2: TPanel
     Left = 0
-    Top = 424
+    Top = 296
     Width = 1503
-    Height = 305
+    Height = 433
     Align = alBottom
     TabOrder = 2
     object DBGridEh1: TDBGridEh
       Left = 1
       Top = 57
       Width = 1501
-      Height = 247
+      Height = 375
       Align = alClient
       DataSource = DS2
       Flat = False

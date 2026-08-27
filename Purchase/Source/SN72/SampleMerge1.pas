@@ -1769,206 +1769,181 @@ end;   }
 
 procedure TSampleMerge.Button5Click(Sender: TObject);
 begin
-  // Doi ten cot tren luoi giao dien
+  //?????????
   DBGridEh3.Columns[12].Title.Caption:='Stock';
-  
-  // Kiem tra an toan, neu chua luu Master thi dung lai
+  //
   IF NOT YPZLZL.Active THEN
-  BEGIN
-    ABORT;
-  END;
-
-  // Dong truy van chi ti?t truoc khi load lai bang tong hop
+     BEGIN
+       ABORT;
+     END;
   Qry_Article.Active:=false;
   
-  // TAT CAP NHAT GIAO DIEN DE TOI UU HIEU NANG RAM & CPU CLIENT
-  Qry_Summary.DisableControls;
-  try
-    with Qry_Summary do
+  with Qry_Summary do
+  begin
+    active:=false;                                                    
+    sql.Clear;
+    //sql.add('SET NOCOUNT ON; ');
+    sql.add('IF OBJECT_ID(''tempdb..#Base'') IS NOT NULL DROP TABLE #Base; ');
+    sql.add('SELECT s2.YPZLBH, s2.CLBH, s2.CSBH, s2.CLSL, s2.YPDH, y.KFJD ');
+    sql.add('INTO #Base ');
+    sql.add('FROM YPZLZLS2 s2 WITH (NOLOCK) ');
+    sql.add('LEFT JOIN YPZL y WITH (NOLOCK) ON y.YPDH = s2.YPDH ');
+    sql.add('WHERE s2.YPZLBH = '''+YPZLZL.FieldByName('YPZLBH').AsString+''' ');
+    if Edit_MatNo.Text<>'' then
+        sql.add('  AND s2.CLBH like '''+Edit_MatNo.Text+'%'' ');
+    sql.add('; ');
+    sql.add('CREATE CLUSTERED INDEX IDX_Base ON #Base(CLBH, YPDH); ');
+    sql.add('IF OBJECT_ID(''tempdb..#CG'') IS NOT NULL DROP TABLE #CG; ');
+    sql.add('SELECT DISTINCT b.CLBH, b.YPDH ');
+    sql.add('INTO #CG ');
+    sql.add('FROM #Base b ');
+    sql.add('JOIN cgzlss cs WITH (NOLOCK) ');
+    sql.add('  ON cs.CLBH = b.CLBH AND cs.Stage = b.KFJD AND cs.zlbh = b.YPDH AND cs.Qty > 0; ');
+    sql.add('CREATE CLUSTERED INDEX IDX_CG ON #CG(CLBH, YPDH); ');
+    sql.add('IF OBJECT_ID(''tempdb..#Use'') IS NOT NULL DROP TABLE #Use; ');
+    sql.add('SELECT DISTINCT CLBH, ZLBH AS YPDH ');
+    sql.add('INTO #Use ');
+    sql.add('FROM ( ');
+    sql.add('    SELECT CLBH, ZLBH FROM CGKCUSE_TMKT WITH (NOLOCK) WHERE Qty > 0 AND CLBH IN (SELECT DISTINCT CLBH FROM #Base) ');
+    sql.add('    UNION ALL ');
+    sql.add('    SELECT CLBH, ZLBH FROM CGKCUSE WITH (NOLOCK) WHERE Qty > 0 AND CLBH IN (SELECT DISTINCT CLBH FROM #Base) ');
+    sql.add(') u; ');
+    sql.add('CREATE CLUSTERED INDEX IDX_Use ON #Use(CLBH, YPDH); ');
+    sql.add('IF OBJECT_ID(''tempdb..#Stat'') IS NOT NULL DROP TABLE #Stat; ');
+    sql.add('SELECT b.CLBH, ');
+    sql.add('       COUNT(DISTINCT CASE WHEN cg.YPDH IS NULL THEN b.YPDH END) AS NoBuy, ');
+    sql.add('       COUNT(DISTINCT CASE WHEN us.YPDH IS NULL THEN b.YPDH END) AS NoUse ');
+    sql.add('INTO #Stat ');
+    sql.add('FROM #Base b ');
+    sql.add('LEFT JOIN #CG  cg ON cg.CLBH = b.CLBH AND cg.YPDH = b.YPDH ');
+    sql.add('LEFT JOIN #Use us ON us.CLBH = b.CLBH AND us.YPDH = b.YPDH ');
+    sql.add('GROUP BY b.CLBH; ');
+    sql.add('CREATE CLUSTERED INDEX IDX_Stat ON #Stat(CLBH); ');
+    sql.add('IF OBJECT_ID(''tempdb..#OTW'') IS NOT NULL DROP TABLE #OTW; ');
+    sql.add('SELECT ob.CLBH, ');
+    sql.add('    isnull(sum(isnull(ci.xqqty,0))-sum(isnull(ci.qty,0)),0) ');
+    sql.add('      + isnull((select sum(cs2.qty) from cgzls cs2 left join CGZL on CGZL.CGNO=cs2.CGNO ');
+    sql.add('                where cs2.clbh=ob.CLBH and CGZL.GSBH=''CDC'' ');
+    sql.add('                and cs2.cgno not in (select distinct cgno from CGZLInvoiceS ci2 where ci2.CLBH=ob.CLBH)),0) as RawOnTheWayQty ');
+    sql.add('INTO #OTW ');
+    sql.add('FROM (SELECT DISTINCT CLBH FROM #Base) ob ');
+    sql.add('LEFT JOIN CGZLInvoiceS ci ON ci.CLBH = ob.CLBH ');
+    sql.add('GROUP BY ob.CLBH; ');
+    sql.add('CREATE CLUSTERED INDEX IDX_OTW ON #OTW(CLBH); ');
+    sql.add('IF OBJECT_ID(''tempdb..#YPZL_Mat'') IS NOT NULL DROP TABLE #YPZL_Mat; ');
+    sql.add('SELECT b.YPZLBH, b.CLBH, CLZL.YWPM AS CLMC, clbzzl.bz AS MatRemark, ');
+    sql.add('       CLZL.DWBH, ZSZL.ZSYWJC, SUM(b.CLSL) AS CLSL, b.CSBH, BUsers.UserName, ');
+    sql.add('       st.NoBuy, st.NoUse, MAX(YPZLZL.INSDATE) AS INSDATE ');
+    sql.add('INTO #YPZL_Mat ');
+    sql.add('FROM #Base b ');
+    sql.add('JOIN #Stat st ON st.CLBH = b.CLBH ');
+    sql.add('LEFT JOIN ZSZL      ON ZSZL.ZSDH = b.CSBH ');
+    sql.add('LEFT JOIN CLZL      ON CLZL.cldh = b.CLBH ');
+    sql.add('LEFT JOIN clbzzl    ON clbzzl.cldh = CLZL.cldh AND clbzzl.zybb = ''E'' ');
+    sql.add('LEFT JOIN ZSZL_DEV  ON ZSZL_DEV.ZSDH = ZSZL.ZSDH AND ZSZL_DEV.GSBH = '''+YPZLZL.FieldByName('GSBH').AsString+''' ');
+    sql.add('LEFT JOIN BUsers    ON ZSZL_DEV.SamplePurchaser = BUsers.UserID ');
+    sql.add('LEFT JOIN zszlfilter ON zszlfilter.zsdh = b.CSBH ');
+    sql.add('LEFT JOIN clzlfilter ON clzlfilter.cldh = b.CLBH ');
+    sql.add('LEFT JOIN YPZLZL    ON YPZLZL.YPZLBH = b.YPZLBH ');
+    sql.add('WHERE CLZL.CLZMLB = ''N'' ');
+    if Edit_MatName.Text<>'' then
+        sql.add('  AND CLZL.ywpm like ''%'+Edit_MatName.Text+'%'' ');
+    if (Radio_PurMat.Checked) or (Radio_Wait.Checked) then
+       begin
+         sql.add('  AND zszlfilter.zsdh is null ');
+         sql.add('  AND clzlfilter.cldh is null ');
+       end;
+    if (Radio_Wait.Checked) then
+       begin
+         sql.add('  AND (IsNull(st.NoBuy,0)>0 or IsNull(st.NoUse,0)>0) ');
+       end;
+    if Edit_Supplier.text<>'' then
+         sql.add('  AND ZSZL.ZSYWJC like ''%'+Edit_Supplier.text+'%''');
+    sql.add('GROUP BY b.YPZLBH, b.CLBH, CLZL.YWPM, CLZL.DWBH, ZSZL.ZSYWJC, b.CSBH, BUsers.UserName, st.NoBuy, st.NoUse, clzlfilter.cldh, clbzzl.bz; ');
+    sql.add('CREATE CLUSTERED INDEX IDX_YPZL_Mat ON #YPZL_Mat(CLBH); ');
+    sql.add('select YPZL_Mat.*,cg.recs,cg.cgno,IsNull(cg.PurQty,0) as PurQty, ');
+    sql.add('CASE WHEN YPZL_Mat.INSDATE < ''2026-03-01'' THEN IsNull(kcuse_TMKT.UseStock,IsNull(kcuse.UseStock,0)) ELSE ISNULL(kcuse_TMKT.UseStock, 0) END AS UseStock,IsNull(kcuse.UseStock,0) as ActualStock, ');
+    sql.add('kcuse_TMKT.stock_memo,IsNull(kcuse_all.UseStock,0) as SafeStock,zszlSample.ZSDH_TW as ZSDH_VN,IsNull(KCCLMONTH.Qty,0) as StockQty,IsNull(MaterialMOQ.SampleLeadTime,14) as  SampleLeadTime, ');
+    sql.add('case when substring(YPZL_Mat.csbh,1,3) <> ''JNG'' and substring(YPZL_Mat.CLBH,1,1) <> ''W'' ');
+    sql.add('     then isnull(OTW.RawOnTheWayQty,0) else 0 end as onthewayqty, ');
+    sql.add('clzl_flex.cldhflex,CGNoNeedUseStock.CLBH as CLBH_NotUS,Isnull(CGNotYet.CLBH,''NotBuy'') as CLBH_NotBuy ');
+    sql.add('from #YPZL_Mat YPZL_Mat ');
+    sql.add('left join (select cs.clbh,count(cs.clbh) as recs, min(cs.cgno) as cgno,sum(CS.Qty) as PurQty ');
+    sql.add('            from cgzlss cs ');
+    sql.add('            where exists (select 1 from #Base b where b.CLBH=cs.clbh and b.KFJD=cs.Stage and b.YPDH=cs.zlbh)  ');
+    sql.add('            group by cs.clbh ');
+    sql.add('           ) cg on cg.clbh=YPZL_Mat.CLBH ');
+    sql.add('left join (select cgkcuse.clbh,MAX(cgkcuse.qty) as UseStock,MAX(cgkcuse.memo) as stock_memo from cgkcuse ');
+    sql.add('            where exists (select 1 from #Base b where b.CLBH=cgkcuse.clbh and b.YPDH=cgkcuse.zlbh)  ');
+    sql.add('                  and cgkcuse.GSBH='''+YPZLZL.FieldByName('GSBH').AsString+''' ');
+    sql.add('            group by cgkcuse.clbh ');
+    sql.add('           ) kcuse on kcuse.clbh=YPZL_Mat.CLBH ');
+    sql.add('left join (select cgkcuse.clbh,sum(cgkcuse.qty) as UseStock,MAX(cgkcuse.memo) as stock_memo from cgkcuse_TMKT cgkcuse ');
+    sql.add('            where exists (select 1 from #Base b where b.CLBH=cgkcuse.clbh and b.YPDH=cgkcuse.zlbh)  ');
+    sql.add('                  and cgkcuse.GSBH='''+YPZLZL.FieldByName('GSBH').AsString+''' ');
+    sql.add('            group by cgkcuse.clbh ');
+    sql.add('           ) kcuse_TMKT on kcuse_TMKT.clbh=YPZL_Mat.CLBH ');
+    sql.add('left join (select cgkcuse.clbh,sum(cgkcuse.qty) as UseStock from cgkcuse ');
+    sql.add('            where cgkcuse.userdate>getdate()-45 ');
+    sql.add('                  and cgkcuse.GSBH='''+YPZLZL.FieldByName('GSBH').AsString+''' ');
+    sql.add('            group by cgkcuse.clbh ');
+    sql.add('           ) kcuse_all on kcuse_all.clbh=YPZL_Mat.CLBH ');
+    sql.add('left join #OTW OTW on OTW.CLBH=YPZL_Mat.CLBH ');
+    sql.add('left join ZSZL_DEV zszlSample on zszlSample.ZSDH=YPZL_Mat.csbh ');
+    sql.Add('and zszlSample.GSBH='''+main.Edit2.Text+''' ');
+    sql.add('left join ( ');
+    sql.add('  select KCCLDay.CLBH,KCCLDay.Qty from KCCLDay  ');
+    sql.add('  where KCCLDay.KCDay='''+FormatDateTime('YYYYMMDD',Date())+''' and KCCLDay.CKBH='''+YPZLZL.FieldByName('GSBH').AsString+''' ');
+    sql.add(') KCCLMONTH on KCCLMONTH.CLBH=YPZL_Mat.CLBH  ');
+    sql.add('Left join (select CLBH,SampleLeadTime from ( select CLBH,SampleLeadTime,ROW_NUMBER() over (PARTITION BY CLBH ORDER BY Substring(Season,1,2) DESC,Substring(Season,3,1) ASC) as  rn from MaterialMOQ ');
+    sql.add(') A where A.rn=1 ) MaterialMOQ on MaterialMOQ.CLBH=YPZL_Mat.CLBH ');
+    sql.Add('left join clzl_flex on clzl_flex.CLDH=YPZL_Mat.CLBH ');
+    sql.Add('left join CGNoNeedUseStock on CGNoNeedUseStock.CLBH=YPZL_Mat.CLBH and CGNoNeedUseStock.GSBH='''+main.Edit2.Text+''' ');
+    sql.Add('left join ( Select Distinct CLBH  ');
+    sql.Add('             From CGZLS  ');
+    sql.Add('       Left join CGZL on CGZLS.cgno=CGZL.CGNO  ');
+    sql.Add('             Where CGZL.GSBH='''+main.Edit2.Text+''' and CLBH in ( Select CLBH From #Base) ');
+    sql.Add('       ) CGNotYet on CGNotYet.CLBH=YPZL_Mat.CLBH ');
+    sql.add('where 1=1 ');
+    if CKCLSL.Checked=true then
+       sql.add(' and YPZL_Mat.CLSL>0 ');
+    IF Chk_Mine.Checked then
+       sql.add(' and zszlSample.SamplePurchaser='''+main.Edit1.Text+'''');
+    if (Radio_Wait.Checked) then
     begin
-      active:=false;                                            
-      sql.Clear;
-      
-      // ==========================================================
-      // 1. KHOI LENH SQL CUA QRY_SUMMARY (SU DUNG THAM SO :p_...)
-      // ==========================================================
-      sql.add('select YPZL_Mat.*,cg.recs,cg.cgno,IsNull(cg.PurQty,0) as PurQty,IsNull(kcuse.UseStock,0) as UseStock,kcuse.stock_memo,IsNull(kcuse_all.UseStock,0) as SafeStock, ');
-      sql.add('zszlSample.ZSDH_TW as ZSDH_VN,IsNull(KCCLMONTH.Qty,0) as StockQty,IsNull(MaterialMOQ.SampleLeadTime,14) as  SampleLeadTime, ');
-      sql.add('case when substring(YPZL_Mat.csbh,1,3) <> ''JNG'' and substring(YPZL_Mat.CLBH,1,1) <> ''W'' then ');
-      sql.add('(select isnull(sum(isnull(xqqty,0))-sum(isnull(qty,0)),0)+isnull((select sum(qty) from cgzls left join CGZL on CGZL.CGNO = cgzls.CGNO  where clbh = YPZL_Mat.CLBH and CGZL.GSBH = ''CDC'' ');
-      sql.add('and cgzls.cgno not in (select distinct cgno from CGZLInvoiceS where CLBH = YPZL_Mat.CLBH)),0) from CGZLInvoiceS ');
-      sql.add('where CLBH = YPZL_Mat.CLBH) else 0 end as onthewayqty,clzl_flex.cldhflex,CGNoNeedUseStock.CLBH as CLBH_NotUS,Isnull(CGNotYet.CLBH,''NotBuy'') as CLBH_NotBuy ');
-      
-      sql.add('from (select YPZLZLS2.YPZLBH,YPZLZLS2.CLBH,CLZL.YWPM as CLMC,clbzzl.bz as MatRemark');
-      sql.add('      ,CLZL.DWBH,ZSZL.ZSYWJC, ROUND(SUM(YPZLZLS2.CLSL), 0) AS CLSL,YPZLZLS2.CSBH,BUsers.UserName,IsNull(cg.NoBuy,0) as NoBuy,IsNull(cuse.NoUse,0) as NoUse');
-      sql.add('      FROM YPZLZLS2');
-      sql.add('      LEFT JOIN ZSZL on ZSZL.ZSDH=YPZLZLS2.CSBH');
-      sql.add('      LEFT JOIN YPZL on YPZL.YPDH=YPZLZLS2.YPDH');
-      sql.add('      LEFT JOIN CLZL   ON YPZLZLS2.CLBH = CLZL.cldh');
-      sql.add('      LEFT JOIN clbzzl on clzl.cldh=clbzzl.cldh and clbzzl.zybb=''E'' ');
-      
-      sql.add('      LEFT JOIN ZSZL_DEV on ZSZL_DEV.ZSDH=ZSZL.ZSDH and ZSZL_DEV.GSBH = :p_GSBH ');
-      sql.add('      LEFT JOIN BUsers on ZSZL_DEV.SamplePurchaser=BUsers.UserID');
-      sql.add('      left join zszlfilter on zszlfilter.zsdh=YPZLZLS2.CSBH');
-      sql.add('      left join clzlfilter on clzlfilter.cldh=YPZLZLS2.CLBH');
-      
-      // NGAT DONG CHO CAU LENH LEFT JOIN cg (NoBuy) QUA 255 KY TU
-      sql.add('      left join (select YPZLZLS2.CLBH,count(Distinct(YPZLZLS2.YPDH)) as NoBuy ');
-      sql.add('                 from YPZLZLS2,ypzl where ypzl.YPDH=YPZLZLS2.YPDH and YPZLZLS2.YPZLBH = :p_YPZLBH ');
-      sql.add('                 and not exists (select cs.zlbh from cgzlss cs where cs.clbh=YPZLZLS2.CLBH ');
-      sql.add('                 and cs.Stage=ypzl.kfjd and cs.zlbh=YPZL.YPDH and cs.Qty>0) ');
-      sql.add('                 group by YPZLZLS2.CLBH ) cg on YPZLZLS2.CLBH=cg.CLBH ');
-      
-      // NGAT DONG CHO CAU LENH LEFT JOIN cuse (NoUse) QUA 255 KY TU
-      sql.add('      left join (select YPZLZLS2.CLBH,count(Distinct(YPZLZLS2.YPDH)) as NoUse ');
-      sql.add('                 from YPZLZLS2,ypzl where ypzl.YPDH=YPZLZLS2.YPDH and YPZLZLS2.YPZLBH = :p_YPZLBH ');
-      sql.add('                 and not exists (select cuse.zlbh from cgkcuse cuse where cuse.clbh=YPZLZLS2.CLBH ');
-      sql.add('                 and  cuse.zlbh=YPZL.YPDH and cuse.Qty>0) ');
-      sql.add('                 group by YPZLZLS2.CLBH ) cuse on YPZLZLS2.CLBH=cuse.CLBH ');
-      
-      sql.add('      where CLZL.CLZMLB=''N'' and YPZLZLS2.YPZLBH = :p_YPZLBH ');
-      
-      // -- Dieu kien dong --
-      if Trim(Edit_MatNo.Text) <> '' then
-          sql.add('            and YPZLZLS2.CLBH like :p_MatNo ');
-      
-      if Trim(Edit_MatName.Text) <> '' then
-          sql.add('            and CLZL.ywpm like :p_MatName ');
-          
-      if (Radio_PurMat.Checked) or (Radio_Wait.Checked) then 
-      begin
-          sql.add('            and zszlfilter.zsdh is null ');
-          sql.add('            and clzlfilter.cldh is null ');
-      end;
-      
-      if (Radio_Wait.Checked) then 
-      begin
-          sql.add('              and (IsNull(cg.NoBuy,0)>0 or IsNull(cuse.NoUse,0)>0) ');
-      end;
-      
-      if Trim(Edit_Supplier.text) <> '' then
-          sql.add('            and ZSZL.ZSYWJC like :p_Supplier ');
-          
-      sql.add('          group by  YPZLZLS2.YPZLBH,YPZLZLS2.CLBH,cg.NoBuy,cuse.NoUse,CLZL.YWPM,CLZL.DWBH,ZSZL.ZSYWJC,YPZLZLS2.CSBH,BUsers.UserName,clzlfilter.cldh,clbzzl.bz');
-      sql.add('          ) YPZL_Mat');
-      
-      sql.add('left join (select cs.clbh,count(cs.clbh) as recs, min(cs.cgno) as cgno,sum(CS.Qty) as PurQty');
-      sql.add('            from cgzlss cs');
-      sql.add('            where exists (select ypzl.YPDH from YPZLZLS2,ypzl ');
-      sql.add('                          where ypzl.YPDH=YPZLZLS2.YPDH and YPZLZLS2.YPZLBH = :p_YPZLBH ');
-      sql.add('                                and cs.clbh=YPZLZLS2.CLBH and cs.Stage=ypzl.kfjd and cs.zlbh=YPZL.YPDH )  ');
-      sql.add('            group by cs.clbh ');
-      sql.add('           ) cg on cg.clbh=YPZL_Mat.CLBH ');
-      
-      sql.add('left join (select cgkcuse.clbh,sum(cgkcuse.qty) as UseStock,MAX(cgkcuse.memo) as stock_memo from cgkcuse ');
-      sql.add('            where exists (select YPDH from YPZLZLS2 ');
-      sql.add('                          where  YPZLZLS2.YPZLBH = :p_YPZLBH ');
-      sql.add('                                 and cgkcuse.clbh=YPZLZLS2.CLBH and cgkcuse.zlbh=YPZLZLS2.ypdh  )  ');
-      sql.add('                  and cgkcuse.GSBH = :p_GSBH ');
-      sql.add('            group by cgkcuse.clbh ');
-      sql.add('           ) kcuse on kcuse.clbh=YPZL_Mat.CLBH ');
-      
-      sql.add('left join (select cgkcuse.clbh,sum(cgkcuse.qty) as UseStock from cgkcuse ');
-      sql.add('            where cgkcuse.userdate>getdate()-45 ');
-      sql.add('                  and cgkcuse.GSBH = :p_GSBH ');
-      sql.add('            group by cgkcuse.clbh ');
-      sql.add('           ) kcuse_all on kcuse_all.clbh=YPZL_Mat.CLBH ');
-      
-      sql.add('left join ZSZL_DEV zszlSample on zszlSample.ZSDH=YPZL_Mat.csbh');
-      sql.add('and zszlSample.GSBH = :p_MainGSBH ');
-      
-      sql.add('left join ( ');
-      sql.add('  select KCCLDay.CLBH,KCCLDay.Qty from KCCLDay  ');
-      sql.add('  where KCCLDay.KCDay = :p_Today and KCCLDay.CKBH = :p_GSBH ');
-      sql.add(') KCCLMONTH on KCCLMONTH.CLBH=YPZL_Mat.CLBH  ');
-      
-      // NGAT DONG CHO CAU LENH LEFT JOIN MaterialMOQ CHO AN TOAN
-      sql.add('Left join (select CLBH,SampleLeadTime from ( select CLBH,SampleLeadTime,');
-      sql.add('           ROW_NUMBER() over (PARTITION BY CLBH ORDER BY Substring(Season,1,2) DESC,Substring(Season,3,1) ASC) as rn ');
-      sql.add('           from MaterialMOQ) A where A.rn=1 ) MaterialMOQ on MaterialMOQ.CLBH=YPZL_Mat.CLBH ');
-      
-      sql.add('left join clzl_flex on clzl_flex.CLDH=YPZL_Mat.CLBH');
-      sql.add('left join CGNoNeedUseStock on CGNoNeedUseStock.CLBH=YPZL_Mat.CLBH and CGNoNeedUseStock.GSBH = :p_MainGSBH ');
-      
-      // LOAI BO TABLE 2014, CHI LAY TABLE CHINH CHO GON
-      sql.add('left join ( Select CGZLS.CLBH  ');
-      sql.add('            From CGZLS ');
-      sql.add('            Left join CGZL on CGZLS.cgno=CGZL.CGNO ');
-      sql.add('            Where CGZL.GSBH = :p_MainGSBH and CGZLS.CLBH in ( Select CLBH From YPZLZLS2 Where YPZLZLS2.YPZLBH = :p_YPZLBH ) ');
-      sql.add('            Group by CGZLS.CLBH ) CGNotYet on CGNotYet.CLBH=YPZL_Mat.CLBH ');
-      
-      sql.add('where 1=1 ');
-      
-      if CKCLSL.Checked=true then
-          sql.add(' and YPZL_Mat.CLSL>0 ');
-          
-      IF Chk_Mine.Checked then
-          sql.add(' and zszlSample.SamplePurchaser = :p_UserID ');
-          
-      if (Radio_Wait.Checked) then
-      begin
-          sql.add(' and ( (CLSL>IsNULL(PurQty,0)) or ((IsNULL(PurQty,0)>0) and (YPZL_Mat.NoBuy>0)) or ((IsNULL(kcuse.UseStock,0)>0) and (YPZL_Mat.NoUse>0)) )  ');
-          sql.add(' and ( (CLSL>IsNULL(kcuse.UseStock,0)) or ((IsNULL(PurQty,0)>0) and (YPZL_Mat.NoBuy>0))  or ((IsNULL(kcuse.UseStock,0)>0) and (YPZL_Mat.NoUse>0)) ) ');
-      end;
-      
-      sql.add('order by YPZL_Mat.ZSYWJC ');
-
-      // ==========================================================
-      // 2. TRUYEN DU LIEU VAO THAM SO TRUOC KHI OPEN
-      // ==========================================================
-      ParamByName('p_YPZLBH').AsString   := YPZLZL.FieldByName('YPZLBH').AsString;
-      ParamByName('p_GSBH').AsString     := YPZLZL.FieldByName('GSBH').AsString;
-      ParamByName('p_MainGSBH').AsString := main.Edit2.Text;
-      ParamByName('p_Today').AsString    := FormatDateTime('YYYYMMDD', Date());
-      
-      if Trim(Edit_MatNo.Text) <> '' then
-         ParamByName('p_MatNo').AsString := Edit_MatNo.Text + '%';
-         
-      if Trim(Edit_MatName.Text) <> '' then
-         ParamByName('p_MatName').AsString := '%' + Edit_MatName.Text + '%';
-         
-      if Trim(Edit_Supplier.text) <> '' then
-         ParamByName('p_Supplier').AsString := '%' + Edit_Supplier.text + '%';
-         
-      if Chk_Mine.Checked then
-         ParamByName('p_UserID').AsString := main.Edit1.Text;
-
-      active:=true;
+       sql.add(' and ( (CLSL>IsNULL(PurQty,0)) or ((IsNULL(PurQty,0)>0) and (YPZL_Mat.NoBuy>0)) or ((IsNULL(kcuse.UseStock,0)>0) and (YPZL_Mat.NoUse>0)) )  ');
+       sql.add(' and ( (CLSL>IsNULL(kcuse.UseStock,0)) or ((IsNULL(PurQty,0)>0) and (YPZL_Mat.NoBuy>0))  or ((IsNULL(kcuse.UseStock,0)>0) and (YPZL_Mat.NoUse>0)) ) ');
     end;
-
-    // ==========================================================
-    // 3. KHOI LENH SQL CUA QRY_ARTICLE (DÙNG MASTER-DETAIL CU)
-    // ==========================================================
-    with Qry_Article do
-    begin
-      active:=false;
-      sql.Clear;
-      sql.add('select YPZLZLS2.YPDH,Max(YPZLZLS2.BWBH) as BWBH,YPZLZLS2.CLBH,CLZL.DWBH,SUM(YPZLZLS2.CLSL) AS CLSL,kfxxzl.devcode,kfxxzl.ARTICLE ,ypzl.KFJD ');
-      sql.add('       ,YPZLZLS.PAIRS,IsNull(cgkcuse.qty,0) as UseStock,ypzl.YPCCO,kfxxzl.FD,IsNull(CGZLSS.Qty,0) as CGQty,ypzl.productionlocation,kfxxzl.YSSM  ');
-      sql.add('FROM YPZLZLS2 ');
-      sql.add('Inner JOIN YPZLZLS on YPZLZLS.YPZLBH=YPZLZLS2.YPZLBH and YPZLZLS.YPDH=YPZLZLS2.YPDH ');
-      sql.add('Inner JOIN CLZL   ON YPZLZLS2.CLBH = CLZL.cldh ');
-      sql.add('Inner JOIN ypzl  ON ypzl.YPDH=YPZLZLS2.YPDH ');
-      sql.add('Inner join kfxxzl on kfxxzl.xiexing=ypzl.xiexing and kfxxzl.shehao=ypzl.shehao ');
-      sql.Add(' left JOIN  (select ZLBH,Sum(Qty) as Qty, Stage from CGZLSS where  CGZLSS.CLBH=:CLBH  Group By ZLBH,CLBH,Stage) CGZLSS on CGZLSS.ZLBH=ypzl.YPDH and CGZLSS.Stage=ypzl.KFJD');
-      sql.add('left join cgkcuse on cgkcuse.zlbh=YPZLZLS2.ypdh and cgkcuse.clbh=YPZLZLS2.clbh and cgkcuse.GSBH='''+YPZLZL.FieldByName('GSBH').AsString+''' ');
-      sql.add('where  YPZLZLS2.CLBH=:CLBH ');
-      sql.add('       and YPZLZLS2.YPZLBH=:YPZLBH ');
-      sql.add('group by  YPZLZLS2.YPDH,YPZLZLS2.CLBH,CLZL.DWBH,kfxxzl.devcode,kfxxzl.ARTICLE  ,ypzl.KFJD ');
-      sql.add('         ,YPZLZLS.PAIRS ,cgkcuse.qty,ypzl.YPCCO,kfxxzl.FD,CGZLSS.Qty,ypzl.productionlocation,kfxxzl.YSSM    ');
-      sql.add('order by kfxxzl.devcode  ASC  ');
-      
-      // Giu nguyen cach active de bang con tu dong chay theo Master
-      if DBGridEh5.Visible=true then 
-         active:=true;
-    end;
-
-  finally
-    // MO LAI GIAO DIEN SAU KHI DU LIEU DA TAI XONG HOAN TOAN
-    Qry_Summary.EnableControls;
+    sql.add('order by YPZL_Mat.ZSYWJC; ');
+    active:=true;
   end;
-end;
+  with Qry_Article do
+  begin
+    active:=false;
+    sql.Clear;
+    //sql.add('select YPZLZLS2.YPDH,Max(YPZLZLS2.BWBH) as BWBH,YPZLZLS2.CLBH,CLZL.DWBH,case when substring(YPZLZLS2.CLBH,1,1) <> ''M'' then SUM(YPZLZLS2.CLSL) else SUM(YPZLZLS2.USAGE) end AS CLSL,kfxxzl.devcode,kfxxzl.ARTICLE ,ypzl.KFJD ');
+    sql.add('select YPZLZLS2.YPDH,Max(YPZLZLS2.BWBH) as BWBH,YPZLZLS2.CLBH,CLZL.DWBH,SUM(YPZLZLS2.CLSL) AS CLSL,kfxxzl.devcode,kfxxzl.ARTICLE ,ypzl.KFJD ');      //20241130 all material calculate the same
+    sql.add('       ,YPZLZLS.PAIRS,IsNull(cgkcuse.qty,0) as UseStock,ypzl.YPCCO,kfxxzl.FD,IsNull(CGZLSS.Qty,0) as CGQty,ypzl.productionlocation,kfxxzl.YSSM  ');
+    sql.add('FROM YPZLZLS2 ');
+    sql.add('Inner JOIN YPZLZLS on YPZLZLS.YPZLBH=YPZLZLS2.YPZLBH and YPZLZLS.YPDH=YPZLZLS2.YPDH ');
+    sql.add('Inner JOIN CLZL   ON YPZLZLS2.CLBH = CLZL.cldh ');
+    sql.add('Inner JOIN ypzl  ON ypzl.YPDH=YPZLZLS2.YPDH ');
+    sql.add('Inner join kfxxzl on kfxxzl.xiexing=ypzl.xiexing and kfxxzl.shehao=ypzl.shehao ');
+    //20150522??
+   // sql.Add (' left JOIN  (select ZLBH,Sum(Qty) as Qty from CGZLSS where  CGZLSS.CLBH=:CLBH and CGZLSS.Stage='''+YPZLZL.FieldByName('KFJD').AsString+'''  Group By ZLBH,CLBH) CGZLSS on CGZLSS.ZLBH=ypzl.YPDH');
+    //20150930
+    sql.Add (' left JOIN  (select ZLBH,Sum(Qty) as Qty, Stage from CGZLSS where  CGZLSS.CLBH=:CLBH  Group By ZLBH,CLBH,Stage) CGZLSS on CGZLSS.ZLBH=ypzl.YPDH and CGZLSS.Stage=ypzl.KFJD');
+    sql.add('left join cgkcuse on cgkcuse.zlbh=YPZLZLS2.ypdh and cgkcuse.clbh=YPZLZLS2.clbh and cgkcuse.GSBH='''+YPZLZL.FieldByName('GSBH').AsString+''' ');
+    sql.add('where  YPZLZLS2.CLBH=:CLBH ');
+    sql.add('       and YPZLZLS2.YPZLBH=:YPZLBH ');
+    sql.add('group by  YPZLZLS2.YPDH,YPZLZLS2.CLBH,CLZL.DWBH,kfxxzl.devcode,kfxxzl.ARTICLE  ,ypzl.KFJD ');
+    sql.add('         ,YPZLZLS.PAIRS ,cgkcuse.qty,ypzl.YPCCO,kfxxzl.FD,CGZLSS.Qty,ypzl.productionlocation,kfxxzl.YSSM    ');
+    sql.add('order by kfxxzl.devcode  ASC  ');
+    //showmessage(SQL.Text);
+    active:=true;
+  end;
 
+end;
 
 procedure TSampleMerge.DBGridEh3DrawColumnCell(Sender: TObject;
   const Rect: TRect; DataCol: Integer; Column: TColumnEh;
