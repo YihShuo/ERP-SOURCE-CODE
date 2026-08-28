@@ -531,13 +531,41 @@ begin
                   FieldByName('Country').Value := QTemp.FieldByName('Country').AsString;
                   FieldByName('Remark').Value := Sheet.Cells[Row, Col + 8].Value;
 
-                  if Pos('/', Sheet.Cells[Row, Col + 10].Value) > 0 then
+                  if Pos('/', Sheet.Cells[Row, Col + 10].Value) = 0 then
+                  begin
+                    ShowMessage('Loi: Cot Con_No/Bien_so excel bat buoc phai co dau "/"!' +
+                                #13#10 + 'Lenh: ' + Sheet.Cells[Row, Col + 11].Value);
+                    Delete;
+                    Exit;
+                  end
+                  else if (Trim(Copy(Sheet.Cells[Row, Col + 10].Value, 1,
+                          Pos('/', Sheet.Cells[Row, Col + 10].Value) - 1)) = '') or
+                     (Trim(Copy(Sheet.Cells[Row, Col + 10].Value,
+                          Pos('/', Sheet.Cells[Row, Col + 10].Value) + 1,
+                          Length(Sheet.Cells[Row, Col + 10].Value))) = '') then
+                  begin
+                    ShowMessage('Loi: Bat buoc phai co ca Con_No/Bien_so!' +
+                                #13#10 + 'Lenh: ' + Sheet.Cells[Row, Col + 11].Value);
+                    Delete;
+                    Exit;
+                  end;
+
+                  FieldByName('Con_No').Value :=
+                    Trim(Copy(Sheet.Cells[Row, Col + 10].Value, 1,
+                        Pos('/', Sheet.Cells[Row, Col + 10].Value) - 1));
+
+                  FieldByName('PlateID').Value :=
+                    Trim(Copy(Sheet.Cells[Row, Col + 10].Value,
+                        Pos('/', Sheet.Cells[Row, Col + 10].Value) + 1,
+                        Length(Sheet.Cells[Row, Col + 10].Value)));
+
+                  {if Pos('/', Sheet.Cells[Row, Col + 10].Value) > 0 then
                   begin
                     FieldByName('Con_No').Value := Copy(Sheet.Cells[Row, Col + 10].Value, 1, Pos('/', Sheet.Cells[Row, Col + 10].Value) - 1);
                     FieldByName('PlateID').Value := Copy(Sheet.Cells[Row, Col + 10].Value, Pos('/', Sheet.Cells[Row, Col + 10].Value) + 1, Length(Sheet.Cells[Row, Col + 10].Value));
                   end
                   else
-                    FieldByName('PlateID').Value := Sheet.Cells[Row, Col + 10].Value;
+                    FieldByName('PlateID').Value := Sheet.Cells[Row, Col + 10].Value;}
                 end;
 
                 Inc(Seq);
