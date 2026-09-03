@@ -754,7 +754,7 @@ object HumidityCheck: THumidityCheck
       '   :YN)')
     DeleteSQL.Strings = (
       
-        'update QC_HumidityCheck set YN = 0 where ReportID := OLD_ReportI' +
+        'update QC_HumidityCheck set YN = 0 where ReportID =: OLD_ReportI' +
         'D')
     Left = 528
     Top = 400

@@ -16,6 +16,7 @@ object NonConformingMaterial: TNonConformingMaterial
   Visible = True
   WindowState = wsMaximized
   OnClose = FormClose
+  OnCreate = FormCreate
   OnDestroy = FormDestroy
   PixelsPerInch = 96
   TextHeight = 13
@@ -66,6 +67,13 @@ object NonConformingMaterial: TNonConformingMaterial
       Width = 68
       Height = 20
       Caption = 'MatSpec:'
+    end
+    object Label4: TLabel
+      Left = 216
+      Top = 112
+      Width = 18
+      Height = 20
+      Caption = 'To'
     end
     object BB1: TBitBtn
       Left = 0
@@ -393,7 +401,7 @@ object NonConformingMaterial: TNonConformingMaterial
       TabOrder = 13
     end
     object dtpUSERDate: TDateTimePicker
-      Left = 152
+      Left = 120
       Top = 8
       Width = 113
       Height = 28
@@ -420,8 +428,8 @@ object NonConformingMaterial: TNonConformingMaterial
       TabOrder = 16
     end
     object dtpInDate: TDateTimePicker
-      Left = 152
-      Top = 40
+      Left = 96
+      Top = 112
       Width = 113
       Height = 28
       Date = 45981.575782071760000000
@@ -454,11 +462,21 @@ object NonConformingMaterial: TNonConformingMaterial
     end
     object ckInDate: TCheckBox
       Left = 8
-      Top = 40
-      Width = 137
+      Top = 112
+      Width = 73
       Height = 17
       Caption = 'InDate:'
       TabOrder = 21
+    end
+    object dtpInDate2: TDateTimePicker
+      Left = 240
+      Top = 112
+      Width = 113
+      Height = 28
+      Date = 46268.595672430560000000
+      Format = 'dd/MM/yyyy'
+      Time = 46268.595672430560000000
+      TabOrder = 22
     end
   end
   object DBGrid1: TDBGridEh
@@ -516,6 +534,8 @@ object NonConformingMaterial: TNonConformingMaterial
       item
         EditButtons = <>
         FieldName = 'Qty'
+        Footer.Color = clYellow
+        Footer.ValueType = fvtSum
         Footers = <>
       end
       item
@@ -835,12 +855,12 @@ object NonConformingMaterial: TNonConformingMaterial
     Top = 400
   end
   object OpenDialog1: TOpenDialog
-    Left = 368
-    Top = 144
+    Left = 1000
+    Top = 48
   end
   object SaveDialog: TSaveDialog
-    Left = 328
-    Top = 152
+    Left = 992
+    Top = 136
   end
   object QGetID: TQuery
     DatabaseName = 'DB'
@@ -853,7 +873,7 @@ object NonConformingMaterial: TNonConformingMaterial
     Top = 400
   end
   object OpenPictureDialog1: TOpenDialog
-    Left = 312
-    Top = 112
+    Left = 1056
+    Top = 88
   end
 end

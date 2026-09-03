@@ -63,7 +63,7 @@ Sub GetMaxExeDate()
             Set rs = Nothing
 
         Else
-            ws.Cells(i, "C").Value = ""
+            ' ws.Cells(i, "C").Value = ""
         End If
 
     Next i

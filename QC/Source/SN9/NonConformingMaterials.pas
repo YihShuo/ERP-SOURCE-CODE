@@ -4,7 +4,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, DBTables, DB, GridsEh, DBGridEh, StdCtrls, Mask, DBCtrls,
+  Dialogs, DBTables, DB, DateUtils, GridsEh, DBGridEh, StdCtrls, Mask, DBCtrls,
   Buttons, ExtCtrls, ComObj, ShellAPI, ComCtrls, DBCtrlsEh;
 
 type
@@ -69,6 +69,8 @@ type
     Query1USERDATE: TDateTimeField;
     Query1DeRate: TFloatField;
     Query1DDBH: TStringField;
+    Label4: TLabel;
+    dtpInDate2: TDateTimePicker;
     procedure BB4Click(Sender: TObject);
     procedure BB1Click(Sender: TObject);
     procedure BB2Click(Sender: TObject);
@@ -93,6 +95,7 @@ type
       AFont: TFont; var Background: TColor; State: TGridDrawState);
     procedure FormDestroy(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure FormCreate(Sender: TObject);
   private
     { Private declarations }
   public
@@ -526,7 +529,7 @@ begin
     if ckUSERDate.Checked then
       SQL.Add('and CAST(USERDate as DATE) = ''' + FormatDateTime('yyyy-mm-dd', dtpUSERDate.Date) + ''' ');
     if ckInDate.Checked then
-      SQL.Add('and CAST(InDate as DATE) = ''' + FormatDateTime('yyyy-mm-dd', dtpInDate.Date) + ''' ');
+      SQL.Add('and CAST(InDate as DATE) BETWEEN ''' + FormatDateTime('yyyy-mm-dd', dtpInDate.Date) + ''' AND ''' + FormatDateTime('yyyy-mm-dd', dtpInDate2.Date) + ''' ');
     if edtZSBH.Text <> '' then
       SQL.Add('and ZSBH = '''+edtZSBH.Text+''' ');
     if edtDDBH.Text <> '' then
@@ -605,6 +608,13 @@ if query1.requestlive then
   end
   else
    action:=Cafree;
+end;
+
+procedure TNonConformingMaterial.FormCreate(Sender: TObject);
+begin
+ dtpUSERDate.Date := Now;
+ dtpInDate.Date := StartOfTheMonth(Now);
+ dtpInDate2.Date := EndOfTheMonth(Now);
 end;
 
 end.

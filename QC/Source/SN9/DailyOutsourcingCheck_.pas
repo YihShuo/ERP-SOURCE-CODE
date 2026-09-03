@@ -4,7 +4,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, DBTables, DB, GridsEh, DBGridEh, StdCtrls, Mask, DBCtrls,
+  Dialogs, DBTables, DB, DateUtils, GridsEh, DBGridEh, StdCtrls, Mask, DBCtrls,
   Buttons, ExtCtrls, ComObj, ShellAPI, ComCtrls, DBCtrlsEh;
 
 type
@@ -67,6 +67,8 @@ type
     Query1DepUID: TStringField;
     QSig: TQuery;
     Confirm: TButton;
+    Label5: TLabel;
+    dtpVI2: TDateTimePicker;
     procedure BB1Click(Sender: TObject);
     procedure BB2Click(Sender: TObject);
     procedure BB3Click(Sender: TObject);
@@ -654,7 +656,7 @@ begin
     if edtSKU.Text <> '' then
       SQL.Add('and Article like ''%'+edtSKU.Text+'%'' ');
     if ckVIDate.Checked then
-      SQL.Add('and CAST(VIDate as date) = ''' +FormatDateTime('yyyy-mm-dd', dtpVI.Date)+ ''' ');
+      SQL.Add('and CAST(VIDate as date) BETWEEN '''+FormatDateTime('yyyy-mm-dd', dtpVI.Date)+ ''' AND '''+FormatDateTime('yyyy-mm-dd', dtpVI2.Date)+ ''' ');
     if ckUSERDate.Checked then
       SQL.Add('and CAST(USERDate as date) = ''' +FormatDateTime('yyyy-mm-dd', dtpUSERDate.Date)+ ''' ');
     Active := True;
@@ -848,7 +850,8 @@ end;
 procedure TDailyOutsourcingCheck.FormCreate(Sender: TObject);
 begin
   dtpUSERDate.Date := Now;
-  dtpVI.Date := Now;
+  dtpVI.Date := StartOfTheMonth(Now);
+  dtpVI2.Date := EndOfTheMonth(Now);
   DBGrid1.FrozenCols := 7;
 end;
 

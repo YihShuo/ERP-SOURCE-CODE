@@ -829,4 +829,16 @@ object WeeklyShippingPlan: TWeeklyShippingPlan
     Left = 176
     Top = 200
   end
+  object PopupMenu2: TPopupMenu
+    Left = 728
+    Top = 216
+    object mnuDelete: TMenuItem
+      Caption = 'Delete'
+      OnClick = mnuDeleteClick
+    end
+    object mnuDeleteAll: TMenuItem
+      Caption = 'Delete All'
+      OnClick = mnuDeleteAllClick
+    end
+  end
 end

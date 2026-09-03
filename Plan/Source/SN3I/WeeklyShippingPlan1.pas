@@ -72,6 +72,9 @@ type
     ShoeImage: TImage;
     QueryPic: TQuery;
     ImageBox: TPanel;
+    PopupMenu2: TPopupMenu;
+    mnuDelete: TMenuItem;
+    mnuDeleteAll: TMenuItem;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormDestroy(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -86,6 +89,8 @@ type
     procedure Delete1Click(Sender: TObject);
     procedure PopupMenu1Popup(Sender: TObject);
     procedure InsertShippingPlanCarton;
+    procedure mnuDeleteClick(Sender: TObject);
+    procedure mnuDeleteAllClick(Sender: TObject);
 //    procedure Query1AfterScroll(DataSet: TDataSet);
   private
     { Private declarations }
@@ -130,7 +135,9 @@ begin
         QDelCarton.SQL.Clear;
         QDelCarton.SQL.Add('DELETE FROM ShippingPlanCarton');
         QDelCarton.SQL.Add('WHERE RY = ''' + Query1.FieldByName('RY').AsString + '''');
-        QDelCarton.SQL.Add('AND PlateID = ''' + Query1.FieldByName('PlateID').AsString + '''');
+        QDelCarton.SQL.Add('AND CAST(Date AS date) = CAST(''' + FormatDateTime('yyyy/MM/dd', Query1.FieldByName('Date').AsDateTime) + ''' AS date)');
+        {QDelCarton.SQL.Add('AND Container = ''' + Query2.FieldByName('Container').AsString + '''');
+        QDelCarton.SQL.Add('AND PlateID = ''' + Query1.FieldByName('PlateID').AsString + '''');}
 
         if Query1.FieldByName('Con_No').IsNull then
           QDelCarton.SQL.Add('AND Con_No = '''' ')
@@ -145,8 +152,8 @@ begin
         QCarton.Close;
         QCarton.SQL.Clear;
         QCarton.SQL.Add('INSERT INTO ShippingPlanCarton');
-        QCarton.SQL.Add('(RY, Con_No, PlateID, CartonNo, UserID, UserDate, YN)');
-        QCarton.SQL.Add('VALUES (:RY, :Con_No, :PlateID, :CartonNo, :UserID, GETDATE(), ''1'')');
+        QCarton.SQL.Add('(RY, Con_No, PlateID, CartonNo, UserID, UserDate, YN, Date, Container)');
+        QCarton.SQL.Add('VALUES (:RY, :Con_No, :PlateID, :CartonNo, :UserID, GETDATE(), ''1'', :Date, :Container)');
         QCarton.Prepare;
 
         //====================================================
@@ -191,6 +198,12 @@ begin
 
                 QCarton.ParamByName('UserID').AsString :=
                   Main.Edit1.Text;
+                  
+                QCarton.ParamByName('Date').Value :=
+                  Query1.FieldByName('Date').Value;
+
+                QCarton.ParamByName('Container').Value :=
+                  Query1.FieldByName('Container').Value;
 
                 QCarton.ExecSQL;
               end;
@@ -219,6 +232,12 @@ begin
               QCarton.ParamByName('UserID').AsString :=
                 Main.Edit1.Text;
 
+              QCarton.ParamByName('Date').Value :=
+                Query1.FieldByName('Date').Value;
+
+              QCarton.ParamByName('Container').Value :=
+                Query1.FieldByName('Container').Value;
+
               QCarton.ExecSQL;
             end;
           end;
@@ -234,7 +253,9 @@ begin
         QDelCarton.SQL.Clear;
         QDelCarton.SQL.Add('DELETE FROM ShippingPlanCarton');
         QDelCarton.SQL.Add('WHERE RY = ''' + Query1.FieldByName('RY').AsString + '''');
-        QDelCarton.SQL.Add('AND PlateID = ''' + Query1.FieldByName('PlateID').AsString + '''');
+        QDelCarton.SQL.Add('AND CAST(Date AS date) = CAST(''' + FormatDateTime('yyyy/MM/dd', Query1.FieldByName('Date').AsDateTime) + ''' AS date)');
+        {QDelCarton.SQL.Add('AND Container = ''' + Query2.FieldByName('Container').AsString + '''');
+        QDelCarton.SQL.Add('AND PlateID = ''' + Query1.FieldByName('PlateID').AsString + '''');}
 
         if Query1.FieldByName('Con_No').IsNull then
           QDelCarton.SQL.Add('AND Con_No = '''' ')
@@ -249,8 +270,8 @@ begin
         QCarton.Close;
         QCarton.SQL.Clear;
         QCarton.SQL.Add('INSERT INTO ShippingPlanCarton');
-        QCarton.SQL.Add('(RY, Con_No, PlateID, CartonNo, UserID, UserDate, YN)');
-        QCarton.SQL.Add('VALUES (:RY, :Con_No, :PlateID, :CartonNo, :UserID, GETDATE(), ''1'')');
+        QCarton.SQL.Add('(RY, Con_No, PlateID, CartonNo, UserID, UserDate, YN, Date, Container)');
+        QCarton.SQL.Add('VALUES (:RY, :Con_No, :PlateID, :CartonNo, :UserID, GETDATE(), ''1'', :Date, :Container)');
         QCarton.Prepare;
 
         for i := 1 to Query1.FieldByName('Cartons').AsInteger do
@@ -271,6 +292,12 @@ begin
 
             QCarton.ParamByName('UserID').AsString :=
               Main.Edit1.Text;
+
+            QCarton.ParamByName('Date').Value :=
+              Query1.FieldByName('Date').Value;
+
+            QCarton.ParamByName('Container').Value :=
+              Query1.FieldByName('Container').Value;
 
             QCarton.ExecSQL;
           end;
@@ -912,6 +939,29 @@ procedure TWeeklyShippingPlan.Delete1Click(Sender: TObject);
 begin
   if (MessageDlg('Are you sure you want to delete the container [' + Query2.FieldByName('ContainerName').AsString + '] shipped to the [' + Query2.FieldByName('Country').AsString + '] ?', mtConfirmation, [mbYes, mbNo], 0) = mrYes) then
   begin
+
+    //delete carton
+    Query1.First;
+    while not Query1.Eof do
+    begin
+      with QDelCarton do
+      begin
+        Close;
+        SQL.Clear;
+
+        SQL.Add(
+          'DELETE FROM ShippingPlanCarton ' +
+          'WHERE RY = ''' + Query1.FieldByName('RY').AsString +
+          ''' AND Con_No = ''' + Query1.FieldByName('Con_No').AsString +
+          ''' AND PlateID = ''' + Query1.FieldByName('PlateID').AsString + ''''
+        );
+
+        ExecSQL;
+      end;
+
+      Query1.Next;
+    end;
+
     with QTemp do
     begin
       Active := false;
@@ -920,6 +970,7 @@ begin
       SQL.Add('WHERE Date = ''' + FormatDateTime('yyyy/MM/dd', Query2.FieldByName('Date').AsDateTime) + ''' AND Container = ''' + Query2.FieldByName('Container').AsString + ''' AND Seq BETWEEN ' + Query2.FieldByName('MinSeq').AsString + ' AND ' + Query2.FieldByName('MaxSeq').AsString);
       ExecSQL;
 
+      //update lai STT
       SQL.Clear;
       SQL.Add('UPDATE ShippingPlan SET Seq = SP.NewSeq');
       SQL.Add('FROM (');
@@ -1011,5 +1062,96 @@ begin
     end;
   end;
 end;}
+
+procedure TWeeklyShippingPlan.mnuDeleteClick(Sender: TObject);
+begin
+  if (MessageDlg('Are you sure you want to delete this record?', mtConfirmation, [mbYes, mbNo], 0) = mrYes) then
+  begin
+    with QDelCarton do
+    begin
+      Active := false;
+      SQL.Clear;
+      SQL.Add('DELETE FROM ShippingPlan');
+      SQL.Add('WHERE RY = '''+Query1.FieldByName('RY').Value+''' AND Con_No = '''+Query1.FieldByName('Con_No').Value+''' AND PlateID = '''+Query1.FieldByName('PlateID').Value+''' ;');
+      SQL.Add('DELETE FROM ShippingPlanCarton');
+      SQL.Add('WHERE RY = '''+Query1.FieldByName('RY').Value+''' AND Con_No = '''+Query1.FieldByName('Con_No').Value+''' AND PlateID = '''+Query1.FieldByName('PlateID').Value+''' ;');
+      ExecSQL;
+
+      SQL.Clear;
+      SQL.Add('UPDATE ShippingPlan SET Seq = SP.NewSeq');
+      SQL.Add('FROM (');
+      SQL.Add('  SELECT Date, Container, Seq, Building, RY, ROW_NUMBER() OVER(PARTITION BY Date ORDER BY UserDate, Seq) AS NewSeq FROM ShippingPlan');
+      SQL.Add('  WHERE Date = ''' + FormatDateTime('yyyy/MM/dd', Query2.FieldByName('Date').AsDateTime) + ''' AND GSBH = ''' + main.Edit2.Text + '''');
+      SQL.Add(') AS SP');
+      SQL.Add('WHERE ShippingPlan.Date = SP.Date AND ShippingPlan.Container = SP.Container AND ShippingPlan.Seq = SP.Seq AND ShippingPlan.Building = SP.Building AND ShippingPlan.RY = SP.RY');
+      ExecSQL;
+
+      SQL.Clear;
+    end;
+    
+    Query1.Close;
+    Query1.Open;
+    Query2.Active := false;
+    Query2.Active := true;
+    ShowMessage('Execution success.');
+  end;
+end;
+
+procedure TWeeklyShippingPlan.mnuDeleteAllClick(Sender: TObject);
+begin
+  if MessageDlg(
+    'Are you sure you want to delete all records?',
+    mtConfirmation, [mbYes, mbNo], 0
+  ) = mrYes then
+  begin
+    Query1.First;
+
+    while not Query1.Eof do
+    begin
+      with QDelCarton do
+      begin
+        Close;
+        SQL.Clear;
+
+        SQL.Add(
+          'DELETE FROM ShippingPlan ' +
+          'WHERE RY = ''' + Query1.FieldByName('RY').AsString +
+          ''' AND Con_No = ''' + Query1.FieldByName('Con_No').AsString +
+          ''' AND PlateID = ''' + Query1.FieldByName('PlateID').AsString + ''''
+        );
+
+        SQL.Add(
+          'DELETE FROM ShippingPlanCarton ' +
+          'WHERE RY = ''' + Query1.FieldByName('RY').AsString +
+          ''' AND Con_No = ''' + Query1.FieldByName('Con_No').AsString +
+          ''' AND PlateID = ''' + Query1.FieldByName('PlateID').AsString + ''''
+        );
+
+        ExecSQL;
+      end;
+
+      Query1.Next;
+    end;
+
+    with QDelCarton do
+    begin
+      SQL.Clear;
+      SQL.Add('UPDATE ShippingPlan SET Seq = SP.NewSeq');
+      SQL.Add('FROM (');
+      SQL.Add('  SELECT Date, Container, Seq, Building, RY, ROW_NUMBER() OVER(PARTITION BY Date ORDER BY UserDate, Seq) AS NewSeq FROM ShippingPlan');
+      SQL.Add('  WHERE Date = ''' + FormatDateTime('yyyy/MM/dd', Query2.FieldByName('Date').AsDateTime) + ''' AND GSBH = ''' + main.Edit2.Text + '''');
+      SQL.Add(') AS SP');
+      SQL.Add('WHERE ShippingPlan.Date = SP.Date AND ShippingPlan.Container = SP.Container AND ShippingPlan.Seq = SP.Seq AND ShippingPlan.Building = SP.Building AND ShippingPlan.RY = SP.RY');
+      ExecSQL;
+    end;
+
+    Query1.Close;
+    Query1.Open;
+    Query2.Close;
+    Query2.Open;
+
+    ShowMessage('Execution success.');
+  end;
+end;
 
 end.

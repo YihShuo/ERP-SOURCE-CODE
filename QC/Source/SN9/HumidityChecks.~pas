@@ -437,7 +437,7 @@ procedure THumidityCheck.bExFClick(Sender: TObject);
 var
   ExcelApp, Workbook, Worksheet, borderRange: OleVariant;
   StartRow, InsertRow: Integer;
-  DuongDanFile, SaveFile, s: string;
+  DuongDanFile, SaveFile, s, AppDir, SrcFile, DstFile: string;
   i, p: Integer;
   MaxHeight: Double;
   SigS, SigMS, SigL, SigP: Boolean;
