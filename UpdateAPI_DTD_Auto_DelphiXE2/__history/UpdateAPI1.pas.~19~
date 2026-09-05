@@ -1,0 +1,270 @@
+﻿unit UpdateAPI1;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Buttons, ADODB, ComObj,
+  Vcl.ExtCtrls;
+
+type
+  TUpdateAPI = class(TForm)
+    btUpdate: TBitBtn;
+    TimerUpdate: TTimer;
+    lbTimer: TLabel;
+    procedure btUpdateClick(Sender: TObject);
+    procedure TimerUpdateTimer(Sender: TObject);
+  private
+    { Private declarations }
+    FLastAutoUpdateDate: TDate;
+  public
+    { Public declarations }
+  end;
+
+
+var
+  UpdateAPI: TUpdateAPI;
+
+implementation
+
+{$R *.dfm}
+
+procedure TUpdateAPI.TimerUpdateTimer(Sender: TObject);
+var
+  H, M, S, MS: Word;
+  NowTime: TDateTime;
+  TargetTime: TDateTime;
+  Remain: TDateTime;
+begin
+  NowTime := Now;
+
+  TargetTime := Trunc(NowTime) + EncodeTime(6, 0, 0, 0);
+
+  if NowTime >= TargetTime then
+    TargetTime := TargetTime + 1;
+
+  Remain := TargetTime - NowTime;
+
+  lbTimer.Caption :=
+    'Current: ' + FormatDateTime('yyyy-mm-dd hh:nn:ss', NowTime) +
+    '  |  Next Update: ' + FormatDateTime('hh:nn:ss', Remain);
+
+  DecodeTime(NowTime, H, M, S, MS);
+
+  if (H = 6) and
+     (M = 0) and
+     (FLastAutoUpdateDate <> Date) then
+  begin
+    FLastAutoUpdateDate := Date;
+
+    TimerUpdate.Enabled := False;
+    try
+      btUpdateClick(btUpdate);
+    finally
+      TimerUpdate.Enabled := True;
+    end;
+  end;
+end;
+
+procedure TUpdateAPI.btUpdateClick(Sender: TObject);
+var
+  Conn: TADOConnection;
+  Qry: TADOQuery;
+  QryCurrentDate: TADOQuery;
+  Http: OleVariant;
+
+  KHPOList: TStringList;
+  KHPO: string;
+  Json: string;
+
+  DesktopPath: string;
+  LogFolder: string;
+  LogFile: string;
+  Log: TStringList;
+
+  I: Integer;
+  ResponseText: string;
+  StatusCode: Integer;
+  CurrentDate: string;
+begin
+  KHPOList := TStringList.Create;
+  Log := TStringList.Create;
+  Conn := TADOConnection.Create(nil);
+  Qry := TADOQuery.Create(nil);
+  QryCurrentDate := TADOQuery.Create(nil);
+
+  try
+
+    {======================================================
+      1. Kết nối SQL Server
+    ======================================================}
+    Conn.ConnectionString :=
+      'Provider=SQLOLEDB;' +
+      'Data Source=192.168.71.7;' +
+      'Initial Catalog=LYS_ERP;' +
+      'User ID=tyxuan;' +
+      'Password=jack;';
+    Conn.LoginPrompt := False;
+    Conn.Connected := True;
+
+    Qry.Connection := Conn;
+    Qry.CommandTimeout := 0;
+
+    QryCurrentDate.Connection := Conn;
+    QryCurrentDate.CommandTimeout := 0;
+
+    //Lấy ngày từ SQL
+    QryCurrentDate.Connection := Conn;
+    QryCurrentDate.SQL.Text := 'SELECT CONVERT(varchar(10), GETDATE(), 120) AS CurrentDate';
+
+    QryCurrentDate.Open;
+
+    CurrentDate :=
+      QryCurrentDate.FieldByName('CurrentDate').AsString;
+
+    QryCurrentDate.Close;
+
+    {======================================================
+      2. Lấy đường dẫn Desktop
+    ======================================================}
+    DesktopPath := GetEnvironmentVariable('USERPROFILE') + '\Desktop';
+
+    LogFolder := DesktopPath + '\UpdateAPI';
+
+    if not DirectoryExists(LogFolder) then
+      ForceDirectories(LogFolder);
+
+    LogFile := LogFolder + '\UpdateAPI_' + CurrentDate + '.txt';
+
+
+    Qry.Connection := Conn;
+
+    {======================================================
+      3. SQL lấy danh sách KHPO
+    ======================================================}
+    Qry.SQL.Text :='EXEC sp_updateapifg10';
+
+    Qry.Open;
+
+    {======================================================
+      4. Lấy danh sách KHPO
+    ======================================================}
+    while not Qry.Eof do
+    begin
+      KHPO := Trim(Qry.FieldByName('KHPO').AsString);
+
+      if KHPO <> '' then
+        KHPOList.Add(KHPO);
+
+      Qry.Next;
+    end;
+
+    Qry.Close;
+
+    {======================================================
+      5. Không có KHPO thì ghi log và thoát
+    ======================================================}
+    if KHPOList.Count = 0 then
+    begin
+      Log.Add(FormatDateTime('yyyy-mm-dd hh:nn:ss', Now) +
+        ' - Không có KHPO cần đồng bộ.');
+
+      Log.SaveToFile(LogFile, TEncoding.UTF8);
+
+      {ShowMessage('Không có KHPO cần đồng bộ.');}
+      Exit;
+    end;
+
+    {======================================================
+      6. Khởi tạo WinHTTP
+    ======================================================}
+    Http := CreateOleObject('WinHttp.WinHttpRequest.5.1');
+
+    {======================================================
+      7. Gọi API từng KHPO
+    ======================================================}
+    for I := 0 to KHPOList.Count - 1 do
+    begin
+      KHPO := KHPOList[I];
+
+      {--------------------------------------------
+        JSON
+      --------------------------------------------}
+      Json :=
+        '{' +
+        '"date":"' + CurrentDate + '",' +
+        '"databaseType":"A",' +
+        '"poList":[' +
+        '"' + StringReplace(KHPO, '"', '\"',
+          [rfReplaceAll]) + '"' +
+        ']' +
+        '}';
+
+      try
+        {--------------------------------------------
+          GET + JSON body
+        --------------------------------------------}
+        Http.Open(
+          'GET',
+          'http://localhost:8081/api/v1/deckers/RePoList',
+          False
+        );
+
+        Http.SetRequestHeader(
+          'Content-Type',
+          'application/json'
+        );
+
+        Http.SetRequestHeader(
+          'Accept',
+          'application/json'
+        );
+
+        Http.Send(Json);
+
+        StatusCode := Http.Status;
+        ResponseText := Http.ResponseText;
+
+        {--------------------------------------------
+          Ghi log
+        --------------------------------------------}
+        Log.Add(
+          FormatDateTime('yyyy-mm-dd hh:nn:ss', Now) +
+          ' | KHPO=' + KHPO +
+          ' | Status=' + IntToStr(StatusCode) +
+          ' | Request=' + Json
+        );
+
+      except
+        on E: Exception do
+        begin
+          Log.Add(
+            FormatDateTime('yyyy-mm-dd hh:nn:ss', Now) +
+            ' | KHPO=' + KHPO +
+            ' | ERROR=' + E.Message
+          );
+        end;
+      end;
+    end;
+
+    {======================================================
+      8. Lưu log
+    ======================================================}
+    Log.SaveToFile(LogFile, TEncoding.UTF8);
+
+    {ShowMessage(
+      'Đã đồng bộ xong.' + #13#10 +
+      'KHPO: ' + IntToStr(KHPOList.Count) + #13#10 +
+      'Log: ' + LogFile
+    );}
+
+  finally
+    QryCurrentDate.Free;
+    Qry.Free;
+    Conn.Free;
+    KHPOList.Free;
+    Log.Free;
+  end;
+end;
+
+end.

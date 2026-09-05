@@ -237,6 +237,8 @@ type
     CB_SUM: TComboBox;
     Label16: TLabel;
     Button8: TButton;
+    QExcelTotal: TQuery;
+    btExcelTotal: TButton;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormDestroy(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -338,6 +340,7 @@ type
     procedure CB_SUMChange(Sender: TObject);
     procedure Q_UBMatchingCalcFields(DataSet: TDataSet);
     procedure Button8Click(Sender: TObject);
+    procedure btExcelTotalClick(Sender: TObject);
   private
     InSearch: boolean;
     SRow_Cutting, SRow_Stitching, SRow_Assembly, SRow_Bottom: integer;
@@ -3061,7 +3064,7 @@ begin
     QTemp.First;
     while not QTemp.Eof do
     begin
-      SQL.Add(', MAX(CASE WHEN SMDD.Size = ''' + QTemp.FieldByName('Size').AsString + ''' THEN SMDD.Pairs END) AS [' + QTemp.FieldByName('Size').AsString + ']');
+      SQL.Add(', ISNULL(MAX(CASE WHEN SMDD.Size = ''' + QTemp.FieldByName('Size').AsString + ''' THEN SMDD.Pairs END), 0) AS [' + QTemp.FieldByName('Size').AsString + ']');
       QTemp.Next;
     end;
     SQL.Add('INTO #SMDD FROM #SC AS SC');
@@ -3084,7 +3087,7 @@ begin
     QTemp.First;
     while not QTemp.Eof do
     begin
-      SQL.Add(', SUM(CASE WHEN Size = ''' + QTemp.FieldByName('Size').AsString + ''' THEN Pairs END) AS [' + QTemp.FieldByName('Size').AsString + ']');
+      SQL.Add(', ISNULL(SUM(CASE WHEN Size = ''' + QTemp.FieldByName('Size').AsString + ''' THEN Pairs END), 0) AS [' + QTemp.FieldByName('Size').AsString + ']');
       QTemp.Next;
     end;
     SQL.Add('INTO #Dispatch FROM SMDDS_Dispatch');
@@ -3111,7 +3114,7 @@ begin
     QTemp.First;
     while not QTemp.Eof do
     begin
-      SQL.Add('  , MIN([' + QTemp.FieldByName('Size').AsString + ']) AS [' + QTemp.FieldByName('Size').AsString + ']');
+      SQL.Add('  , ISNULL(MIN([' + QTemp.FieldByName('Size').AsString + ']), 0) AS [' + QTemp.FieldByName('Size').AsString + ']');
       QTemp.Next;
     end;
     if (QTemp.RecordCount > 0) then
@@ -3132,7 +3135,7 @@ begin
     QTemp.First;
     while not QTemp.Eof do
     begin
-      SQL.Add('  , D.[' + QTemp.FieldByName('Size').AsString + ']');
+      SQL.Add('  , ISNULL(D.[' + QTemp.FieldByName('Size').AsString + '], 0)');
       QTemp.Next;
     end;
     if (QTemp.RecordCount > 0) then
@@ -3507,6 +3510,291 @@ begin
         ShowMessage(F.Message);
       end;
     end;
+  end;
+end;
+
+procedure TProductionPlanTracking.btExcelTotalClick(Sender: TObject);
+var
+  ExcelApp, Sheet, Range: Variant;
+  Row, StartMergeRow: Integer;
+  CurrLine, XieMing: string;
+begin
+  QExcelTotal.Close;
+  QExcelTotal.SQL.Clear;
+
+  // Quan trong: Bat buoc phai co de BDE khong bi loi voi bang tam (#) trong MSSQL 2008 R2
+  QExcelTotal.SQL.Add('SET NOCOUNT ON;');
+  QExcelTotal.SQL.Add('SET ANSI_WARNINGS OFF;');
+
+  // 1. Xoa cac bang tam cu neu da ton tai
+  QExcelTotal.SQL.Add('IF OBJECT_ID(''tempdb..#SC_Total'') IS NOT NULL DROP TABLE #SC_Total;');
+  QExcelTotal.SQL.Add('IF OBJECT_ID(''tempdb..#SMDD_Total'') IS NOT NULL DROP TABLE #SMDD_Total;');
+  QExcelTotal.SQL.Add('IF OBJECT_ID(''tempdb..#Dispatch_Total'') IS NOT NULL DROP TABLE #Dispatch_Total;');
+  QExcelTotal.SQL.Add('IF OBJECT_ID(''tempdb..#SumSQ_Total'') IS NOT NULL DROP TABLE #SumSQ_Total;');
+
+  // 2. Tao bang tam #SC_Total
+  QExcelTotal.SQL.Add('SELECT SC.building_no AS Building, ');
+  QExcelTotal.SQL.Add('''LINE '' + RIGHT(''00'' + CAST(CAST(RIGHT(SC.lean_no, 2) AS INT) AS VARCHAR), 2) AS Lean, ');
+  QExcelTotal.SQL.Add('SC.schedule_date, SC.ry_index, DDZL.DDBH, ');
+  QExcelTotal.SQL.Add('SUBSTRING(DDZL.ARTICLE, CHARINDEX(''-'', DDZL.ARTICLE) + 1, LEN(DDZL.ARTICLE)) AS Article, ');
+  QExcelTotal.SQL.Add('XXZL.XieMing, DDZL.Pairs, DDZL.ShipDate INTO #SC_Total ');
+  QExcelTotal.SQL.Add('FROM schedule_crawler AS SC ');
+  QExcelTotal.SQL.Add('LEFT JOIN DDZL ON DDZL.DDBH = CASE WHEN LEN(SC.ry) - LEN(REPLACE(SC.ry, ''-'', '''')) < 2 THEN SC.ry ELSE SUBSTRING(SC.ry, 1, LEN(SC.ry) - CHARINDEX(''-'', REVERSE(SC.ry))) END ');
+  QExcelTotal.SQL.Add('LEFT JOIN XXZL ON XXZL.XieXing = DDZL.XieXing AND XXZL.SheHao = DDZL.SheHao ');
+  QExcelTotal.SQL.Add('WHERE SC.schedule_date BETWEEN ''' + FormatDateTime('yyyy/MM/dd', StartOfTheMonth(DTP5.DateTime)) + ''' AND ''' + FormatDateTime('yyyy/MM/dd', EndOfTheMonth(DTP6.DateTime)) + ''';');
+
+  // 3. Tao bang tam #SMDD_Total
+  QExcelTotal.SQL.Add('SELECT SC.Building, SC.Lean, SC.schedule_date, SC.ry_index, SC.DDBH, SC.Article, SC.XieMing, ');
+  QExcelTotal.SQL.Add('SC.Pairs, SC.ShipDate, SMDD.GXLB, ');
+  QExcelTotal.SQL.Add('ISNULL(MAX(CASE WHEN SMDD.Size = ''01'' THEN SMDD.Pairs END), 0) AS [01], ');
+  QExcelTotal.SQL.Add('ISNULL(MAX(CASE WHEN SMDD.Size = ''01.5'' THEN SMDD.Pairs END), 0) AS [01.5], ');
+  QExcelTotal.SQL.Add('ISNULL(MAX(CASE WHEN SMDD.Size = ''02'' THEN SMDD.Pairs END), 0) AS [02], ');
+  QExcelTotal.SQL.Add('ISNULL(MAX(CASE WHEN SMDD.Size = ''02.5'' THEN SMDD.Pairs END), 0) AS [02.5], ');
+  QExcelTotal.SQL.Add('ISNULL(MAX(CASE WHEN SMDD.Size = ''03'' THEN SMDD.Pairs END), 0) AS [03], ');
+  QExcelTotal.SQL.Add('ISNULL(MAX(CASE WHEN SMDD.Size = ''03.5'' THEN SMDD.Pairs END), 0) AS [03.5], ');
+  QExcelTotal.SQL.Add('ISNULL(MAX(CASE WHEN SMDD.Size = ''04'' THEN SMDD.Pairs END), 0) AS [04], ');
+  QExcelTotal.SQL.Add('ISNULL(MAX(CASE WHEN SMDD.Size = ''04.5'' THEN SMDD.Pairs END), 0) AS [04.5], ');
+  QExcelTotal.SQL.Add('ISNULL(MAX(CASE WHEN SMDD.Size = ''05'' THEN SMDD.Pairs END), 0) AS [05], ');
+  QExcelTotal.SQL.Add('ISNULL(MAX(CASE WHEN SMDD.Size = ''05.5'' THEN SMDD.Pairs END), 0) AS [05.5], ');
+  QExcelTotal.SQL.Add('ISNULL(MAX(CASE WHEN SMDD.Size = ''06'' THEN SMDD.Pairs END), 0) AS [06], ');
+  QExcelTotal.SQL.Add('ISNULL(MAX(CASE WHEN SMDD.Size = ''06.5'' THEN SMDD.Pairs END), 0) AS [06.5], ');
+  QExcelTotal.SQL.Add('ISNULL(MAX(CASE WHEN SMDD.Size = ''07'' THEN SMDD.Pairs END), 0) AS [07], ');
+  QExcelTotal.SQL.Add('ISNULL(MAX(CASE WHEN SMDD.Size = ''07.5'' THEN SMDD.Pairs END), 0) AS [07.5], ');
+  QExcelTotal.SQL.Add('ISNULL(MAX(CASE WHEN SMDD.Size = ''08'' THEN SMDD.Pairs END), 0) AS [08], ');
+  QExcelTotal.SQL.Add('ISNULL(MAX(CASE WHEN SMDD.Size = ''08.5'' THEN SMDD.Pairs END), 0) AS [08.5], ');
+  QExcelTotal.SQL.Add('ISNULL(MAX(CASE WHEN SMDD.Size = ''09'' THEN SMDD.Pairs END), 0) AS [09], ');
+  QExcelTotal.SQL.Add('ISNULL(MAX(CASE WHEN SMDD.Size = ''09.5'' THEN SMDD.Pairs END), 0) AS [09.5], ');
+  QExcelTotal.SQL.Add('ISNULL(MAX(CASE WHEN SMDD.Size = ''10'' THEN SMDD.Pairs END), 0) AS [10], ');
+  QExcelTotal.SQL.Add('ISNULL(MAX(CASE WHEN SMDD.Size = ''10.5'' THEN SMDD.Pairs END), 0) AS [10.5], ');
+  QExcelTotal.SQL.Add('ISNULL(MAX(CASE WHEN SMDD.Size = ''11'' THEN SMDD.Pairs END), 0) AS [11], ');
+  QExcelTotal.SQL.Add('ISNULL(MAX(CASE WHEN SMDD.Size = ''11.5'' THEN SMDD.Pairs END), 0) AS [11.5], ');
+  QExcelTotal.SQL.Add('ISNULL(MAX(CASE WHEN SMDD.Size = ''12'' THEN SMDD.Pairs END), 0) AS [12], ');
+  QExcelTotal.SQL.Add('ISNULL(MAX(CASE WHEN SMDD.Size = ''12.5'' THEN SMDD.Pairs END), 0) AS [12.5], ');
+  QExcelTotal.SQL.Add('ISNULL(MAX(CASE WHEN SMDD.Size = ''13'' THEN SMDD.Pairs END), 0) AS [13], ');
+  QExcelTotal.SQL.Add('ISNULL(MAX(CASE WHEN SMDD.Size = ''13.5'' THEN SMDD.Pairs END), 0) AS [13.5], ');
+  QExcelTotal.SQL.Add('ISNULL(MAX(CASE WHEN SMDD.Size = ''14'' THEN SMDD.Pairs END), 0) AS [14], ');
+  QExcelTotal.SQL.Add('ISNULL(MAX(CASE WHEN SMDD.Size = ''15'' THEN SMDD.Pairs END), 0) AS [15], ');
+  QExcelTotal.SQL.Add('ISNULL(MAX(CASE WHEN SMDD.Size = ''16'' THEN SMDD.Pairs END), 0) AS [16] ');
+  QExcelTotal.SQL.Add('INTO #SMDD_Total FROM #SC_Total AS SC ');
+  QExcelTotal.SQL.Add('LEFT JOIN (SELECT SC.DDBH, ''Total'' AS GXLB, DDZLS.CC AS Size, ');
+  QExcelTotal.SQL.Add('DDZLS.Quantity AS Pairs FROM (SELECT DISTINCT DDBH FROM #SC_Total) AS SC ');
+  QExcelTotal.SQL.Add('LEFT JOIN DDZLS ON DDZLS.DDBH = SC.DDBH UNION ALL ');
+  QExcelTotal.SQL.Add('SELECT SC.DDBH, Section.Name AS GXLB, SMDDSS.XXCC AS Size, ');
+  QExcelTotal.SQL.Add('SUM(SMDDSS.Qty * SMDDSS.okCTS) AS Finished FROM (SELECT DISTINCT DDBH FROM #SC_Total) AS SC ');
+  QExcelTotal.SQL.Add('LEFT JOIN (SELECT ''S'' AS GXLB, ''Upper'' AS Name UNION ALL ');
+  QExcelTotal.SQL.Add('SELECT ''O'' AS GXLB, ''Bottom'' AS Name) AS Section ON 1 = 1 ');
+  QExcelTotal.SQL.Add('LEFT JOIN SMDD ON SMDD.YSBH = SC.DDBH AND SMDD.GXLB = Section.GXLB ');
+  QExcelTotal.SQL.Add('LEFT JOIN SMDDSS ON SMDDSS.DDBH = SMDD.DDBH AND SMDDSS.GXLB = SMDD.GXLB ');
+  QExcelTotal.SQL.Add('GROUP BY SC.DDBH, Section.Name, SMDDSS.XXCC) AS SMDD ON SMDD.DDBH = SC.DDBH ');
+  QExcelTotal.SQL.Add('GROUP BY SC.Building, SC.Lean, SC.schedule_date, SC.ry_index, ');
+  QExcelTotal.SQL.Add('SC.DDBH, SC.Article, SC.XieMing, SC.Pairs, SC.ShipDate, SMDD.GXLB;');
+
+  // 4. Tao bang tam #Dispatch_Total
+  QExcelTotal.SQL.Add('SELECT ZLBH AS DDBH, ');
+  QExcelTotal.SQL.Add('ISNULL(SUM(CASE WHEN Size = ''01'' THEN Pairs END), 0) AS [01], ');
+  QExcelTotal.SQL.Add('ISNULL(SUM(CASE WHEN Size = ''01.5'' THEN Pairs END), 0) AS [01.5], ');
+  QExcelTotal.SQL.Add('ISNULL(SUM(CASE WHEN Size = ''02'' THEN Pairs END), 0) AS [02], ');
+  QExcelTotal.SQL.Add('ISNULL(SUM(CASE WHEN Size = ''02.5'' THEN Pairs END), 0) AS [02.5], ');
+  QExcelTotal.SQL.Add('ISNULL(SUM(CASE WHEN Size = ''03'' THEN Pairs END), 0) AS [03], ');
+  QExcelTotal.SQL.Add('ISNULL(SUM(CASE WHEN Size = ''03.5'' THEN Pairs END), 0) AS [03.5], ');
+  QExcelTotal.SQL.Add('ISNULL(SUM(CASE WHEN Size = ''04'' THEN Pairs END), 0) AS [04], ');
+  QExcelTotal.SQL.Add('ISNULL(SUM(CASE WHEN Size = ''04.5'' THEN Pairs END), 0) AS [04.5], ');
+  QExcelTotal.SQL.Add('ISNULL(SUM(CASE WHEN Size = ''05'' THEN Pairs END), 0) AS [05], ');
+  QExcelTotal.SQL.Add('ISNULL(SUM(CASE WHEN Size = ''05.5'' THEN Pairs END), 0) AS [05.5], ');
+  QExcelTotal.SQL.Add('ISNULL(SUM(CASE WHEN Size = ''06'' THEN Pairs END), 0) AS [06], ');
+  QExcelTotal.SQL.Add('ISNULL(SUM(CASE WHEN Size = ''06.5'' THEN Pairs END), 0) AS [06.5], ');
+  QExcelTotal.SQL.Add('ISNULL(SUM(CASE WHEN Size = ''07'' THEN Pairs END), 0) AS [07], ');
+  QExcelTotal.SQL.Add('ISNULL(SUM(CASE WHEN Size = ''07.5'' THEN Pairs END), 0) AS [07.5], ');
+  QExcelTotal.SQL.Add('ISNULL(SUM(CASE WHEN Size = ''08'' THEN Pairs END), 0) AS [08], ');
+  QExcelTotal.SQL.Add('ISNULL(SUM(CASE WHEN Size = ''08.5'' THEN Pairs END), 0) AS [08.5], ');
+  QExcelTotal.SQL.Add('ISNULL(SUM(CASE WHEN Size = ''09'' THEN Pairs END), 0) AS [09], ');
+  QExcelTotal.SQL.Add('ISNULL(SUM(CASE WHEN Size = ''09.5'' THEN Pairs END), 0) AS [09.5], ');
+  QExcelTotal.SQL.Add('ISNULL(SUM(CASE WHEN Size = ''10'' THEN Pairs END), 0) AS [10], ');
+  QExcelTotal.SQL.Add('ISNULL(SUM(CASE WHEN Size = ''10.5'' THEN Pairs END), 0) AS [10.5], ');
+  QExcelTotal.SQL.Add('ISNULL(SUM(CASE WHEN Size = ''11'' THEN Pairs END), 0) AS [11], ');
+  QExcelTotal.SQL.Add('ISNULL(SUM(CASE WHEN Size = ''11.5'' THEN Pairs END), 0) AS [11.5], ');
+  QExcelTotal.SQL.Add('ISNULL(SUM(CASE WHEN Size = ''12'' THEN Pairs END), 0) AS [12], ');
+  QExcelTotal.SQL.Add('ISNULL(SUM(CASE WHEN Size = ''12.5'' THEN Pairs END), 0) AS [12.5], ');
+  QExcelTotal.SQL.Add('ISNULL(SUM(CASE WHEN Size = ''13'' THEN Pairs END), 0) AS [13], ');
+  QExcelTotal.SQL.Add('ISNULL(SUM(CASE WHEN Size = ''13.5'' THEN Pairs END), 0) AS [13.5], ');
+  QExcelTotal.SQL.Add('ISNULL(SUM(CASE WHEN Size = ''14'' THEN Pairs END), 0) AS [14], ');
+  QExcelTotal.SQL.Add('ISNULL(SUM(CASE WHEN Size = ''15'' THEN Pairs END), 0) AS [15], ');
+  QExcelTotal.SQL.Add('ISNULL(SUM(CASE WHEN Size = ''16'' THEN Pairs END), 0) AS [16] ');
+  QExcelTotal.SQL.Add('INTO #Dispatch_Total FROM SMDDS_Dispatch ');
+  QExcelTotal.SQL.Add('WHERE ZLBH IN (SELECT DISTINCT DDBH FROM #SC_Total) GROUP BY ZLBH;');
+
+  // 5. Ghi du lieu vao bang #SumSQ_Total
+  QExcelTotal.SQL.Add('SELECT *, ROW_NUMBER() OVER(ORDER BY Building, Lean, schedule_date, ry_index, ');
+  QExcelTotal.SQL.Add('CASE SMDD.GXLB WHEN ''Upper'' THEN 1 WHEN ''Bottom'' THEN 2 WHEN ''Matching'' THEN 3 ');
+  QExcelTotal.SQL.Add('WHEN ''Dispatch'' THEN 4 WHEN ''Remain'' THEN 5 WHEN ''Total'' THEN 6 WHEN ''Shortage'' THEN 7 END) AS Seq ');
+  QExcelTotal.SQL.Add('INTO #SumSQ_Total FROM (');
+  QExcelTotal.SQL.Add('SELECT Building, Lean, schedule_date, ry_index, DDBH, Article, XieMing, Pairs, ShipDate, GXLB, ');
+  QExcelTotal.SQL.Add('ISNULL([01], 0) AS [01], ISNULL([01.5], 0) AS [01.5], ISNULL([02], 0) AS [02], ');
+  QExcelTotal.SQL.Add('ISNULL([02.5], 0) AS [02.5], ISNULL([03], 0) AS [03], ISNULL([03.5], 0) AS [03.5], ');
+  QExcelTotal.SQL.Add('ISNULL([04], 0) AS [04], ISNULL([04.5], 0) AS [04.5], ISNULL([05], 0) AS [05], ISNULL([05.5], 0) AS [05.5], ');
+  QExcelTotal.SQL.Add('ISNULL([06], 0) AS [06], ISNULL([06.5], 0) AS [06.5], ISNULL([07], 0) AS [07], ');
+  QExcelTotal.SQL.Add('ISNULL([07.5], 0) AS [07.5], ISNULL([08], 0) AS [08], ISNULL([08.5], 0) AS [08.5], ');
+  QExcelTotal.SQL.Add('ISNULL([09], 0) AS [09], ISNULL([09.5], 0) AS [09.5], ISNULL([10], 0) AS [10], ISNULL([10.5], 0) AS [10.5], ');
+  QExcelTotal.SQL.Add('ISNULL([11], 0) AS [11], ISNULL([11.5], 0) AS [11.5], ISNULL([12], 0) AS [12], ');
+  QExcelTotal.SQL.Add('ISNULL([12.5], 0) AS [12.5], ISNULL([13], 0) AS [13], ISNULL([13.5], 0) AS [13.5], ');
+  QExcelTotal.SQL.Add('ISNULL([14], 0) AS [14], ISNULL([15], 0) AS [15], ISNULL([16], 0) AS [16], ');
+  QExcelTotal.SQL.Add('ISNULL([01],0)+ISNULL([01.5],0)+ISNULL([02],0)+ISNULL([02.5],0)+ISNULL([03],0)+ISNULL([03.5],0)+ ');
+  QExcelTotal.SQL.Add('ISNULL([04],0)+ISNULL([04.5],0)+ISNULL([05],0)+ISNULL([05.5],0)+ISNULL([06],0)+ISNULL([06.5],0)+ ');
+  QExcelTotal.SQL.Add('ISNULL([07],0)+ISNULL([07.5],0)+ISNULL([08],0)+ISNULL([08.5],0)+ISNULL([09],0)+ISNULL([09.5],0)+ ');
+  QExcelTotal.SQL.Add('ISNULL([10],0)+ISNULL([10.5],0)+ISNULL([11],0)+ISNULL([11.5],0)+ISNULL([12],0)+ISNULL([12.5],0)+ ');
+  QExcelTotal.SQL.Add('ISNULL([13],0)+ISNULL([13.5],0)+ISNULL([14],0)+ISNULL([15],0)+ISNULL([16],0) AS Total FROM #SMDD_Total ');
+  QExcelTotal.SQL.Add('UNION ALL ');
+  QExcelTotal.SQL.Add('SELECT Building, Lean, schedule_date, ry_index, DDBH, Article, XieMing, Pairs, ShipDate, ''Matching'' AS GXLB, ');
+  QExcelTotal.SQL.Add('ISNULL(MIN([01]), 0) AS [01], ISNULL(MIN([01.5]), 0) AS [01.5], ISNULL(MIN([02]), 0) AS [02], ');
+  QExcelTotal.SQL.Add('ISNULL(MIN([02.5]), 0) AS [02.5], ISNULL(MIN([03]), 0) AS [03], ISNULL(MIN([03.5]), 0) AS [03.5], ');
+  QExcelTotal.SQL.Add('ISNULL(MIN([04]), 0) AS [04], ISNULL(MIN([04.5]), 0) AS [04.5], ISNULL(MIN([05]), 0) AS [05], ');
+  QExcelTotal.SQL.Add('ISNULL(MIN([05.5]), 0) AS [05.5], ISNULL(MIN([06]), 0) AS [06], ISNULL(MIN([06.5]), 0) AS [06.5], ');
+  QExcelTotal.SQL.Add('ISNULL(MIN([07]), 0) AS [07], ISNULL(MIN([07.5]), 0) AS [07.5], ISNULL(MIN([08]), 0) AS [08], ');
+  QExcelTotal.SQL.Add('ISNULL(MIN([08.5]), 0) AS [08.5], ISNULL(MIN([09]), 0) AS [09], ISNULL(MIN([09.5]), 0) AS [09.5], ');
+  QExcelTotal.SQL.Add('ISNULL(MIN([10]), 0) AS [10], ISNULL(MIN([10.5]), 0) AS [10.5], ISNULL(MIN([11]), 0) AS [11], ');
+  QExcelTotal.SQL.Add('ISNULL(MIN([11.5]), 0) AS [11.5], ISNULL(MIN([12]), 0) AS [12], ISNULL(MIN([12.5]), 0) AS [12.5], ');
+  QExcelTotal.SQL.Add('ISNULL(MIN([13]), 0) AS [13], ISNULL(MIN([13.5]), 0) AS [13.5], ISNULL(MIN([14]), 0) AS [14], ');
+  QExcelTotal.SQL.Add('ISNULL(MIN([15]), 0) AS [15], ISNULL(MIN([16]), 0) AS [16], ');
+  QExcelTotal.SQL.Add('ISNULL(MIN([01]),0)+ISNULL(MIN([01.5]),0)+ISNULL(MIN([02]),0)+ISNULL(MIN([02.5]),0)+ ');
+  QExcelTotal.SQL.Add('ISNULL(MIN([03]),0)+ISNULL(MIN([03.5]),0)+ISNULL(MIN([04]),0)+ISNULL(MIN([04.5]),0)+ ');
+  QExcelTotal.SQL.Add('ISNULL(MIN([05]),0)+ISNULL(MIN([05.5]),0)+ISNULL(MIN([06]),0)+ISNULL(MIN([06.5]),0)+ ');
+  QExcelTotal.SQL.Add('ISNULL(MIN([07]),0)+ISNULL(MIN([07.5]),0)+ISNULL(MIN([08]),0)+ISNULL(MIN([08.5]),0)+ ');
+  QExcelTotal.SQL.Add('ISNULL(MIN([09]),0)+ISNULL(MIN([09.5]),0)+ISNULL(MIN([10]),0)+ISNULL(MIN([10.5]),0)+ ');
+  QExcelTotal.SQL.Add('ISNULL(MIN([11]),0)+ISNULL(MIN([11.5]),0)+ISNULL(MIN([12]),0)+ISNULL(MIN([12.5]),0)+ ');
+  QExcelTotal.SQL.Add('ISNULL(MIN([13]),0)+ISNULL(MIN([13.5]),0)+ISNULL(MIN([14]),0)+ISNULL(MIN([15]),0)+ ');
+  QExcelTotal.SQL.Add('ISNULL(MIN([16]),0) AS Total ');
+  QExcelTotal.SQL.Add('FROM #SMDD_Total WHERE GXLB IN (''Upper'', ''Bottom'') ');
+  QExcelTotal.SQL.Add('GROUP BY Building, Lean, schedule_date, ry_index, DDBH, Article, XieMing, Pairs, ShipDate ');
+  QExcelTotal.SQL.Add('UNION ALL ');
+  QExcelTotal.SQL.Add('SELECT SC.Building, SC.Lean, SC.schedule_date, SC.ry_index, SC.DDBH, SC.Article, SC.XieMing, ');
+  QExcelTotal.SQL.Add('SC.Pairs, SC.ShipDate, ''Dispatch'' AS GXLB, ');
+  QExcelTotal.SQL.Add('ISNULL(D.[01], 0) AS [01], ISNULL(D.[01.5], 0) AS [01.5], ISNULL(D.[02], 0) AS [02], ');
+  QExcelTotal.SQL.Add('ISNULL(D.[02.5], 0) AS [02.5], ISNULL(D.[03], 0) AS [03], ISNULL(D.[03.5], 0) AS [03.5], ');
+  QExcelTotal.SQL.Add('ISNULL(D.[04], 0) AS [04], ISNULL(D.[04.5], 0) AS [04.5], ISNULL(D.[05], 0) AS [05], ');
+  QExcelTotal.SQL.Add('ISNULL(D.[05.5], 0) AS [05.5], ISNULL(D.[06], 0) AS [06], ISNULL(D.[06.5], 0) AS [06.5], ');
+  QExcelTotal.SQL.Add('ISNULL(D.[07], 0) AS [07], ISNULL(D.[07.5], 0) AS [07.5], ISNULL(D.[08], 0) AS [08], ');
+  QExcelTotal.SQL.Add('ISNULL(D.[08.5], 0) AS [08.5], ISNULL(D.[09], 0) AS [09], ISNULL(D.[09.5], 0) AS [09.5], ');
+  QExcelTotal.SQL.Add('ISNULL(D.[10], 0) AS [10], ISNULL(D.[10.5], 0) AS [10.5], ISNULL(D.[11], 0) AS [11], ');
+  QExcelTotal.SQL.Add('ISNULL(D.[11.5], 0) AS [11.5], ISNULL(D.[12], 0) AS [12], ISNULL(D.[12.5], 0) AS [12.5], ');
+  QExcelTotal.SQL.Add('ISNULL(D.[13], 0) AS [13], ISNULL(D.[13.5], 0) AS [13.5], ISNULL(D.[14], 0) AS [14], ');
+  QExcelTotal.SQL.Add('ISNULL(D.[15], 0) AS [15], ISNULL(D.[16], 0) AS [16], ');
+  QExcelTotal.SQL.Add('ISNULL(D.[03.5],0)+ISNULL(D.[04],0)+ISNULL(D.[04.5],0)+ISNULL(D.[05],0)+ISNULL(D.[05.5],0)+ ');
+  QExcelTotal.SQL.Add('ISNULL(D.[06],0)+ISNULL(D.[06.5],0)+ISNULL(D.[07],0)+ISNULL(D.[07.5],0)+ISNULL(D.[08],0)+ ');
+  QExcelTotal.SQL.Add('ISNULL(D.[08.5],0)+ISNULL(D.[09],0)+ISNULL(D.[09.5],0)+ISNULL(D.[10],0)+ISNULL(D.[10.5],0)+ ');
+  QExcelTotal.SQL.Add('ISNULL(D.[11],0)+ISNULL(D.[11.5],0)+ISNULL(D.[12],0)+ISNULL(D.[12.5],0)+ISNULL(D.[13],0)+ ');
+  QExcelTotal.SQL.Add('ISNULL(D.[13.5],0)+ISNULL(D.[14],0)+ISNULL(D.[15],0)+ISNULL(D.[16],0) AS Total ');
+  QExcelTotal.SQL.Add('FROM (SELECT DISTINCT Building, Lean, schedule_date, ry_index, DDBH, Article, XieMing, Pairs, ');
+  QExcelTotal.SQL.Add('ShipDate FROM #SC_Total) AS SC LEFT JOIN #Dispatch_Total D ON SC.DDBH = D.DDBH ');
+  QExcelTotal.SQL.Add(') AS SMDD;');
+
+  // 6. XUAT KET QUA CUOI CUNG
+  QExcelTotal.SQL.Add('WITH DistinctPairs AS (SELECT DISTINCT Building + ''-'' + Lean AS LINE, XieMing, Pairs FROM #SumSQ_Total),');
+  QExcelTotal.SQL.Add('AggregatedPairs AS (SELECT LINE, XieMing, SUM(Pairs) AS TotalPairs FROM DistinctPairs GROUP BY LINE, XieMing),');
+  QExcelTotal.SQL.Add('AggregatedGXLB AS (SELECT Building + ''-'' + Lean AS LINE, XieMing, ISNULL(SUM(CASE WHEN GXLB = ''Upper'' THEN Total END), 0) AS Upper, ISNULL(SUM(CASE WHEN GXLB = ''Bottom'' THEN Total END), 0) AS Bottom, ');
+  QExcelTotal.SQL.Add('ISNULL(SUM(CASE WHEN GXLB = ''Matching'' THEN Total END), 0) AS Matching FROM #SumSQ_Total GROUP BY Building, Lean, XieMing)');
+  QExcelTotal.SQL.Add('SELECT ISNULL(G.LINE, N''TONG CONG'') AS LINE, ISNULL(G.XieMing, N''-- TONG LINE --'') AS XieMing, SUM(P.TotalPairs) AS Pairs, SUM(G.Upper) AS Upper, SUM(G.Bottom) AS Bottom, SUM(G.Matching) AS Matching ');
+  QExcelTotal.SQL.Add('FROM AggregatedGXLB G LEFT JOIN AggregatedPairs P ON G.LINE = P.LINE AND G.XieMing = P.XieMing ');
+  QExcelTotal.SQL.Add('GROUP BY GROUPING SETS ((G.LINE, G.XieMing), (G.LINE), ()) ');
+  QExcelTotal.SQL.Add('ORDER BY CASE WHEN G.LINE IS NULL THEN 1 ELSE 0 END, G.LINE, CASE WHEN G.XieMing IS NULL THEN 1 ELSE 0 END, G.XieMing;');
+
+  Screen.Cursor := crHourGlass;
+  try
+    QExcelTotal.Open;
+
+    // --- BAT DAU XUAT EXCEL ---
+    ExcelApp := CreateOleObject('Excel.Application');
+    ExcelApp.Visible := True;
+    ExcelApp.DisplayAlerts := False; // Tat canh bao gop o
+    ExcelApp.Workbooks.Add;
+    Sheet := ExcelApp.Workbooks[1].WorkSheets[1];
+
+    // Chinh do rong cot
+    Sheet.Columns[1].ColumnWidth := 15;
+    Sheet.Columns[2].ColumnWidth := 30;
+
+    Sheet.Range['A1:F1'].Merge;
+    Sheet.Range['A1:G1'].HorizontalAlignment := -4108;
+    Sheet.Range['A1:G1'].VerticalAlignment := -4108;
+
+    Sheet.Cells[1, 1].Value := 'SO LUONG MU DE DONG DOI ';
+    Sheet.Cells[2, 1].Value := 'Line';
+    Sheet.Cells[2, 2].Value := 'Shoe Name';
+    Sheet.Cells[2, 3].Value := 'Tong doi';
+    Sheet.Cells[2, 4].Value := 'May';
+    Sheet.Cells[2, 5].Value := 'De';
+    Sheet.Cells[2, 6].Value := 'Dong doi';
+
+    Row := 3;
+    StartMergeRow := 3;
+
+    QExcelTotal.DisableControls;
+    try
+      QExcelTotal.First;
+      while not QExcelTotal.Eof do
+      begin
+        CurrLine := QExcelTotal.FieldByName('LINE').AsString;
+        XieMing := QExcelTotal.FieldByName('XieMing').AsString;
+
+        // Xu ly dong tong (Subtotal / Grand Total)
+        if XieMing = '-- TONG LINE --' then
+        begin
+          if CurrLine = 'TONG CONG' then
+            Sheet.Cells[Row, 2].Value := 'GRAND TOTAL'
+          else
+            Sheet.Cells[Row, 2].Value := 'TOTAL ' + CurrLine;
+
+          // In dam va to mau nen
+          Sheet.Range['B' + IntToStr(Row)].Font.Bold := True;
+          Sheet.Range['A' + IntToStr(Row) + ':F' + IntToStr(Row)].Interior.ColorIndex := 34;
+
+          // Gop o cot A cho cac ma giay cung chuyen
+          if StartMergeRow < Row - 1 then
+          begin
+            Range := Sheet.Range['A' + IntToStr(StartMergeRow) + ':A' + IntToStr(Row - 1)];
+            Range.Merge;
+            Range.VerticalAlignment := -4108;   // Can giua doc
+            Range.HorizontalAlignment := -4108; // Can giua ngang
+          end;
+
+          // Dat lai diem bat dau gop cho chuyen ke tiep
+          StartMergeRow := Row + 1;
+        end
+        else
+        begin
+          Sheet.Cells[Row, 1].Value := CurrLine;
+          Sheet.Cells[Row, 2].Value := XieMing;
+        end;
+
+        // Ghi so lieu thi cong
+        Sheet.Cells[Row, 3].Value := QExcelTotal.FieldByName('Pairs').AsFloat;
+        Sheet.Cells[Row, 4].Value := QExcelTotal.FieldByName('Upper').AsFloat;
+        Sheet.Cells[Row, 5].Value := QExcelTotal.FieldByName('Bottom').AsFloat;
+        Sheet.Cells[Row, 6].Value := QExcelTotal.FieldByName('Matching').AsFloat;
+
+        // Ke khung
+        //Sheet.Range['A' + IntToStr(Row) + ':F' + IntToStr(Row)].Borders.LineStyle := 1;
+        Sheet.Range['A1' + ':F' + IntToStr(Row)].Borders.LineStyle := 1;
+
+        Inc(Row);
+        QExcelTotal.Next;
+      end;
+
+      // Kiem tra gop o lan cuoi
+      if StartMergeRow < Row - 1 then
+      begin
+        Range := Sheet.Range['A' + IntToStr(StartMergeRow) + ':A' + IntToStr(Row - 1)];
+        Range.Merge;
+        Range.VerticalAlignment := -4108;
+        Range.HorizontalAlignment := -4108;
+      end;
+
+    finally
+      QExcelTotal.EnableControls;
+      ExcelApp.DisplayAlerts := True;
+    end;
+
+  finally
+    Screen.Cursor := crDefault;
   end;
 end;
 

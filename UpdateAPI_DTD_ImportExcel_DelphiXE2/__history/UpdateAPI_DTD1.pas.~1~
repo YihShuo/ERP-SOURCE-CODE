@@ -1,0 +1,530 @@
+unit UpdateAPI_DTD1;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, DBGridEhGrouping, ToolCtrlsEh,
+  DBGridEhToolCtrls, DynVarsEh, Data.DB, Datasnap.DBClient, EhLibVCL, GridsEh,
+  DBAxisGridsEh, DBGridEh, Vcl.StdCtrls, Vcl.Buttons, ComObj;
+
+type
+  TUpdateAPI_DTD = class(TForm)
+    btnImport: TBitBtn;
+    btnRunAPI: TBitBtn;
+    DBGrid1: TDBGridEh;
+    DataSource1: TDataSource;
+    ClientDataSet1: TClientDataSet;
+    OpenDialog1: TOpenDialog;
+    procedure FormCreate(Sender: TObject);
+    procedure btnImportClick(Sender: TObject);
+    procedure ImportExcel(const FileName: string);
+    procedure RunAPI;
+    procedure btnRunAPIClick(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  UpdateAPI_DTD: TUpdateAPI_DTD;
+
+implementation
+
+{$R *.dfm}
+
+procedure TUpdateAPI_DTD.RunAPI;
+var
+  Http: OleVariant;
+  TxtFile: TextFile;
+
+  FileName: string;
+
+  KHPO: string;
+  ApiDate: string;
+  Json: string;
+
+  StatusCode: string;
+  ResponseText: string;
+
+  I: Integer;
+  Total: Integer;
+begin
+  //============================================================
+  // Kiem tra du lieu
+  //============================================================
+  if not ClientDataSet1.Active then
+  begin
+    ShowMessage('Chua import Excel.');
+    Exit;
+  end;
+
+  if ClientDataSet1.IsEmpty then
+  begin
+    ShowMessage('Khong co du lieu.');
+    Exit;
+  end;
+
+  //============================================================
+  // Tao ten file TXT
+  //============================================================
+  FileName :=
+    ExtractFilePath(Application.ExeName) +
+    'API_Result_' +
+    FormatDateTime('yyyymmdd_hhnnss', Now) +
+    '.txt';
+
+  //============================================================
+  // Tao file TXT
+  //============================================================
+  AssignFile(TxtFile, FileName);
+  Rewrite(TxtFile);
+
+  try
+    //==========================================================
+    // Header
+    //==========================================================
+    Writeln(
+      TxtFile,
+      'KHPO',
+      #9,
+      'Date',
+      #9,
+      'JSON',
+      #9,
+      'Status',
+      #9,
+      'ResponseText'
+    );
+
+    //==========================================================
+    // Tao HTTP CHI 1 LAN
+    //==========================================================
+    Http := Unassigned;
+
+    try
+      Http :=
+        CreateOleObject(
+          'WinHttp.WinHttpRequest.5.1'
+        );
+
+      //========================================================
+      // Timeout: 60 giay
+      //========================================================
+      Http.SetTimeouts(
+        60000,
+        60000,
+        60000,
+        60000
+      );
+
+      Total := ClientDataSet1.RecordCount;
+      I := 0;
+
+      ClientDataSet1.First;
+
+      //========================================================
+      // Duyet tung PO
+      //========================================================
+      while not ClientDataSet1.Eof do
+      begin
+        Inc(I);
+
+        KHPO :=
+          Trim(
+            ClientDataSet1.FieldByName('KHPO').AsString
+          );
+
+        //======================================================
+        // Lay Date
+        //======================================================
+        if ClientDataSet1.FieldByName('Date').IsNull then
+        begin
+          ApiDate := '';
+
+          Json :=
+            '{' +
+            '"date":"",' +
+            '"databaseType":"A",' +
+            '"poList":["' + KHPO + '"]' +
+            '}';
+
+          StatusCode := 'ERROR';
+          ResponseText := 'Date rong';
+        end
+        else
+        begin
+          ApiDate :=
+            FormatDateTime(
+              'yyyy-mm-dd',
+              ClientDataSet1.FieldByName('Date').AsDateTime
+            );
+
+          //====================================================
+          // Tao JSON
+          //====================================================
+          Json :=
+            '{' +
+            '"date":"' + ApiDate + '",' +
+            '"databaseType":"A",' +
+            '"poList":["' + KHPO + '"]' +
+            '}';
+
+          try
+            //==================================================
+            // GET
+            //==================================================
+            Http.Open(
+              'GET',
+              'http://localhost:8081/api/v1/deckers/RePoList',
+              False
+            );
+
+            //==================================================
+            // Header
+            //==================================================
+            Http.SetRequestHeader(
+              'Content-Type',
+              'application/json'
+            );
+
+            //==================================================
+            // Send
+            //==================================================
+            Http.Send(Json);
+
+            //==================================================
+            // Lay ket qua
+            //==================================================
+            StatusCode :=
+              IntToStr(Http.Status);
+
+            ResponseText :=
+              Http.ResponseText;
+
+          except
+            on E: Exception do
+            begin
+              StatusCode := 'ERROR';
+              ResponseText := E.Message;
+            end;
+          end;
+        end;
+
+        //======================================================
+        // Ghi TXT
+        //======================================================
+        Writeln(
+          TxtFile,
+          KHPO,
+          #9,
+          ApiDate,
+          #9,
+          Json,
+          #9,
+          StatusCode,
+          #9,
+          ResponseText
+        );
+
+        //======================================================
+        // Cap nhat caption
+        //======================================================
+        Caption :=
+          Format(
+            'Dang xu ly %d/%d (%.1f%%) PO: %s',
+            [
+              I,
+              Total,
+              (I / Total) * 100,
+              KHPO
+            ]
+          );
+
+        Application.ProcessMessages;
+
+        ClientDataSet1.Next;
+      end;
+
+    finally
+      //========================================================
+      // Giai phong HTTP SAU KHI XU LY XONG
+      //========================================================
+      Http := Unassigned;
+    end;
+
+  finally
+    //==========================================================
+    // Dong file
+    //==========================================================
+    CloseFile(TxtFile);
+  end;
+
+  Caption := 'Update API DTD';
+
+  ShowMessage(
+    'Hoan thanh!' + #13#10 +
+    'File ket qua:' + #13#10 +
+    FileName
+  );
+end;
+
+procedure TUpdateAPI_DTD.ImportExcel(const FileName: string);
+var
+  ExcelApp: OleVariant;
+  Workbook: OleVariant;
+  Worksheet: OleVariant;
+  UsedRange: OleVariant;
+  Data: OleVariant;
+
+  Row: Integer;
+  LastRow: Integer;
+
+  KHPO: string;
+  ExcelDate: Variant;
+begin
+  ExcelApp := Unassigned;
+  Workbook := Unassigned;
+  Worksheet := Unassigned;
+  UsedRange := Unassigned;
+  Data := Unassigned;
+
+  try
+    //==========================================================
+    // Tao Excel
+    //==========================================================
+    ExcelApp := CreateOleObject('Excel.Application');
+
+    ExcelApp.Visible := False;
+    ExcelApp.DisplayAlerts := False;
+
+    //==========================================================
+    // Mo file Excel
+    //==========================================================
+    Workbook := ExcelApp.Workbooks.Open(FileName);
+
+    //==========================================================
+    // Lay sheet dau tien
+    //==========================================================
+    Worksheet := Workbook.Worksheets.Item[1];
+
+    //==========================================================
+    // Lay UsedRange
+    //==========================================================
+    UsedRange := Worksheet.UsedRange;
+
+    //==========================================================
+    // Lay du lieu mot lan
+    //==========================================================
+    Data := UsedRange.Value;
+
+    //==========================================================
+    // Kiem tra co du lieu
+    //==========================================================
+    if VarIsEmpty(Data) or VarIsNull(Data) then
+      raise Exception.Create('File Excel khong co du lieu.');
+
+    //==========================================================
+    // Tao ClientDataSet
+    //==========================================================
+    ClientDataSet1.Close;
+    ClientDataSet1.FieldDefs.Clear;
+
+    ClientDataSet1.FieldDefs.Add(
+      'KHPO',
+      ftString,
+      50
+    );
+
+    ClientDataSet1.FieldDefs.Add(
+      'Date',
+      ftString,
+      10
+    );
+
+    ClientDataSet1.CreateDataSet;
+    ClientDataSet1.Open;
+
+    //==========================================================
+    // UsedRange chi co 1 o
+    //==========================================================
+    if not VarIsArray(Data) then
+      raise Exception.Create(
+        'Excel khong co du lieu dang bang.'
+      );
+
+    //==========================================================
+    // So dong cua UsedRange
+    //==========================================================
+    LastRow :=
+      VarArrayHighBound(Data, 1);
+
+    //==========================================================
+    // Duyet tu dong 2
+    //==========================================================
+    for Row := 2 to LastRow do
+    begin
+      //========================================================
+      // Cot A -> KHPO
+      //========================================================
+      KHPO := '';
+
+      if not VarIsNull(Data[Row, 1]) and
+         not VarIsEmpty(Data[Row, 1]) then
+      begin
+        KHPO := Trim(
+          VarToStr(Data[Row, 1])
+        );
+      end;
+
+      // Bo qua dong khong co KHPO
+      if KHPO = '' then
+        Continue;
+
+      //========================================================
+      // Cot B -> Date
+      //========================================================
+      ExcelDate := Data[Row, 2];
+
+      ClientDataSet1.Append;
+
+      try
+        ClientDataSet1.FieldByName('KHPO').AsString :=
+          KHPO;
+
+        if not VarIsNull(ExcelDate) and
+           not VarIsEmpty(ExcelDate) then
+        begin
+          try
+            ClientDataSet1.FieldByName('Date').AsString :=
+              FormatDateTime(
+                'yyyy-mm-dd',
+                VarToDateTime(ExcelDate)
+              );
+          except
+            // Neu khong convert duoc thi thu lay dang string
+            ClientDataSet1.FieldByName('Date').AsString :=
+              Trim(VarToStr(ExcelDate));
+          end;
+        end
+        else
+          ClientDataSet1.FieldByName('Date').Clear;
+
+        ClientDataSet1.Post;
+
+      except
+        ClientDataSet1.Cancel;
+        raise;
+      end;
+    end;
+
+    ClientDataSet1.First;
+
+  finally
+    //==========================================================
+    // Dong Workbook
+    //==========================================================
+    if not VarIsEmpty(Workbook) then
+    begin
+      try
+        Workbook.Close(False);
+      except
+      end;
+    end;
+
+    //==========================================================
+    // Thoat Excel
+    //==========================================================
+    if not VarIsEmpty(ExcelApp) then
+    begin
+      try
+        ExcelApp.Quit;
+      except
+      end;
+    end;
+
+    //==========================================================
+    // Giai phong COM
+    //==========================================================
+    Data := Unassigned;
+    UsedRange := Unassigned;
+    Worksheet := Unassigned;
+    Workbook := Unassigned;
+    ExcelApp := Unassigned;
+  end;
+end;
+
+procedure TUpdateAPI_DTD.btnImportClick(Sender: TObject);
+begin
+  if not OpenDialog1.Execute then
+    Exit;
+
+  Screen.Cursor := crHourGlass;
+
+  try
+    ImportExcel(OpenDialog1.FileName);
+
+    ShowMessage(
+      'Import thanh cong!' + #13#10 +
+      'So dong: ' +
+      IntToStr(ClientDataSet1.RecordCount)
+    );
+
+  except
+    on E: Exception do
+      ShowMessage(
+        'Loi import Excel:' + #13#10 +
+        E.Message
+      );
+  end;
+
+  Screen.Cursor := crDefault;
+end;
+
+procedure TUpdateAPI_DTD.btnRunAPIClick(Sender: TObject);
+begin
+  if ClientDataSet1.IsEmpty then
+  begin
+    ShowMessage('Chua co du lieu de chay API.');
+    Exit;
+  end;
+
+  if MessageDlg(
+    'Ban co muon chay API cho ' +
+    IntToStr(ClientDataSet1.RecordCount) +
+    ' PO?',
+    mtConfirmation,
+    [mbYes, mbNo],
+    0
+  ) <> mrYes then
+    Exit;
+
+  Screen.Cursor := crHourGlass;
+
+  try
+    RunAPI;
+
+  except
+    on E: Exception do
+      ShowMessage(
+        'Loi:' + #13#10 +
+        E.Message
+      );
+  end;
+
+  Screen.Cursor := crDefault;
+end;
+
+procedure TUpdateAPI_DTD.FormCreate(Sender: TObject);
+begin
+  DataSource1.DataSet := ClientDataSet1;
+  DBGrid1.DataSource := DataSource1;
+
+  OpenDialog1.Filter :=
+    'Excel Files (*.xlsx;*.xls)|*.xlsx;*.xls';
+
+  OpenDialog1.Title := 'Chon file Excel';
+end;
+
+end.

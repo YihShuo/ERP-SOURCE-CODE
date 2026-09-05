@@ -358,6 +358,7 @@ type
     Query_APListNo: TStringField;
     Query_Sfinish_date: TDateTimeField;
     Button2: TButton;
+    qryCheck: TQuery;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -511,6 +512,7 @@ type
     procedure ReloadLean(ComboBox, SourceBox: TComboBox; DTP_Start, DTP_End: TDateTimePicker; Mode: String);
     procedure ProductionLineCheck(SDate: TDate; Building: string);
     procedure onSizePairsValidate(Sender: TField);
+    procedure ValidateAndSaveDispatch(AqryMaster, AqryDetail: TQuery);
   public
     { Public declarations }
     Version: string;
@@ -534,6 +536,132 @@ uses
 
 {$R *.dfm}
 
+// Ham kiem tra va luu du lieu CachedUpdates (Ho tro MSSQL 2008 R2)
+// Tham so:
+// - AqryMaster: Dataset chua thong tin don hang (Master)
+// - AqryDetail: Dataset chua luoi nhap lieu Size can luu (Detail)
+procedure TScheduleUpload.ValidateAndSaveDispatch(AqryMaster, AqryDetail: TQuery);
+var
+  TotalNewQty: Integer;
+  SizeName: string;
+  DispatchPairs, MaxCTS: Integer;
+  bm: TBookmark;
+  FieldSize: TField;
+  OldQty: Integer;
+begin
+  // 1. Ép lu?i ghi nh?n d? li?u dang nh?p d? vào b? d?m (Bu?c ph?i có d? UpdatesPending nh?n di?n)
+  if AqryDetail.State in [dsEdit, dsInsert] then
+    AqryDetail.Post;
+
+  // Bo qua neu khong co du lieu nao can luu
+  if not AqryDetail.UpdatesPending then Exit;
+
+  // 2. K? th?a chung du?ng truy?n Database v?i Query Detail d? Profiler b?t du?c
+  //qryCheck.DatabaseName := AqryDetail.DatabaseName;
+  qryCheck.Active := False;
+  qryCheck.SQL.Clear; 
+  
+  // Cau lenh SQL chay tren he quan tri MSSQL 2008 R2
+  qryCheck.SQL.Add('SELECT');
+  qryCheck.SQL.Add('    ISNULL(D.Size, S.XXCC) AS Size,');
+  qryCheck.SQL.Add('    ISNULL(D.Pairs, 0) AS DispatchPairs,');
+  qryCheck.SQL.Add('    ISNULL(S.CTS, 0) AS CTS');
+  qryCheck.SQL.Add('FROM');
+  qryCheck.SQL.Add('(');
+  qryCheck.SQL.Add('    SELECT');
+  qryCheck.SQL.Add('        Size,');
+  qryCheck.SQL.Add('        SUM(Pairs) AS Pairs');
+  qryCheck.SQL.Add('    FROM SMDDS_Dispatch');
+  qryCheck.SQL.Add('    WHERE ZLBH = :DDBH');
+  qryCheck.SQL.Add('    GROUP BY Size');
+  qryCheck.SQL.Add(') D');
+  qryCheck.SQL.Add('FULL JOIN');
+  qryCheck.SQL.Add('(');
+  qryCheck.SQL.Add('    SELECT');
+  qryCheck.SQL.Add('        XXCC,');
+  qryCheck.SQL.Add('        SUM(CTS * SMDDSS.Qty) AS CTS');
+  qryCheck.SQL.Add('    FROM SMDDSS');
+  qryCheck.SQL.Add('    INNER JOIN SMDD');
+  qryCheck.SQL.Add('        ON SMDD.DDBH = SMDDSS.DDBH');
+  qryCheck.SQL.Add('        AND SMDD.GXLB = SMDDSS.GXLB');
+  qryCheck.SQL.Add('        AND SMDD.GXLB = ''A''');
+  qryCheck.SQL.Add('    WHERE YSBH = :DDBH');
+  qryCheck.SQL.Add('      AND SMDDSS.GXLB = ''A''');
+  qryCheck.SQL.Add('    GROUP BY XXCC');
+  qryCheck.SQL.Add(') S');
+  qryCheck.SQL.Add('    ON D.Size = S.XXCC');
+  qryCheck.SQL.Add('ORDER BY Size;');
+
+  // Lay ma don hang tu Dataset Master (Cot 'ZLBH')
+  qryCheck.ParamByName('DDBH').AsString := AqryMaster.FieldByName('ZLBH').AsString;
+  qryCheck.Open;
+
+  // Duyet tung size tu database de doi chieu voi du lieu tren luoi
+  qryCheck.First;
+  while not qryCheck.Eof do
+  begin
+    SizeName := qryCheck.FieldByName('Size').AsString;
+    DispatchPairs := qryCheck.FieldByName('DispatchPairs').AsInteger;
+    MaxCTS := qryCheck.FieldByName('CTS').AsInteger;
+    TotalNewQty := 0;
+
+    // Tim cot Size tuong ung tren luoi Detail
+    FieldSize := AqryDetail.FindField(SizeName);
+    
+    if Assigned(FieldSize) then
+    begin
+      // Quet toan bo so luong nhap tren luoi (dang luu tam trong CachedUpdates)
+      AqryDetail.DisableControls; 
+      bm := AqryDetail.GetBookmark;
+      try
+        AqryDetail.First;
+        while not AqryDetail.Eof do
+        begin
+          if AqryDetail.UpdateStatus = usInserted then
+          begin
+            TotalNewQty := TotalNewQty + FieldSize.AsInteger;
+          end
+          else if AqryDetail.UpdateStatus = usModified then
+          begin
+            if VarIsNull(FieldSize.OldValue) or VarIsEmpty(FieldSize.OldValue) then
+              OldQty := 0
+            else
+              OldQty := FieldSize.OldValue;
+              
+            TotalNewQty := TotalNewQty + (FieldSize.AsInteger - OldQty);
+          end;
+          
+          AqryDetail.Next;
+        end;
+      finally
+        if AqryDetail.BookmarkValid(bm) then
+        begin
+          AqryDetail.GotoBookmark(bm);
+          AqryDetail.FreeBookmark(bm);
+        end;
+        AqryDetail.EnableControls;
+      end;
+
+      // Thong bao loi khong dau neu vuot qua so luong CTS
+      if (DispatchPairs + TotalNewQty) > MaxCTS then
+      begin
+        Application.MessageBox(
+          PChar(Format('Loi: Size %s vuot qua gioi han!' + #13#10 +
+                       '- Da phat truoc do: %d' + #13#10 +
+                       '- Dang nhap them: %d' + #13#10 +
+                       '- Toi da cho phep (CTS): %d',
+                       [SizeName, DispatchPairs, TotalNewQty, MaxCTS])),
+          'Warning', MB_OK + MB_ICONWARNING);
+          
+        qryCheck.Close; // Dong ket noi cua qryCheck truoc khi thoat
+        Abort;          // Ngat toan bo cac lenh luu thuc thi phia sau
+      end;
+    end;
+    qryCheck.Next;
+  end;
+  qryCheck.Close;
+end;
+
 procedure TScheduleUpload.FormClose(Sender: TObject;
   var Action: TCloseAction);
 begin
@@ -541,7 +669,7 @@ begin
   Cycle_List.Free;
   Action := caFree;
 end;
-       
+
 procedure TScheduleUpload.FormDestroy(Sender: TObject);
 begin
   ScheduleUpload := Nil;
@@ -3577,8 +3705,8 @@ begin
                     SQL.Clear;
                     SQL.Add('DECLARE @RY VARCHAR(20) = ''' + Sheet.Cells[CRow, PlanBlock[0]].Text + ''';');
                     SQL.Add('SELECT DDZL.DDBH, DDZL.ARTICLE, XXZL.XTMH, XXZL.XieMing, DDZL.Pairs, DDZL.RYTYPE,');
-                    SQL.Add('MIN(CASE WHEN SMDD.DDBH = SMDD.YSBH THEN 1 ELSE CAST(SUBSTRING(SMDD.DDBH, LEN(SMDD.DDBH)-2, 3) AS INT) END) AS MinCycle,');
-                    SQL.Add('MAX(CASE WHEN SMDD.DDBH = SMDD.YSBH THEN 1 ELSE CAST(SUBSTRING(SMDD.DDBH, LEN(SMDD.DDBH)-2, 3) AS INT) END) AS MaxCycle FROM DDZL');
+                    SQL.Add('MIN(CASE WHEN SMDD.DDBH = SMDD.YSBH THEN 1 ELSE CAST(REVERSE(SUBSTRING(REVERSE(SMDD.DDBH), 1, CHARINDEX(''-'', REVERSE(SMDD.DDBH)) - 1)) AS INT) END) AS MinCycle,');
+                    SQL.Add('MAX(CASE WHEN SMDD.DDBH = SMDD.YSBH THEN 1 ELSE CAST(REVERSE(SUBSTRING(REVERSE(SMDD.DDBH), 1, CHARINDEX(''-'', REVERSE(SMDD.DDBH)) - 1)) AS INT) END) AS MaxCycle  FROM DDZL');
                     SQL.Add('LEFT JOIN XXZL ON XXZL.XieXing = DDZL.XieXing AND XXZL.SheHao = DDZL.SheHao');
                     SQL.Add('LEFT JOIN SMDD ON SMDD.YSBH = DDZL.DDBH');
                     SQL.Add('WHERE SMDD.GXLB = ''A'' AND DDZL.DDBH = CASE WHEN LEN(@RY) - LEN(REPLACE(@RY, ''-'', '''')) < 2 THEN @RY ELSE SUBSTRING(@RY, 1, LEN(@RY) - CHARINDEX(''-'', REVERSE(@RY))) END');
@@ -5471,6 +5599,8 @@ var
 begin
   ListNo := Query_AP.FieldByName('ListNo').AsString;
 
+  ValidateAndSaveDispatch(Query_AP, Query_APS);
+
   with QTemp do
   begin
     Active := false;
@@ -5502,7 +5632,7 @@ begin
   isSaving := true;
   Query_AP.Active := false;
   Query_AP.Active := true;
-  isSaving := false;   
+  isSaving := false;
   Query_AP.Locate('ListNo', ListNo, []);
 end;
 

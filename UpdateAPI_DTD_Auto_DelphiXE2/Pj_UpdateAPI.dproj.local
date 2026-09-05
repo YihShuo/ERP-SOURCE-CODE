@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+	<Transactions>
+    <Transaction>1899-12-30 00:00:00.000.772,=C:\Users\Admin\Documents\RAD Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.182,=C:\Users\Admin\Documents\RAD Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.042,D:\UpdateAPI_DelphiXE2\Pj_UpdateAPI.dproj=C:\Users\Admin\Documents\RAD Studio\Projects\Project1.dproj</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.799,D:\UpdateAPI_DelphiXE2\UpdateAPI1.pas=C:\Users\Admin\Documents\RAD Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.799,D:\UpdateAPI_DelphiXE2\UpdateAPI1.dfm=C:\Users\Admin\Documents\RAD Studio\Projects\Unit1.dfm</Transaction>
+  </Transactions>
+</BorlandProject>

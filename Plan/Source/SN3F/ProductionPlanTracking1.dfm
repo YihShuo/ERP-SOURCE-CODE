@@ -1,6 +1,6 @@
 object ProductionPlanTracking: TProductionPlanTracking
-  Left = 240
-  Top = 197
+  Left = 231
+  Top = 172
   Width = 1555
   Height = 730
   Caption = 'ProductionPlanTracking'
@@ -27,7 +27,7 @@ object ProductionPlanTracking: TProductionPlanTracking
     Top = 0
     Width = 1539
     Height = 691
-    ActivePage = TabSheet1
+    ActivePage = TabSheet3
     Align = alClient
     TabOrder = 0
     object TabSheet1: TTabSheet
@@ -1629,7 +1629,7 @@ object ProductionPlanTracking: TProductionPlanTracking
           Font.Height = -13
           Font.Name = 'MS Sans Serif'
           Font.Style = []
-          ItemHeight = 16
+          ItemHeight = 0
           ParentFont = False
           TabOrder = 1
           OnChange = CB_BuildingChange
@@ -1645,7 +1645,7 @@ object ProductionPlanTracking: TProductionPlanTracking
           Font.Height = -13
           Font.Name = 'MS Sans Serif'
           Font.Style = []
-          ItemHeight = 16
+          ItemHeight = 0
           ParentFont = False
           TabOrder = 2
         end
@@ -2092,12 +2092,12 @@ object ProductionPlanTracking: TProductionPlanTracking
           ParentFont = False
         end
         object Label16: TLabel
-          Left = 773
+          Left = 826
           Top = 18
-          Width = 62
+          Width = 65
           Height = 16
           Alignment = taRightJustify
-          Caption = 'Sum Type'
+          Caption = 'Sum Type:'
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clWindowText
           Font.Height = -13
@@ -2188,7 +2188,7 @@ object ProductionPlanTracking: TProductionPlanTracking
           OnChange = DTP6Change
         end
         object CB_SUM: TComboBox
-          Left = 840
+          Left = 896
           Top = 14
           Width = 121
           Height = 24
@@ -2217,6 +2217,15 @@ object ProductionPlanTracking: TProductionPlanTracking
           ParentFont = False
           TabOrder = 6
           OnClick = Button8Click
+        end
+        object btExcelTotal: TButton
+          Left = 746
+          Top = 13
+          Width = 75
+          Height = 25
+          Caption = 'ExcelTotal'
+          TabOrder = 7
+          OnClick = btExcelTotalClick
         end
       end
       object DBGridEh7: TDBGridEh
@@ -2760,5 +2769,10 @@ object ProductionPlanTracking: TProductionPlanTracking
     DataSet = Q_UBMatching
     Left = 88
     Top = 171
+  end
+  object QExcelTotal: TQuery
+    DatabaseName = 'DB'
+    Left = 124
+    Top = 203
   end
 end

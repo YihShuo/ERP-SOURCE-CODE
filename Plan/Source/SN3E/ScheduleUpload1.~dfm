@@ -25,7 +25,7 @@ object ScheduleUpload: TScheduleUpload
     Top = 0
     Width = 1370
     Height = 615
-    ActivePage = TabSheet7
+    ActivePage = TabSheet10
     Align = alClient
     TabOrder = 0
     object TabSheet1: TTabSheet
@@ -2227,7 +2227,7 @@ object ScheduleUpload: TScheduleUpload
           Font.Height = -13
           Font.Name = 'MS Sans Serif'
           Font.Style = []
-          ItemHeight = 16
+          ItemHeight = 0
           ParentFont = False
           TabOrder = 2
           OnChange = CB_Building_1DChange
@@ -2243,7 +2243,7 @@ object ScheduleUpload: TScheduleUpload
           Font.Height = -13
           Font.Name = 'MS Sans Serif'
           Font.Style = []
-          ItemHeight = 16
+          ItemHeight = 0
           ParentFont = False
           TabOrder = 3
         end
@@ -3201,7 +3201,7 @@ object ScheduleUpload: TScheduleUpload
           Font.Height = -13
           Font.Name = 'MS Sans Serif'
           Font.Style = []
-          ItemHeight = 0
+          ItemHeight = 16
           ParentFont = False
           TabOrder = 1
           OnChange = CB_Building_APChange
@@ -3217,7 +3217,7 @@ object ScheduleUpload: TScheduleUpload
           Font.Height = -13
           Font.Name = 'MS Sans Serif'
           Font.Style = []
-          ItemHeight = 0
+          ItemHeight = 16
           ParentFont = False
           TabOrder = 2
         end
@@ -5704,5 +5704,10 @@ object ScheduleUpload: TScheduleUpload
   object UpdateSQL_APS: TUpdateSQL
     Left = 148
     Top = 385
+  end
+  object qryCheck: TQuery
+    DatabaseName = 'DB'
+    Left = 276
+    Top = 259
   end
 end

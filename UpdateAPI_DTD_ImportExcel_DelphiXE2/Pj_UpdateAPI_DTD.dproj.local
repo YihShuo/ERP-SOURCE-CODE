@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+	<Transactions>
+    <Transaction>1899-12-30 00:00:00.000.181,C:\Users\Admin\Documents\RAD Studio\Projects\Project1.dproj=D:\ERP SOURCE CODE\UpdateAPI_DTD_ImportExcel\Pj_UpdateAPI_DTD.dproj</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.836,C:\Users\Admin\Documents\RAD Studio\Projects\Unit1.dfm=D:\ERP SOURCE CODE\UpdateAPI_DTD_ImportExcel\UpdateAPI_DTD1.dfm</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.836,C:\Users\Admin\Documents\RAD Studio\Projects\Unit1.pas=D:\ERP SOURCE CODE\UpdateAPI_DTD_ImportExcel\UpdateAPI_DTD1.pas</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.772,=C:\Users\Admin\Documents\RAD Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.006,=C:\Users\Admin\Documents\RAD Studio\Projects\Unit1.pas</Transaction>
+  </Transactions>
+</BorlandProject>
