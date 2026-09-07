@@ -140,7 +140,7 @@ begin
     sql.add('left join (select CartonBar,sum(Qty) as Qty from YWDDSDZ ');
     sql.add('           group by CartonBar ) YWDDSDZ on YWDDSDZ.CartonBar=YWCP.CartonBar ');
     sql.add('left join XXZL  with (nolock) on DDZl.XieXing=XXZl.XieXing and DDZL.SheHao=XXZL.Shehao ');
-    sql.add('left join LBZLS  with (nolock) on LBZLS.LB='+''''+'06'+''''+' and LBZLS.LBDH=DDZL.DDGB');
+    sql.add('left join LBZLS  with (nolock) on LBZLS.LB='+''''+'13'+''''+' and LBZLS.LBDH=DDZL.Dest');
     sql.add('left join KFZL  with (nolock) on KFZL.KFDH=DDZL.KHBH ');
     sql.add('left join BDepartment  with (nolock) on BDepartment.ID=YWCP.DepNo ');
     sql.add('left join (select YWBZPO.DDBH,sum(YWBZPO.CTS) as CTS ');
@@ -189,7 +189,7 @@ begin
     sql.add('           group by CartonBar ) YWDDSDZ on YWDDSDZ.CartonBar=YWCP.CartonBar ');
 
     sql.add('left join XXZL  with (nolock) on DDZl.XieXing=XXZl.XieXing and DDZL.SheHao=XXZL.Shehao ');
-    sql.add('left join LBZLS  with (nolock) on LBZLS.LB='+''''+'06'+''''+' and LBZLS.LBDH=DDZL.DDGB');
+    sql.add('left join LBZLS  with (nolock) on LBZLS.LB='+''''+'13'+''''+' and LBZLS.LBDH=DDZL.Dest');
     sql.add('left join KFZL  with (nolock) on KFZL.KFDH=DDZL.KHBH ');
     sql.add('left join BDepartment  with (nolock) on BDepartment.ID=YWCP.DepNo ');
     sql.add('left join (select YWBZPO.DDBH,sum(YWBZPO.CTS) as CTS ');
@@ -334,7 +334,7 @@ begin
     sql.add('left join (select CartonBar,sum(Qty) as Qty from YWDDSDZ ');
     sql.add('           group by CartonBar ) YWDDSDZ on YWDDSDZ.CartonBar=YWCPOld.CartonBar ');
     sql.add('left join XXZL  with (nolock) on DDZl.XieXing=XXZl.XieXing and DDZL.SheHao=XXZL.Shehao ');
-    sql.add('left join LBZLS  with (nolock) on LBZLS.LB='+''''+'06'+''''+' and LBZLS.LBDH=DDZL.DDGB');
+    sql.add('left join LBZLS  with (nolock) on LBZLS.LB='+''''+'13'+''''+' and LBZLS.LBDH=DDZL.dest');
     sql.add('left join KFZL  with (nolock) on KFZL.KFDH=DDZL.KHBH ');
     sql.add('left join BDepartment  with (nolock) on BDepartment.ID=YWCPOld.DepNo ');
     sql.add('left join (select YWBZPO.DDBH,sum(YWBZPO.CTS) as CTS ');

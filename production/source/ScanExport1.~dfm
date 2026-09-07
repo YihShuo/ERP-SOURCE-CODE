@@ -23,7 +23,7 @@ object ScanExport: TScanExport
   object Panel1: TPanel
     Left = 0
     Top = 0
-    Width = 1366
+    Width = 1358
     Height = 73
     Align = alTop
     Font.Charset = DEFAULT_CHARSET
@@ -280,12 +280,21 @@ object ScanExport: TScanExport
       ParentFont = False
       TabOrder = 8
     end
+    object Button1: TButton
+      Left = 992
+      Top = 32
+      Width = 75
+      Height = 33
+      Caption = 'OLD'
+      TabOrder = 9
+      OnClick = Button1Click
+    end
   end
   object gdMain: TDBGridEh
     Left = 0
     Top = 73
-    Width = 1366
-    Height = 423
+    Width = 1358
+    Height = 415
     Align = alClient
     DataSource = dsMain
     Flat = False

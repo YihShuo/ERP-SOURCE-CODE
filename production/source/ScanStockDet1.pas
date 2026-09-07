@@ -257,7 +257,7 @@ end;
           }
 
           // code moi
-          procedure TScanStockDet.Button1Click(Sender: TObject);
+{procedure TScanStockDet.Button1Click(Sender: TObject);
 var
   strNextDate: string;
 begin
@@ -300,7 +300,7 @@ begin
       begin
         sql.Add('     ''1'' as DepName,');
       end;
-      
+
       // GI? NGUYÊN 100% C?U TRÚC SELECT VÀ TÍNH TOÁN
       sql.Add('       XXZL.Article,max (YWCP.KCBH) as KCBH,ISNULL(STUFF((SELECT '', '' + kv2.KVBH + ''('' + CAST(SUM(kv2.Qty) AS VARCHAR(10)) + '')''FROM YWCP kv2 WITH (NOLOCK)  ');
       sql.Add(' WHERE kv2.DDBH = YWCP.DDBH AND SB=1 GROUP BY kv2.KVBH ');
@@ -324,7 +324,7 @@ begin
       sql.add('LEFT JOIN (SELECT A.DDBH,SUM(A.CTS) AS CTS,STUFF((SELECT ''/'' + B.MEMO FROM (SELECT DISTINCT DDBH, MEMO  ');
       sql.add('FROM YWBZPOS WITH (NOLOCK)) B WHERE B.DDBH = A.DDBH FOR XML PATH(''''), TYPE).value(''.'', ''VARCHAR(MAX)''), 1, 1, '''') AS MEMO FROM ( ');
       sql.add('SELECT DISTINCT DDBH, XH, CTS, MEMO FROM YWBZPOS WITH (NOLOCK) WHERE DDBH LIKE '''+edit1.Text+'%'') A GROUP BY A.DDBH) YWBZPO ON YWCP.DDBH = YWBZPO.DDBH');
-      
+
       if checkBox2.Checked then
         sql.add('left join BDepartment on YWCP.DepNO = BDepartment.ID');
 
@@ -391,7 +391,7 @@ begin
       
       if checkBox2.Checked then
         sql.add('left join BDepartment on YWCP.DepNO = BDepartment.ID');
-        
+
       // T?I UU M?NH Ð? WHERE
       sql.Add('where DDZL.DDBH like '''+edit1.Text+'%''');
       sql.add('      and YWCP.KCBH like '''+edit2.Text+'%''');
@@ -402,7 +402,7 @@ begin
       // Ð?i ngày và NOT EXISTS
       sql.add('      and IsNull(YWCP.SB,'''')<>'''' and YWCP.Indate < ''' + strNextDate + ''' ');
       sql.add('      and NOT EXISTS (Select 1 from YWCP EX1 WITH (NOLOCK) where EX1.CARTONBAR = YWCP.CARTONBAR and EX1.SB=''3'' and EX1.EXEDATE < ''' + strNextDate + ''')');
-      
+
       if cbx1.Text <> 'All' then
         sql.Add('      and ywcp.sb = '+CBX1.text+' ');
         
@@ -418,12 +418,192 @@ begin
       sql.add('         XXZL.Article,XXZL.XieMing,YWDD.ETD,LBZLS.YWSM,KFZL.KFJC,YWDD.Qty,YWBZPO.CTS,XXZL.yssm,KHPO,YWBZPO.MEMO,ywcp.Status--, Result');
       sql.add('order by YWCP.DDBH ');
     end;
-    
+
     //FuncObj.WriteErrorLog(sql.Text);
     active := true;
 //  FuncObj.WriteErrorLog(sql.Text);
   end;
 end;
+      }
+      // version ngay 15/07/2026
+
+
+      procedure TScanStockDet.Button1Click(Sender: TObject);
+var
+  strNextDate: string;
+begin
+  // --- 1. XU LY GIAO DIEN GRID ---
+  if checkBox2.Checked then
+  begin
+    DBGridEh1.Columns[2].Visible := true;
+    DBGridEh1.Columns[10].Visible := false;
+    DBGridEh1.Columns[13].Visible := false;
+  end
+  else
+  begin
+    DBGridEh1.Columns[2].Visible := false;
+    DBGridEh1.Columns[10].Visible := true;
+    DBGridEh1.Columns[13].Visible := true;
+  end;
+
+  // Tinh ngay tiep theo
+  strNextDate := FormatDateTime('yyyy/MM/dd', DTP.Date + 1);
+
+  // --- 2. KHOI TAO BANG TAM Bieu dien bang ExecSQL de tranh loi BDE ---
+  with query1 do
+  begin
+    Active := False;
+    SQL.Clear;
+    SQL.Add('SET ANSI_NULLS ON; SET QUOTED_IDENTIFIER ON; SET CONCAT_NULL_YIELDS_NULL ON;');
+    SQL.Add('SET ANSI_WARNINGS ON; SET ANSI_PADDING ON; SET ARITHABORT ON; SET NOCOUNT ON;');
+    SQL.Add('IF OBJECT_ID(''tempdb..#KVBH_Cache'') IS NOT NULL DROP TABLE #KVBH_Cache;');
+    SQL.Add('SELECT kv2.DDBH, STUFF((SELECT '', '' + kv3.KVBH + ''('' + CAST(SUM(kv3.Qty) AS VARCHAR(10)) + '')'' ');
+    SQL.Add('FROM YWCP kv3 WITH (NOLOCK) WHERE kv3.DDBH = kv2.DDBH AND kv3.SB = 1 GROUP BY kv3.KVBH ');
+    SQL.Add('FOR XML PATH(''''), TYPE).value(''.'', ''VARCHAR(500)''), 1, 2, '''') AS KVBH_String ');
+    SQL.Add('INTO #KVBH_Cache FROM YWCP kv2 WITH (NOLOCK) WHERE kv2.SB = 1 GROUP BY kv2.DDBH;');
+    ExecSQL; 
+  end;
+
+  // --- 3. TRUY VAN DU LIEU CHINH (Dung Active := True) ---
+  with query1 do
+  begin
+    Active := False;
+    SQL.Clear;
+
+    if SameText(Main.Edit2.Text, 'HBA') then
+    begin
+      // ======= NHANH CHO HBA =======
+      SQL.Add('SELECT YWCP.DDBH, YWDD.YSBH,');
+      if checkBox2.Checked then 
+        SQL.Add(' BDepartment.DepName,') 
+      else 
+        SQL.Add(' ''1'' as DepName,');
+        
+      SQL.Add(' XXZL.Article, MAX(YWCP.KCBH) AS KCBH,');
+      // Su dung KVBH_String tu bang tam moi thay cho doan STUFF dai
+      SQL.Add(' ISNULL(KV.KVBH_String, ''NO('' + CAST(SUM(YWCP.Qty) AS VARCHAR(10)) + '')'') AS KVBH,');
+      SQL.Add(' Person as Status, XXZL.XieMing, YWDD.ETD, LBZLS.YWSM as Country, KFZL.KFJC,');
+      SQL.Add(' YWDD.Qty, SUM(YWCP.Qty) as okQty, YWDD.Qty-isnull(sum(YWCP.Qty),0) as LackQty, SUM(YWDDSDZ.Qty) as DZQty,');
+      SQL.Add(' YWBZPO.CTS, COUNT(YWCP.DDBH) as okCTS, YWBZPO.CTS-count(YWCP.DDBH) as LackCTS,');
+      SQL.Add(' MAX(YWCP.LastInDate) as LastInDate, MAX(YWCP.InDate) as InDate, XXZL.yssm, KHPO,');
+      SQL.Add(' STUFF((SELECT ''-'' + CAST(SB AS VARCHAR(10)) FROM (SELECT DISTINCT SB FROM YWCP cp2 WITH (NOLOCK)');
+      SQL.Add(' WHERE cp2.DDBH = YWCP.DDBH) t FOR XML PATH(''''), TYPE).value(''.'', ''VARCHAR(8000)''),1,1,'''') AS SB,');
+      SQL.Add(' '''' Status, CONVERT(VARCHAR(8000), YWBZPO.MEMO) AS POMEMO');
+
+      SQL.Add(' FROM YWCP WITH (NOLOCK)');
+      SQL.Add(' LEFT JOIN YWDD WITH (NOLOCK) ON YWDD.DDBH = YWCP.DDBH');
+      SQL.Add(' LEFT JOIN #KVBH_Cache KV ON YWCP.DDBH = KV.DDBH'); // Join bang tam
+      SQL.Add(' LEFT JOIN (SELECT CartonBar, sum(Qty) as Qty FROM YWDDSDZ WITH (NOLOCK) GROUP BY CartonBar) YWDDSDZ ON YWDDSDZ.CartonBar=YWCP.CartonBar');
+      SQL.Add(' LEFT JOIN DDZL WITH (NOLOCK) ON YWDD.YSBH = DDZl.DDBH');
+      SQL.Add(' LEFT JOIN XXZL WITH (NOLOCK) ON DDZl.XieXing = XXZl.XieXing AND DDZL.SheHao = XXZL.Shehao');
+      SQL.Add(' LEFT JOIN LBZLS WITH (NOLOCK) ON LBZLS.LB = ''13'' AND LBZLS.LBDH = DDZL.Dest');
+      SQL.Add(' LEFT JOIN KFZL WITH (NOLOCK) ON KFZL.KFDH = DDZL.KHBH');
+      SQL.Add(' LEFT JOIN DDZL_PASS WITH (NOLOCK) ON YWCP.DDBH = DDZL_PASS.DDBH'); // DDZL_PASS chi co o nhanh HBA
+      
+      SQL.Add(' LEFT JOIN (SELECT A.DDBH, SUM(A.CTS) AS CTS,');
+      SQL.Add(' STUFF((SELECT ''/'' + B.MEMO FROM (SELECT DISTINCT DDBH, MEMO FROM YWBZPOS WITH (NOLOCK)) B');
+      SQL.Add(' WHERE B.DDBH = A.DDBH FOR XML PATH(''''), TYPE).value(''.'', ''VARCHAR(MAX)''), 1, 1, '''') AS MEMO');
+      SQL.Add(' FROM (SELECT DISTINCT DDBH, XH, CTS, MEMO FROM YWBZPOS WITH (NOLOCK) WHERE DDBH LIKE '''+edit1.Text+'%'') A GROUP BY A.DDBH) YWBZPO ON YWCP.DDBH = YWBZPO.DDBH');
+
+      if checkBox2.Checked then 
+        SQL.Add(' LEFT JOIN BDepartment ON YWCP.DepNO = BDepartment.ID');
+
+      SQL.Add(' WHERE DDZL.DDBH like '''+edit1.Text+'%''');
+      SQL.Add(' AND YWCP.KCBH like '''+edit2.Text+'%''');
+      SQL.Add(' AND isnull(KFZL.KFJC,'''') like ''%'+edit3.text+'%''');
+      SQL.Add(' AND isnull(LBZLS.YWSM,'''') like ''%'+edit4.text+'%''');
+      SQL.Add(' AND DDZL.GSBH='''+main.edit2.text+'''');
+      SQL.Add(' AND IsNull(YWCP.SB,'''')<>'''' AND YWCP.Indate < ''' + strNextDate + '''');
+
+      // Tich hop logic kiem tra ca bang cu YWCPOLD tu file SQL moi
+      SQL.Add(' AND NOT EXISTS (SELECT 1 FROM (SELECT CARTONBAR, SB, EXEDATE FROM YWCP WITH (NOLOCK)');
+      SQL.Add(' UNION ALL SELECT CARTONBAR, SB, EXEDATE FROM YWCPOLD WITH (NOLOCK)) EX1');
+      SQL.Add(' WHERE EX1.CARTONBAR = YWCP.CARTONBAR AND EX1.SB=''3'' AND EX1.EXEDATE < ''' + strNextDate + ''')');
+
+      if checkbox1.checked=false then
+      begin
+        SQL.Add(' AND NOT EXISTS (SELECT 1 FROM (SELECT CARTONBAR, SB, OUTDATE FROM YWCP WITH (NOLOCK)');
+        SQL.Add(' UNION ALL SELECT CARTONBAR, SB, OUTDATE FROM YWCPOLD WITH (NOLOCK)) EX2');
+        SQL.Add(' WHERE EX2.CARTONBAR = YWCP.CARTONBAR AND EX2.SB IN (''2'',''4'') AND IsNull(EX2.OUTDATE, GetDate()-7200) < ''' + strNextDate + ''')');
+      end;
+
+      SQL.Add(' GROUP BY YWCP.DDBH, YWDD.YSBH,');
+      if checkBox2.Checked then 
+        SQL.Add(' BDepartment.DepName,');
+      SQL.Add(' XXZL.Article, XXZL.XieMing, YWDD.ETD, LBZLS.YWSM, KFZL.KFJC, YWDD.Qty, YWBZPO.CTS, XXZL.yssm, KHPO, YWBZPO.MEMO, Person, KV.KVBH_String');
+      SQL.Add(' ORDER BY YWCP.DDBH');
+    end
+    else
+    begin
+      // ======= NHANH CHO CAC TRUONG HOP KHAC =======
+      SQL.Add('SELECT YWCP.DDBH, YWDD.YSBH,');
+      if checkBox2.Checked then 
+        SQL.Add(' BDepartment.DepName,') 
+      else 
+        SQL.Add(' ''1'' as DepName,');
+        
+      SQL.Add(' XXZL.Article, MAX(YWCP.KCBH) AS KCBH,');
+      SQL.Add(' ISNULL(KV.KVBH_String, ''NO('' + CAST(SUM(YWCP.Qty) AS VARCHAR(10)) + '')'') AS KVBH,');
+      SQL.Add(' '''' as Status, XXZL.XieMing, YWDD.ETD, LBZLS.YWSM as Country, KFZL.KFJC,');
+      SQL.Add(' YWDD.Qty, SUM(YWCP.Qty) as okQty, YWDD.Qty-isnull(sum(YWCP.Qty),0) as LackQty, SUM(YWDDSDZ.Qty) as DZQty,');
+      SQL.Add(' YWBZPO.CTS, COUNT(YWCP.DDBH) as okCTS, YWBZPO.CTS-count(YWCP.DDBH) as LackCTS,');
+      SQL.Add(' MAX(YWCP.LastInDate) as LastInDate, MAX(YWCP.InDate) as InDate, XXZL.yssm, KHPO,');
+      SQL.Add(' STUFF((SELECT ''-'' + CAST(SB AS VARCHAR(10)) FROM (SELECT DISTINCT SB FROM YWCP cp2 WITH (NOLOCK)');
+      SQL.Add(' WHERE cp2.DDBH = YWCP.DDBH) t FOR XML PATH(''''), TYPE).value(''.'', ''VARCHAR(8000)''),1,1,'''') AS SB,');
+      SQL.Add(' ywcp.Status Status, CONVERT(VARCHAR(8000), YWBZPO.MEMO) AS POMEMO');
+
+      SQL.Add(' FROM YWCP WITH (NOLOCK)');
+      SQL.Add(' LEFT JOIN YWDD WITH (NOLOCK) ON YWDD.DDBH = YWCP.DDBH');
+      SQL.Add(' LEFT JOIN #KVBH_Cache KV ON YWCP.DDBH = KV.DDBH'); // Join bang tam
+      SQL.Add(' LEFT JOIN (SELECT CartonBar, sum(Qty) as Qty FROM YWDDSDZ WITH (NOLOCK) GROUP BY CartonBar) YWDDSDZ ON YWDDSDZ.CartonBar=YWCP.CartonBar');
+      SQL.Add(' LEFT JOIN DDZL WITH (NOLOCK) ON YWDD.YSBH = DDZl.DDBH');
+      SQL.Add(' LEFT JOIN XXZL WITH (NOLOCK) ON DDZl.XieXing = XXZl.XieXing AND DDZL.SheHao = XXZL.Shehao');
+      SQL.Add(' LEFT JOIN LBZLS WITH (NOLOCK) ON LBZLS.LB = ''13'' AND LBZLS.LBDH = DDZL.Dest');
+      SQL.Add(' LEFT JOIN KFZL WITH (NOLOCK) ON KFZL.KFDH = DDZL.KHBH');
+      // Nhanh ELSE ko co left join DDZL_PASS
+      
+      SQL.Add(' LEFT JOIN (SELECT A.DDBH, SUM(A.CTS) AS CTS,');
+      SQL.Add(' STUFF((SELECT ''/'' + B.MEMO FROM (SELECT DISTINCT DDBH, MEMO FROM YWBZPOS WITH (NOLOCK)) B');
+      SQL.Add(' WHERE B.DDBH = A.DDBH FOR XML PATH(''''), TYPE).value(''.'', ''VARCHAR(MAX)''), 1, 1, '''') AS MEMO');
+      SQL.Add(' FROM (SELECT DISTINCT DDBH, XH, CTS, MEMO FROM YWBZPOS WITH (NOLOCK) WHERE DDBH LIKE '''+edit1.Text+'%'') A GROUP BY A.DDBH) YWBZPO ON YWCP.DDBH = YWBZPO.DDBH');
+
+      if checkBox2.Checked then 
+        SQL.Add(' LEFT JOIN BDepartment ON YWCP.DepNO = BDepartment.ID');
+
+      SQL.Add(' WHERE DDZL.DDBH like '''+edit1.Text+'%''');
+      SQL.Add(' AND YWCP.KCBH like '''+edit2.Text+'%''');
+      SQL.Add(' AND isnull(KFZL.KFJC,'''') like ''%'+edit3.text+'%''');
+      SQL.Add(' AND isnull(LBZLS.YWSM,'''') like ''%'+edit4.text+'%''');
+      SQL.Add(' AND DDZL.GSBH='''+main.edit2.text+'''');
+      SQL.Add(' AND IsNull(YWCP.SB,'''')<>'''' AND YWCP.Indate < ''' + strNextDate + '''');
+
+      SQL.Add(' AND NOT EXISTS (SELECT 1 FROM (SELECT CARTONBAR, SB, EXEDATE FROM YWCP WITH (NOLOCK)');
+      SQL.Add(' UNION ALL SELECT CARTONBAR, SB, EXEDATE FROM YWCPOLD WITH (NOLOCK)) EX1');
+      SQL.Add(' WHERE EX1.CARTONBAR = YWCP.CARTONBAR AND EX1.SB=''3'' AND EX1.EXEDATE < ''' + strNextDate + ''')');
+
+      // Filter rie^ng cua nhanh ELSE
+      if cbx1.Text <> 'All' then 
+        SQL.Add(' AND ywcp.sb = ' + cbx1.Text);
+
+      if checkbox1.checked=false then
+      begin
+        SQL.Add(' AND NOT EXISTS (SELECT 1 FROM (SELECT CARTONBAR, SB, OUTDATE FROM YWCP WITH (NOLOCK)');
+        SQL.Add(' UNION ALL SELECT CARTONBAR, SB, OUTDATE FROM YWCPOLD WITH (NOLOCK)) EX2');
+        SQL.Add(' WHERE EX2.CARTONBAR = YWCP.CARTONBAR AND EX2.SB IN (''2'',''4'') AND IsNull(EX2.OUTDATE, GetDate()-7200) < ''' + strNextDate + ''')');
+      end;
+
+      SQL.Add(' GROUP BY YWCP.DDBH, YWDD.YSBH,');
+      if checkBox2.Checked then 
+        SQL.Add(' BDepartment.DepName,');
+      SQL.Add(' XXZL.Article, XXZL.XieMing, YWDD.ETD, LBZLS.YWSM, KFZL.KFJC, YWDD.Qty, YWBZPO.CTS, XXZL.yssm, KHPO, YWBZPO.MEMO, ywcp.Status, KV.KVBH_String');
+      SQL.Add(' ORDER BY YWCP.DDBH');
+    end;
+
+    // Chi goi lenh nay de load Data grid len (ko he chua SET hay DROP ben trong)
+    Active := True;
+  end;
+end;
+
 
 
 

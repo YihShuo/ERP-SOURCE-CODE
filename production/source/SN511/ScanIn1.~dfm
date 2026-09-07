@@ -1,6 +1,6 @@
 object ScanIn: TScanIn
-  Left = -8
-  Top = 297
+  Left = 102
+  Top = 250
   Width = 1936
   Height = 820
   Caption = 'ScanIn'
@@ -76,7 +76,7 @@ object ScanIn: TScanIn
         Height = 20
         Alignment = taCenter
         AutoSize = False
-        Caption = #29983#29986#32026#21029'(TO-SX)'
+        Caption = '????(TO-SX)'
       end
       object Label6: TLabel
         Left = 536
@@ -462,7 +462,7 @@ object ScanIn: TScanIn
               ValueType = fvtCount
             end>
           ReadOnly = True
-          Title.Caption = #22806#31665#32232#34399'|CARTONBAR'
+          Title.Caption = '????|CARTONBAR'
           Width = 113
         end
         item
@@ -470,7 +470,7 @@ object ScanIn: TScanIn
           FieldName = 'YSBH'
           Footers = <>
           ReadOnly = True
-          Title.Caption = #35330#21934#32232#34399'|YSBH'
+          Title.Caption = '????|YSBH'
           Width = 75
         end
         item
@@ -493,14 +493,14 @@ object ScanIn: TScanIn
           FieldName = 'XieMing'
           Footers = <>
           ReadOnly = True
-          Title.Caption = #38795#21517'|XieMing'
+          Title.Caption = '??|XieMing'
           Width = 94
         end
         item
           EditButtons = <>
           FieldName = 'Country'
           Footers = <>
-          Title.Caption = #22283#23478'|Country'
+          Title.Caption = '??|Country'
           Width = 120
         end
         item
@@ -508,7 +508,7 @@ object ScanIn: TScanIn
           FieldName = 'XH'
           Footers = <>
           ReadOnly = True
-          Title.Caption = #33394#34399'|XH'
+          Title.Caption = '??|XH'
           Width = 32
         end
         item
@@ -520,7 +520,7 @@ object ScanIn: TScanIn
               ValueType = fvtSum
             end>
           ReadOnly = True
-          Title.Caption = #38617#25976'|Qty'
+          Title.Caption = '??|Qty'
           Width = 48
         end
         item
@@ -528,7 +528,7 @@ object ScanIn: TScanIn
           FieldName = 'DepName'
           Footers = <>
           ReadOnly = True
-          Title.Caption = #37096#38272'|DepName'
+          Title.Caption = '??|DepName'
           Width = 67
         end
         item
@@ -536,7 +536,7 @@ object ScanIn: TScanIn
           FieldName = 'CKBH'
           Footers = <>
           ReadOnly = True
-          Title.Caption = #24288#21312'|CKBH'
+          Title.Caption = '??|CKBH'
           Width = 43
         end
         item
@@ -544,27 +544,27 @@ object ScanIn: TScanIn
           FieldName = 'KCBH'
           Footers = <>
           ReadOnly = True
-          Title.Caption = #20489#24235'|KCBH'
+          Title.Caption = '??|KCBH'
           Width = 55
         end
         item
           EditButtons = <>
           FieldName = 'KVBH'
           Footers = <>
-          Title.Caption = #20301#32622'|KVBH'
+          Title.Caption = '??|KVBH'
         end
         item
           EditButtons = <>
           FieldName = 'LPNBarCode'
           Footers = <>
-          Title.Caption = 'UCC'#27161'|LPNBarCode'
+          Title.Caption = 'UCC?|LPNBarCode'
         end
         item
           EditButtons = <>
           FieldName = 'INCS'
           Footers = <>
           ReadOnly = True
-          Title.Caption = #27425#25976'|INCS'
+          Title.Caption = '??|INCS'
           Width = 37
         end
         item
@@ -572,7 +572,7 @@ object ScanIn: TScanIn
           FieldName = 'INDATE'
           Footers = <>
           ReadOnly = True
-          Title.Caption = #26085#24235#26085'|INDATE'
+          Title.Caption = '???|INDATE'
           Width = 70
         end
         item
@@ -580,14 +580,14 @@ object ScanIn: TScanIn
           FieldName = 'rgw'
           Footers = <>
           ReadOnly = True
-          Title.Caption = #37325#37327'|rgw'
+          Title.Caption = '??|rgw'
         end
         item
           EditButtons = <>
           FieldName = 'INUSER'
           Footers = <>
           ReadOnly = True
-          Title.Caption = #20154#21729'|INUSER'
+          Title.Caption = '??|INUSER'
         end>
     end
     object rwin: TMemo
@@ -654,7 +654,7 @@ object ScanIn: TScanIn
                 ValueType = fvtCount
               end>
             ReadOnly = True
-            Title.Caption = #23610#30908'|DDCC'
+            Title.Caption = '??|DDCC'
             Width = 39
           end
           item
@@ -662,7 +662,7 @@ object ScanIn: TScanIn
             FieldName = 'XXCC'
             Footers = <>
             ReadOnly = True
-            Title.Caption = #23610#30908'|XXCC'
+            Title.Caption = '??|XXCC'
             Width = 33
           end
           item
@@ -674,7 +674,7 @@ object ScanIn: TScanIn
                 ValueType = fvtSum
               end>
             ReadOnly = True
-            Title.Caption = #38617#25976'|Qty'
+            Title.Caption = '??|Qty'
             Width = 28
           end
           item
@@ -687,7 +687,7 @@ object ScanIn: TScanIn
                 ValueType = fvtSum
               end>
             ReadOnly = True
-            Title.Caption = #25475#25551'|In_Qty'
+            Title.Caption = '??|In_Qty'
             Width = 39
           end
           item
@@ -700,7 +700,7 @@ object ScanIn: TScanIn
             Font.Style = []
             Footers = <>
             ReadOnly = True
-            Title.Caption = #20839#30418#30908'|InboxBar'
+            Title.Caption = '???|InboxBar'
             Width = 62
           end>
       end
@@ -732,7 +732,7 @@ object ScanIn: TScanIn
             FieldName = 'DDBH'
             Footers = <>
             ReadOnly = True
-            Title.Caption = #35330#21934'|DDBH'
+            Title.Caption = '??|DDBH'
             Width = 44
           end
           item
@@ -740,14 +740,14 @@ object ScanIn: TScanIn
             FieldName = 'Pairs'
             Footers = <>
             ReadOnly = True
-            Title.Caption = #38617#25976'|Pairs'
+            Title.Caption = '??|Pairs'
             Width = 50
           end
           item
             EditButtons = <>
             FieldName = 'CartonOK'
             Footers = <>
-            Title.Caption = #31665#23376'OK|CartonOK'
+            Title.Caption = '??OK|CartonOK'
             Width = 60
             WordWrap = True
           end
@@ -756,7 +756,7 @@ object ScanIn: TScanIn
             FieldName = 'Qty'
             Footers = <>
             ReadOnly = True
-            Title.Caption = #20837#24235'|Qty'
+            Title.Caption = '??|Qty'
             Width = 39
           end
           item
@@ -765,7 +765,7 @@ object ScanIn: TScanIn
             FieldName = 'MatFlag'
             Footers = <>
             ReadOnly = True
-            Title.Caption = #38936#26009'OK|VT OK'
+            Title.Caption = '??OK|VT OK'
             Width = 52
           end>
       end

@@ -19,7 +19,8 @@ uses
   themma in 'source\N6\themma.pas' {themvattu},
   DataSQ1 in 'source\N7\DataSQ1.pas' {DataSQ},
   UpdateDDZL1 in 'source\N8\UpdateDDZL1.pas' {UpdateDDZL},
-  exportkcll in 'source\N7\exportkcll.pas' {exportkcll1};
+  exportkcll in 'source\N7\exportkcll.pas' {exportkcll1},
+  DeleteYWCP1 in 'source\N9\DeleteYWCP1.pas' {DeleteYWCP};
 
 {$R *.res}
 
@@ -44,6 +45,7 @@ begin
   Application.CreateForm(TDM2, DM2);
   Application.CreateForm(Tmain, main);
   Application.CreateForm(Texportkcll1, exportkcll1);
+  Application.CreateForm(TDeleteYWCP, DeleteYWCP);
   login.hide;
   login.free;
  Application.Run;  

@@ -25,6 +25,7 @@ type
     SN71: TMenuItem;
     SN8: TMenuItem;
     SN72: TMenuItem;
+    SN9: TMenuItem;
     procedure SN14Click(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormCreate(Sender: TObject);
@@ -38,6 +39,7 @@ type
     procedure SN71Click(Sender: TObject);
     procedure SN8Click(Sender: TObject);
     procedure SN72Click(Sender: TObject);
+    procedure SN9Click(Sender: TObject);
   private
     { Private declarations }
 
@@ -52,7 +54,7 @@ var
 implementation
 
 uses SysUser1, limit1, Lock1, Switch1, CopyLimit1, UILanguages1, Unit1,
-  themma, DataSQ1, UpdateDDZL1, exportkcll;
+  themma, DataSQ1, UpdateDDZL1, exportkcll, DeleteYWCP1;
 
 {$R *.dfm}
 
@@ -257,6 +259,19 @@ begin
   else begin
     exportkcll1 := Texportkcll1.Create(Self);
     exportkcll1.Show;
+  end;
+end;
+
+procedure Tmain.SN9Click(Sender: TObject);
+begin
+  if DeleteYWCP <> nil then
+  begin
+    DeleteYWCP.Show;
+    DeleteYWCP.WindowState := wsMaximized;
+  end
+  else begin
+    DeleteYWCP := TDeleteYWCP.Create(Self);
+    DeleteYWCP.Show;
   end;
 end;
 

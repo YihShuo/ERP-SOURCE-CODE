@@ -1635,7 +1635,7 @@ begin
   close;
 end;
 
-procedure TScanIn.Button1Click(Sender: TObject);
+{procedure TScanIn.Button1Click(Sender: TObject);
 var IsUploadSucc:boolean;
     tmpCARTONBAR:TStringlist;
     i:integer;
@@ -1712,6 +1712,112 @@ begin
       Showmessage('Error:'+E.Message);
   end;
 end;
+     }
+
+
+procedure TScanIn.Button1Click(Sender: TObject);
+var IsUploadSucc:boolean;
+    tmpCARTONBAR:TStringlist;
+    i:integer;
+    SQLStr:String;
+    ErrorList: String; // Khai bao them bien de luu danh sach ma loi
+begin
+  //
+  try
+    with Qtemp do
+    begin
+      active:=false;
+      sql.Clear;
+      sql.add('select getdate() as NDate ');
+      active:=true;
+      NDate:=fieldbyname('NDate').value;
+      active:=false;
+    end;
+    tmpCARTONBAR:=TStringlist.Create;
+    IsUploadSucc:=true; //判斷上傳是否異常成功或失敗
+    ErrorList := ''; // Khoi tao bien chuoi rong truoc khi vao vong lap
+
+    with YWCP  do
+    begin
+      YWCP.first;
+      while not YWCP.eof do
+      begin
+          //20140405 weston 修改
+          YWCPExe.Active:=false;
+          YWCPExe.SQL.Clear;
+          YWCPExe.SQL.Add('Update YWCP Set  SB = '''+FieldByName('SB').AsString+''',CKBH='''+FieldByName('CKBH').AsString+''',');
+          YWCPExe.SQL.Add('DepNo='''+FieldByName('DepNo').AsString+''',KCBH='''+FieldByName('KCBH').AsString+''',KVBH='''+FieldByName('KVBH').AsString+''',INCS='+FieldByName('INCS').AsString+',');
+          YWCPExe.SQL.Add('INDATE='''+FormatDatetime('YYYY-MM-DD HH:NN:SS',FieldByName('INDATE').value)+''',LastInDate='''+FormatDatetime('YYYY-MM-DD HH:NN:SS',FieldByName('LastInDate').value)+''',');
+          YWCPExe.SQL.Add('rgw='+FieldByName('rgw').AsString+',INUser='''+FieldByName('INUser').AsString+''',REDATE=Case when SB in (''2'',''4'') then  '''+FormatDatetime('YYYY-MM-DD HH:NN:SS',FieldByName('LastInDate').value)+''' else REDATE end, ');
+          YWCPExe.SQL.Add('RECS=Case when SB in (''2'',''4'') then  IsNull(RECS,0)+1 else RECS end where CARTONBAR='''+FieldByName('CARTONBAR').AsString+'''');
+          //funcObj.WriteErrorLog(YWCPExe.sql.Text);
+          YWCPExe.ExecSQL;
+          tmpCARTONBAR.Add(FieldByName('CARTONBAR').AsString);
+
+          // GOM MA LOI VAO ERRORLIST (KHONG DUNG VONG LAP)
+          if YWCPExe.RowsAffected<>1 then 
+          begin
+            IsUploadSucc:=false;
+            ErrorList := ErrorList + '- ' + FieldByName('CARTONBAR').AsString + #13#10;
+          end;
+          //
+
+          YWCP.next;
+      end;
+      
+     { // HIEN THI TONG HOP CAC MA KHONG UPDATE DUOC XUONG MSSQL 2008 R2
+      if ErrorList <> '' then
+      begin
+        Showmessage('Loi khong the cap nhat cac thung sau vao database:' + #13#10 + ErrorList);
+      end;
+           }
+      //檢查資料是否完整寫入
+      if tmpCARTONBAR.Count>0 then
+      begin
+        for i:=0 to tmpCARTONBAR.Count-1 do
+        begin
+          SQLStr:=SQLStr+'(CARTONBAR='''+tmpCARTONBAR.Strings[i]+''') or';
+        end;
+        if Length(SQLStr)>0 then SQLStr:='Select CARTONBAR from YWCP where ('+Copy(SQLStr,1,length(SQLStr)-3)+') and SB=1';
+        //
+        with YWCPExe do
+        begin
+          Active:=false;
+          SQL.Clear;
+          SQL.Add(SQLStr);
+          Active:=true;
+          
+          // NEU LOI O KHAU VERIFY, SE HIEN THI RO SO LUONG BI HUT
+          if YWCPExe.RecordCount<tmpCARTONBAR.Count then 
+          begin
+            IsUploadSucc:=false;
+            Showmessage('Loi verify: He thong chi tra ve ' + IntToStr(YWCPExe.RecordCount) + ' dong. Mong doi: ' + IntToStr(tmpCARTONBAR.Count));
+          end;
+
+          Active:=false;
+        end;
+      end;
+      tmpCARTONBAR.Free;
+
+      //是否上傳都有更新成功
+      if IsUploadSucc=true then
+      begin
+        YWCP.active:=false;
+        edit4.text:='0';
+        YWCP.active:=true;
+        YPCPMat.Active:=false;
+        YPCPMat.Active:=true;
+      end else
+      begin
+       // Showmessage('Du lieu nhap kho khi upload khong thanh cong, vui long upload lan nua hoac lien he IT');
+      end;
+    end;
+  except
+    on E:Exception do
+      Showmessage('Error:'+E.Message);
+  end;
+end;
+
 
 procedure TScanIn.YWBZPOSAfterOpen(DataSet: TDataSet);
 begin

@@ -1,6 +1,6 @@
 object ScanIn: TScanIn
-  Left = 178
-  Top = 286
+  Left = 102
+  Top = 250
   Width = 1936
   Height = 820
   Caption = 'ScanIn'

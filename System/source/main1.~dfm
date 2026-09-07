@@ -1,6 +1,6 @@
 object main: Tmain
-  Left = 514
-  Top = 232
+  Left = 429
+  Top = 234
   Width = 870
   Height = 500
   Caption = 'main'
@@ -92,12 +92,17 @@ object main: Tmain
       end
       object SN72: TMenuItem
         Caption = 'N72 xuat du lieu kiem toan'
+        OnClick = SN72Click
       end
     end
     object SN8: TMenuItem
       Caption = 'N8 Update DDZL'
       Enabled = False
       OnClick = SN8Click
+    end
+    object SN9: TMenuItem
+      Caption = 'N9 Delete YWCP'
+      OnClick = SN9Click
     end
   end
   object Query1: TQuery
