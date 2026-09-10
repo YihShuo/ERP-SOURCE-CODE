@@ -3688,7 +3688,7 @@ begin
   QExcelTotal.SQL.Add(') AS SMDD;');
 
   // 6. XUAT KET QUA CUOI CUNG
-  QExcelTotal.SQL.Add('WITH DistinctPairs AS (SELECT DISTINCT Building + ''-'' + Lean AS LINE, XieMing, Pairs FROM #SumSQ_Total),');
+  QExcelTotal.SQL.Add('WITH DistinctPairs AS (SELECT DISTINCT Building + ''-'' + Lean AS LINE, DDBH, ry_index, XieMing, Pairs FROM #SumSQ_Total),');
   QExcelTotal.SQL.Add('AggregatedPairs AS (SELECT LINE, XieMing, SUM(Pairs) AS TotalPairs FROM DistinctPairs GROUP BY LINE, XieMing),');
   QExcelTotal.SQL.Add('AggregatedGXLB AS (SELECT Building + ''-'' + Lean AS LINE, XieMing, ISNULL(SUM(CASE WHEN GXLB = ''Upper'' THEN Total END), 0) AS Upper, ISNULL(SUM(CASE WHEN GXLB = ''Bottom'' THEN Total END), 0) AS Bottom, ');
   QExcelTotal.SQL.Add('ISNULL(SUM(CASE WHEN GXLB = ''Matching'' THEN Total END), 0) AS Matching FROM #SumSQ_Total GROUP BY Building, Lean, XieMing)');

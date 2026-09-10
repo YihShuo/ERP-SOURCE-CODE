@@ -1,3 +1,4 @@
+USE LYS_ERP;
 WITH RawData AS (
     SELECT 
         I.INV_NO, 
@@ -11,7 +12,7 @@ WITH RawData AS (
             CON_NO, 
             REPLACE(BIEN_SO, '-', '') BIEN_SO, 
             EXEDATE
-        FROM YWCP 
+        FROM (SELECT * FROM YWCP UNION ALL SELECT * FROM YWCPOld) YWCP 
         WHERE EXEDATE >= '2026-01-01'
     ) Y ON Y.DDBH = I.RYNO
     GROUP BY I.INV_NO, Y.BIEN_SO, Y.CON_NO

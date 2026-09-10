@@ -1,6 +1,6 @@
 object DailyOutsourcingCheck: TDailyOutsourcingCheck
-  Left = 252
-  Top = 168
+  Left = 181
+  Top = 161
   Width = 1666
   Height = 834
   Caption = 'DailyOutsourcingCheck'

@@ -427,7 +427,7 @@ begin
             '' + edtZSBH.Text;
 
       5: Worksheet.Cells[3, i].Characters(p, 0).Text :=
-            '' + FormatDateTime('dd-mm-yyyy', dtpVI.Date);
+            '' + FormatDateTime('dd-mm-yyyy', Query1.FieldByName('VIDate').AsDateTime);
     end;
   end;
 

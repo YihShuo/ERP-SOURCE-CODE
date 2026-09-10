@@ -544,7 +544,7 @@ procedure TScheduleUpload.ValidateAndSaveDispatch(AqryMaster, AqryDetail: TQuery
 var
   TotalNewQty: Integer;
   SizeName: string;
-  DispatchPairs, MaxCTS: Integer;
+  DispatchPairs, MatchingPairs: Integer;
   bm: TBookmark;
   FieldSize: TField;
   OldQty: Integer;
@@ -559,18 +559,20 @@ begin
   // 2. K? th?a chung du?ng truy?n Database v?i Query Detail d? Profiler b?t du?c
   //qryCheck.DatabaseName := AqryDetail.DatabaseName;
   qryCheck.Active := False;
-  qryCheck.SQL.Clear; 
-  
+  qryCheck.SQL.Clear;
+
   // Cau lenh SQL chay tren he quan tri MSSQL 2008 R2
+  qryCheck.SQL.Clear;
+
   qryCheck.SQL.Add('SELECT');
   qryCheck.SQL.Add('    ISNULL(D.Size, S.XXCC) AS Size,');
   qryCheck.SQL.Add('    ISNULL(D.Pairs, 0) AS DispatchPairs,');
-  qryCheck.SQL.Add('    ISNULL(S.CTS, 0) AS CTS');
+  qryCheck.SQL.Add('    ISNULL(S.okCTS, 0) AS okCTS');
   qryCheck.SQL.Add('FROM');
   qryCheck.SQL.Add('(');
   qryCheck.SQL.Add('    SELECT');
   qryCheck.SQL.Add('        Size,');
-  qryCheck.SQL.Add('        SUM(Pairs) AS Pairs');
+  qryCheck.SQL.Add('        ISNULL(SUM(Pairs), 0) AS Pairs');
   qryCheck.SQL.Add('    FROM SMDDS_Dispatch');
   qryCheck.SQL.Add('    WHERE ZLBH = :DDBH');
   qryCheck.SQL.Add('    GROUP BY Size');
@@ -579,14 +581,22 @@ begin
   qryCheck.SQL.Add('(');
   qryCheck.SQL.Add('    SELECT');
   qryCheck.SQL.Add('        XXCC,');
-  qryCheck.SQL.Add('        SUM(CTS * SMDDSS.Qty) AS CTS');
-  qryCheck.SQL.Add('    FROM SMDDSS');
-  qryCheck.SQL.Add('    INNER JOIN SMDD');
-  qryCheck.SQL.Add('        ON SMDD.DDBH = SMDDSS.DDBH');
-  qryCheck.SQL.Add('        AND SMDD.GXLB = SMDDSS.GXLB');
-  qryCheck.SQL.Add('        AND SMDD.GXLB = ''A''');
-  qryCheck.SQL.Add('    WHERE YSBH = :DDBH');
-  qryCheck.SQL.Add('      AND SMDDSS.GXLB = ''A''');
+  qryCheck.SQL.Add('        MIN(okCTS) AS okCTS');
+  qryCheck.SQL.Add('    FROM');
+  qryCheck.SQL.Add('    (');
+  qryCheck.SQL.Add('        SELECT');
+  qryCheck.SQL.Add('            XXCC,');
+  qryCheck.SQL.Add('            ISNULL(SUM(okCTS * SMDDSS.Qty), 0) AS okCTS,');
+  qryCheck.SQL.Add('            SMDDSS.GXLB');
+  qryCheck.SQL.Add('        FROM SMDDSS');
+  qryCheck.SQL.Add('        INNER JOIN SMDD');
+  qryCheck.SQL.Add('            ON SMDD.DDBH = SMDDSS.DDBH');
+  qryCheck.SQL.Add('            AND SMDD.GXLB = SMDDSS.GXLB');
+  qryCheck.SQL.Add('            AND SMDD.GXLB IN (''O'',''S'')');
+  qryCheck.SQL.Add('        WHERE YSBH = :DDBH');
+  qryCheck.SQL.Add('          AND SMDDSS.GXLB IN (''O'',''S'')');
+  qryCheck.SQL.Add('        GROUP BY XXCC, SMDDSS.GXLB');
+  qryCheck.SQL.Add('    ) S1');
   qryCheck.SQL.Add('    GROUP BY XXCC');
   qryCheck.SQL.Add(') S');
   qryCheck.SQL.Add('    ON D.Size = S.XXCC');
@@ -602,7 +612,7 @@ begin
   begin
     SizeName := qryCheck.FieldByName('Size').AsString;
     DispatchPairs := qryCheck.FieldByName('DispatchPairs').AsInteger;
-    MaxCTS := qryCheck.FieldByName('CTS').AsInteger;
+    MatchingPairs := qryCheck.FieldByName('okCTS').AsInteger;
     TotalNewQty := 0;
 
     // Tim cot Size tuong ung tren luoi Detail
@@ -643,14 +653,14 @@ begin
       end;
 
       // Thong bao loi khong dau neu vuot qua so luong CTS
-      if (DispatchPairs + TotalNewQty) > MaxCTS then
+      if (DispatchPairs + TotalNewQty) > MatchingPairs then
       begin
         Application.MessageBox(
           PChar(Format('Loi: Size %s vuot qua gioi han!' + #13#10 +
                        '- Da phat truoc do: %d' + #13#10 +
                        '- Dang nhap them: %d' + #13#10 +
-                       '- Toi da cho phep (CTS): %d',
-                       [SizeName, DispatchPairs, TotalNewQty, MaxCTS])),
+                       '- Toi da cho phep: %d',
+                       [SizeName, DispatchPairs, TotalNewQty, MatchingPairs])),
           'Warning', MB_OK + MB_ICONWARNING);
           
         qryCheck.Close; // Dong ket noi cua qryCheck truoc khi thoat
