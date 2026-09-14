@@ -3,6 +3,7 @@ Sub CheckALPRSumQty()
 
     Dim ws As Worksheet
     Dim conn As Object
+    Dim cmd As Object
     Dim rs As Object
 
     Dim lastRow As Long
@@ -10,7 +11,6 @@ Sub CheckALPRSumQty()
     Dim processedRows As Long
     Dim i As Long
 
-    Dim sql As String
     Dim KHPO As String
     Dim ARTICLE As String
 
@@ -44,7 +44,7 @@ Sub CheckALPRSumQty()
     oldStatusBar = Application.StatusBar
 
     '==========================================================
-    ' Tat nhung thu khong can thiet de tang toc
+    ' Tat nhung thu khong can thiet
     '==========================================================
     Application.ScreenUpdating = False
     Application.EnableEvents = False
@@ -52,7 +52,7 @@ Sub CheckALPRSumQty()
     Application.StatusBar = "Dang ket noi SQL Server..."
 
     '==========================================================
-    ' Ket noi SQL
+    ' Mo Connection 1 lan duy nhat
     '==========================================================
     Set conn = CreateObject("ADODB.Connection")
 
@@ -69,6 +69,29 @@ Sub CheckALPRSumQty()
     conn.Open
 
     '==========================================================
+    ' Tao Command 1 lan duy nhat
+    '==========================================================
+    Set cmd = CreateObject("ADODB.Command")
+
+    With cmd
+        .ActiveConnection = conn
+        .CommandType = 4       ' adCmdStoredProc
+        .CommandText = "sp_ALPRcheck_SumQty"
+        .CommandTimeout = 0
+
+        ' @KHPO varchar(30)
+        .Parameters.Append .CreateParameter( _
+            "@KHPO", 200, 1, 30)
+
+        ' @ARTICLE varchar(50)
+        .Parameters.Append .CreateParameter( _
+            "@ARTICLE", 200, 1, 50)
+
+        ' Prepare command
+        .Prepared = True
+    End With
+
+    '==========================================================
     ' Xu ly tung dong
     '==========================================================
     For i = 2 To lastRow
@@ -80,20 +103,25 @@ Sub CheckALPRSumQty()
 
         If KHPO <> "" Then
 
-            sql = "EXEC sp_ALPRcheck_SumQty '" & _
-                  Replace(KHPO, "'", "''") & "', '" & _
-                  Replace(ARTICLE, "'", "''") & "'"
+            '==================================================
+            ' Gan gia tri cho parameter
+            '==================================================
+            cmd.Parameters("@KHPO").Value = KHPO
+            cmd.Parameters("@ARTICLE").Value = ARTICLE
 
-            Set rs = CreateObject("ADODB.Recordset")
-
-            rs.Open sql, conn, 0, 1
+            '==================================================
+            ' Execute
+            '==================================================
+            Set rs = cmd.Execute
 
             If Not rs.EOF Then
+
                 If IsNull(rs.Fields(0).Value) Then
                     ws.Cells(i, "S").Value = ""
                 Else
                     ws.Cells(i, "S").Value = rs.Fields(0).Value
                 End If
+
             Else
                 ws.Cells(i, "S").Value = ""
             End If
@@ -102,7 +130,7 @@ Sub CheckALPRSumQty()
             Set rs = Nothing
 
         Else
-            ws.Cells(i, "M").Value = ""
+            ws.Cells(i, "S").Value = ""
         End If
 
         '======================================================
@@ -124,13 +152,21 @@ Sub CheckALPRSumQty()
     Next i
 
     '==========================================================
-    ' Dong ket noi
+    ' Dong Recordset neu con
     '==========================================================
     If Not rs Is Nothing Then
         If rs.State <> 0 Then rs.Close
         Set rs = Nothing
     End If
 
+    '==========================================================
+    ' Dong Command
+    '==========================================================
+    Set cmd = Nothing
+
+    '==========================================================
+    ' Dong Connection
+    '==========================================================
     If Not conn Is Nothing Then
         If conn.State <> 0 Then conn.Close
         Set conn = Nothing
@@ -169,6 +205,8 @@ ErrHandler:
         Set rs = Nothing
     End If
 
+    Set cmd = Nothing
+
     If Not conn Is Nothing Then
         If conn.State <> 0 Then conn.Close
         Set conn = Nothing
@@ -184,4 +222,3 @@ ErrHandler:
     MsgBox errMsg, vbCritical, "CheckALPRSumQty"
 
 End Sub
-

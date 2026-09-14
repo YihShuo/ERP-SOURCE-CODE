@@ -204,7 +204,7 @@ begin
           GET + JSON body
         --------------------------------------------}
         Http.Open(
-          'GET',
+          'POST',
           'http://localhost:8081/api/v1/deckers/RePoList',
           False
         );

@@ -176,7 +176,7 @@ begin
             // GET
             //==================================================
             Http.Open(
-              'POST',
+              'GET',
               'http://localhost:8081/api/v1/deckers/RePoList',
               False
             );
@@ -223,7 +223,9 @@ begin
           #9,
           Json,
           #9,
-          StatusCode
+          StatusCode,
+          #9,
+          ResponseText
         );
 
         //======================================================

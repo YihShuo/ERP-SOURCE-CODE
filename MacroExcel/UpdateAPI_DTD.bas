@@ -39,7 +39,7 @@ Sub UpdatePO_DTD()
         On Error GoTo ErrHandler
 
         ' Mo ket noi va gui request
-        Http.Open "GET", "http://localhost:8081/api/v1/deckers/RePoList", False
+        Http.Open "POST", "http://localhost:8081/api/v1/deckers/RePoList", False
         Http.SetRequestHeader "Content-Type", "application/json"
         Http.Send Json
 
