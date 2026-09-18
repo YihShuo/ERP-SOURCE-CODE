@@ -31,7 +31,7 @@ Sub GetMaxExeDate()
     For i = 2 To lastRow
 
         KHPO = Trim(ws.Cells(i, "A").Value)
-        ARTICLE = Trim(ws.Cells(i, "B").Value)
+        ARTICLE = Trim(ws.Cells(i, "D").Value)
 
         ' Neu A va B co du lieu thi moi truy van
         If KHPO <> "" And ARTICLE <> "" Then
@@ -50,20 +50,20 @@ Sub GetMaxExeDate()
 
             If Not rs.EOF Then
                 If IsNull(rs.Fields("EXEDATE").Value) Then
-                    ws.Cells(i, "C").Value = ""
+                    ws.Cells(i, "E").Value = ""
                 Else
-                    ws.Cells(i, "C").Value = rs.Fields("EXEDATE").Value
-                    ws.Cells(i, "C").NumberFormat = "yyyy-mm-dd"
+                    ws.Cells(i, "E").Value = rs.Fields("EXEDATE").Value
+                    ws.Cells(i, "E").NumberFormat = "yyyy-mm-dd"
                 End If
             Else
-                ws.Cells(i, "C").Value = ""
+                ws.Cells(i, "E").Value = ""
             End If
 
             rs.Close
             Set rs = Nothing
 
         Else
-            ' ws.Cells(i, "C").Value = ""
+            ' ws.Cells(i, "E").Value = ""
         End If
 
     Next i

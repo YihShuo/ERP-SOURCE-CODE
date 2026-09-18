@@ -93,6 +93,7 @@ type
     procedure Query1AfterOpen(DataSet: TDataSet);
     procedure DBGrid1Columns11EditButtonClick(Sender: TObject;
       var Handled: Boolean);
+    procedure FormCreate(Sender: TObject);
   private
     { Private declarations }
   public
@@ -375,7 +376,7 @@ var
   s: WideString;
 begin
 
-  AppDir := ExtractFilePath(Application.ExeName);
+  {AppDir := ExtractFilePath(Application.ExeName);
 
   if not DirectoryExists(AppDir) then
     ForceDirectories(AppDir);
@@ -384,7 +385,7 @@ begin
   DstFile := IncludeTrailingPathDelimiter(AppDir) + 'A-QIP-004D.xlsx';
 
   if not CopyFile(PChar(SrcFile), PChar(DstFile), False) then
-    ShowMessage('Copy file that bai');
+    ShowMessage('Copy file that bai');}
 
   DuongDanFile := ExtractFilePath(ParamStr(0)) + 'A-QIP-004D.xlsx';
 
@@ -494,6 +495,12 @@ procedure TNGMaterial.DBGrid1Columns11EditButtonClick(Sender: TObject;
 begin
   QC_MatDefect:=TQC_MatDefect.create(self);
   QC_MatDefect.Show;
+end;
+
+procedure TNGMaterial.FormCreate(Sender: TObject);
+begin
+  dtpUSERDate.Date := Now;
+  dtpInspecDate.Date := Now;
 end;
 
 end.

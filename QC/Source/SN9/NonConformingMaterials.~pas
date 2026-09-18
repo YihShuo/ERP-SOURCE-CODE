@@ -157,7 +157,7 @@ begin
      or (Trim(AQuery.FieldByName(AIDField).AsString) = '') then
     Exit;
 
-  Cell := AWorksheet.Cells[AInsertRow + 2, ACol];
+  Cell := AWorksheet.Cells[11, ACol];
   MergeCell := Cell.MergeArea;
 
   MergeCell.WrapText := True;

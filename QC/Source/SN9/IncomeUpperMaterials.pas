@@ -783,7 +783,7 @@ begin
   PrintSign(Worksheet, Query1, InsertRow, 'MSCFID', 'MSCFDate', 1, True);
   PrintSign(Worksheet, Query1, InsertRow, 'SCFID',  'SCFDate',  3, True);
   PrintSign(Worksheet, Query1, InsertRow, 'LCFID',  'LCFDate',  6, True);
-  PrintSign(Worksheet, Query1, InsertRow, 'PreparedID', 'PreparedDate', 11, True);
+  PrintSign(Worksheet, Query1, InsertRow, 'PreparedID', 'PreparedDate', 11, False);
 
   //Kiem tra ky KCS Super
   {Query1.First;

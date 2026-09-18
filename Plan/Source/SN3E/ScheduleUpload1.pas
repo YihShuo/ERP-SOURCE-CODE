@@ -567,7 +567,7 @@ begin
   qryCheck.SQL.Add('SELECT');
   qryCheck.SQL.Add('    ISNULL(D.Size, S.XXCC) AS Size,');
   qryCheck.SQL.Add('    ISNULL(D.Pairs, 0) AS DispatchPairs,');
-  qryCheck.SQL.Add('    ISNULL(S.okCTS, 0) AS MatchingPairs');
+  qryCheck.SQL.Add('    ISNULL(S.CTS, 0) AS MatchingPairs');
   qryCheck.SQL.Add('FROM');
   qryCheck.SQL.Add('(');
   qryCheck.SQL.Add('    SELECT');
@@ -581,12 +581,12 @@ begin
   qryCheck.SQL.Add('(');
   qryCheck.SQL.Add('    SELECT');
   qryCheck.SQL.Add('        XXCC,');
-  qryCheck.SQL.Add('        MIN(okCTS) AS okCTS');
+  qryCheck.SQL.Add('        MIN(CTS) AS CTS');
   qryCheck.SQL.Add('    FROM');
   qryCheck.SQL.Add('    (');
   qryCheck.SQL.Add('        SELECT');
   qryCheck.SQL.Add('            XXCC,');
-  qryCheck.SQL.Add('            ISNULL(SUM(okCTS * SMDDSS.Qty), 0) AS okCTS,');
+  qryCheck.SQL.Add('            ISNULL(SUM(CTS * SMDDSS.Qty), 0) AS CTS,');
   qryCheck.SQL.Add('            SMDDSS.GXLB');
   qryCheck.SQL.Add('        FROM SMDDSS');
   qryCheck.SQL.Add('        INNER JOIN SMDD');

@@ -189,7 +189,7 @@ begin
 
     SignFile := ExtractFilePath(Application.ExeName) +
                 'Signatures\' +
-                Main.Edit1.Text +
+                Trim(AQuery.FieldByName(AIDField).AsString) +
                 '.bmp';
 
     if FileExists(SignFile) then
@@ -199,8 +199,8 @@ begin
       CellWidth  := MergeCell.Width;
       CellHeight := MergeCell.Height;
 
-      PicWidth  := 80;
-      PicHeight := 40;
+      PicWidth  := CellWidth * 0.4;
+      PicHeight := CellHeight * 0.45;
 
       AWorksheet.Shapes.AddPicture(
         SignFile,

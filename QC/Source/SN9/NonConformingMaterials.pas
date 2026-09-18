@@ -157,7 +157,7 @@ begin
      or (Trim(AQuery.FieldByName(AIDField).AsString) = '') then
     Exit;
 
-  Cell := AWorksheet.Cells[AInsertRow + 2, ACol];
+  Cell := AWorksheet.Cells[11, ACol];
   MergeCell := Cell.MergeArea;
 
   MergeCell.WrapText := True;
@@ -407,7 +407,7 @@ var
   v: array[0..11] of WideString;
   cur: WideString;
 begin
-  AppDir := ExtractFilePath(Application.ExeName);
+  {AppDir := ExtractFilePath(Application.ExeName);
 
   if not DirectoryExists(AppDir) then
     ForceDirectories(AppDir);
@@ -416,7 +416,7 @@ begin
   DstFile := IncludeTrailingPathDelimiter(AppDir) + 'A-QIP-WS009-02B.xlsx';
 
   if not CopyFile(PChar(SrcFile), PChar(DstFile), False) then
-    ShowMessage('Copy file that bai');
+    ShowMessage('Copy file that bai');}
 
   DuongDanFile := ExtractFilePath(ParamStr(0)) + 'A-QIP-WS009-02B.xlsx';
   SaveDialog := TSaveDialog.Create(nil);

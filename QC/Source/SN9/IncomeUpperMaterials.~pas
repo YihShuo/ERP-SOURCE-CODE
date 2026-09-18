@@ -726,21 +726,6 @@ begin
     end;
   end;
 
-  Worksheet.Cells[5, 6].Value := Query1.FieldByName('RQty').AsString;
-  Worksheet.Cells[5, 7].Value := Query1.FieldByName('IQty').AsString;
-  Worksheet.Cells[5, 8].Value := Query1.FieldByName('DeQty').AsString;
-  Worksheet.Cells[5, 9].Value := Query1.FieldByName('DeReason').AsString;
-  Worksheet.Cells[5, 10].Value := Query1.FieldByName('InspecResult').AsString;
-
-  if Trim(Query1.FieldByName('SendDate').AsString) <> '' then
-    Worksheet.Cells[5, 11].Value := FormatDateTime('dd-mm-yyyy', Query1.FieldByName('SendDate').AsDateTime)
-  else
-    Worksheet.Cells[5, 11].Value := '';
-
-  Worksheet.Cells[5, 12].Value := Query1.FieldByName('LabID').AsString;
-  Worksheet.Cells[5, 13].Value := Query1.FieldByName('LabResult').AsString;
-  Worksheet.Cells[5, 14].Value := Query1.FieldByName('Reject').AsString;
-
   QDetail.First;
   InsertRow := StartRow;
 
@@ -777,6 +762,21 @@ begin
     Inc(InsertRow);
     QDetail.Next;
   end;
+
+  Worksheet.Cells[5, 6].Value := Query1.FieldByName('RQty').AsString;
+  Worksheet.Cells[5, 7].Value := Query1.FieldByName('IQty').AsString;
+  Worksheet.Cells[5, 8].Value := Query1.FieldByName('DeQty').AsString;
+  Worksheet.Cells[5, 9].Value := Query1.FieldByName('DeReason').AsString;
+  Worksheet.Cells[5, 10].Value := Query1.FieldByName('InspecResult').AsString;
+
+  if Trim(Query1.FieldByName('SendDate').AsString) <> '' then
+    Worksheet.Cells[5, 11].Value := FormatDateTime('dd-mm-yyyy', Query1.FieldByName('SendDate').AsDateTime)
+  else
+    Worksheet.Cells[5, 11].Value := '';
+
+  Worksheet.Cells[5, 12].Value := Query1.FieldByName('LabID').AsString;
+  Worksheet.Cells[5, 13].Value := Query1.FieldByName('LabResult').AsString;
+  Worksheet.Cells[5, 14].Value := Query1.FieldByName('Reject').AsString;
 
   Worksheet.Rows[Format('%d:%d', [InsertRow, InsertRow])].Delete;
 

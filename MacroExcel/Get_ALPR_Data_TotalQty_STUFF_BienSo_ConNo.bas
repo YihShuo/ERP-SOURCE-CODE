@@ -24,12 +24,59 @@ Sub Get_ALPR_Data()
     Dim SQL6 As String
     Dim SQL7 As String
     Dim SQL8 As String
+        
+    ' ==========================================================
+    ' CAU HINH COT EXCEL
+    ' ==========================================================
+    
+    Dim ColPO As String
+    Dim ColStyle As String
+    Dim ColColor As String
+    
+    Dim ColQty As String
+    Dim ColConNo As String
+    Dim ColBienSo As String
+
+    ' --- Cot dau vao ---
+    ColPO = "G"
+    ColStyle = "H"
+    ColColor = "I"
+
+    ' --- Cot ket qua ---
+    ColQty = "S"
+    ColConNo = "T"
+    ColBienSo = "U"
 
 
     Set ws = ActiveSheet
 
     LastRow = ws.Cells(ws.Rows.Count, "A").End(xlUp).Row
-
+    
+    ws.Range(ColQty & "1").Offset(0, -1).Copy _
+        Destination:=ws.Range(ColQty & "1")
+    
+    ws.Range(ColConNo & "1").Offset(0, -1).Copy _
+        Destination:=ws.Range(ColConNo & "1")
+    
+    ws.Range(ColBienSo & "1").Offset(0, -1).Copy _
+        Destination:=ws.Range(ColBienSo & "1")
+    
+    
+    ws.Range(ColQty & "1").Value = "ExQty"
+    ws.Range(ColConNo & "1").Value = "ConNo"
+    ws.Range(ColBienSo & "1").Value = "BienSo"
+    
+    
+    ' To nen cam
+    ws.Range(ColQty & "1").Interior.Color = RGB(255, 192, 0)
+    ws.Range(ColConNo & "1").Interior.Color = RGB(255, 192, 0)
+    ws.Range(ColBienSo & "1").Interior.Color = RGB(255, 192, 0)
+    
+    ' AutoFit 3 cot
+    ws.Columns(ColQty).AutoFit
+    ws.Columns(ColConNo).AutoFit
+    ws.Columns(ColBienSo).AutoFit
+    
     If LastRow < 2 Then
         MsgBox "Khong co du lieu!", vbInformation
         Exit Sub
@@ -194,9 +241,9 @@ Sub Get_ALPR_Data()
 
     For i = 2 To LastRow
 
-        PO = Trim(CStr(ws.Cells(i, "G").Value))
+        PO = Trim(CStr(ws.Cells(i, ColPO).Value))
 
-        SKU = Trim(CStr(ws.Cells(i, "H").Value)) & "-" & Trim(CStr(ws.Cells(i, "I").Value))
+        SKU = Trim(CStr(ws.Cells(i, ColStyle).Value)) & "-" & Trim(CStr(ws.Cells(i, ColColor).Value))
 
 
         ' Neu PO va SKU khong rong
@@ -214,35 +261,35 @@ Sub Get_ALPR_Data()
 
                 ' Cot TotalQty
                 If IsNull(Rs.Fields("TotalQty").Value) Then
-                    ws.Cells(i, "S").Value = ""
+                    ws.Cells(i, ColQty).Value = ""
                 Else
-                    ws.Cells(i, "S").Value = _
+                    ws.Cells(i, ColQty).Value = _
                         Rs.Fields("TotalQty").Value
                 End If
 
 
                 ' Cot CON_NO
                 If IsNull(Rs.Fields("CON_NO").Value) Then
-                    ws.Cells(i, "T").Value = ""
+                    ws.Cells(i, ColConNo).Value = ""
                 Else
-                    ws.Cells(i, "T").Value = _
+                    ws.Cells(i, ColConNo).Value = _
                         Rs.Fields("CON_NO").Value
                 End If
 
 
                 ' Cot Plate_Id
                 If IsNull(Rs.Fields("Plate_Id").Value) Then
-                    ws.Cells(i, "U").Value = ""
+                    ws.Cells(i, ColBienSo).Value = ""
                 Else
-                    ws.Cells(i, "U").Value = _
+                    ws.Cells(i, ColBienSo).Value = _
                         Rs.Fields("Plate_Id").Value
                 End If
 
             Else
 
-                ws.Cells(i, "S").Value = "0"
-                ws.Cells(i, "T").Value = ""
-                ws.Cells(i, "U").Value = ""
+                ws.Cells(i, ColQty).Value = "0"
+                ws.Cells(i, ColConNo).Value = ""
+                ws.Cells(i, ColBienSo).Value = ""
 
             End If
 
@@ -252,9 +299,9 @@ Sub Get_ALPR_Data()
 
         Else
 
-            ws.Cells(i, "S").Value = "0"
-            ws.Cells(i, "T").Value = ""
-            ws.Cells(i, "U").Value = ""
+            ws.Cells(i, ColQty).Value = "0"
+            ws.Cells(i, ColConNo).Value = ""
+            ws.Cells(i, ColBienSo).Value = ""
 
         End If
 

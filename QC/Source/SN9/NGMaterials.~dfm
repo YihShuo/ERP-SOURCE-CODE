@@ -478,6 +478,7 @@ object NGMaterial: TNGMaterial
       Top = 72
       Width = 121
       Height = 28
+      CharCase = ecUpperCase
       TabOrder = 19
     end
     object DBMemo1: TDBMemo
@@ -505,6 +506,7 @@ object NGMaterial: TNGMaterial
       Top = 72
       Width = 161
       Height = 28
+      CharCase = ecUpperCase
       TabOrder = 22
     end
   end

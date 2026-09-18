@@ -567,7 +567,7 @@ begin
   qryCheck.SQL.Add('SELECT');
   qryCheck.SQL.Add('    ISNULL(D.Size, S.XXCC) AS Size,');
   qryCheck.SQL.Add('    ISNULL(D.Pairs, 0) AS DispatchPairs,');
-  qryCheck.SQL.Add('    ISNULL(S.okCTS, 0) AS okCTS');
+  qryCheck.SQL.Add('    ISNULL(S.okCTS, 0) AS MatchingPairs');
   qryCheck.SQL.Add('FROM');
   qryCheck.SQL.Add('(');
   qryCheck.SQL.Add('    SELECT');
@@ -612,7 +612,7 @@ begin
   begin
     SizeName := qryCheck.FieldByName('Size').AsString;
     DispatchPairs := qryCheck.FieldByName('DispatchPairs').AsInteger;
-    MatchingPairs := qryCheck.FieldByName('okCTS').AsInteger;
+    MatchingPairs := qryCheck.FieldByName('MatchingPairs').AsInteger;
     TotalNewQty := 0;
 
     // Tim cot Size tuong ung tren luoi Detail
