@@ -30,40 +30,49 @@ Sub GetMaxExeDate()
     ' Duyet tung dong
     For i = 2 To lastRow
 
-        KHPO = Trim(ws.Cells(i, "A").Value)
-        ARTICLE = Trim(ws.Cells(i, "D").Value)
+        KHPO = Trim(ws.Cells(i, "G").Value)
+        ARTICLE = Trim(ws.Cells(i, "J").Value)
 
         ' Neu A va B co du lieu thi moi truy van
         If KHPO <> "" And ARTICLE <> "" Then
 
-            SQL = "SELECT CAST(MAX(EXEDATE) AS date) AS EXEDATE " & _
-                  "FROM YWCP " & _
-                  "WHERE DDBH IN (" & _
-                  "SELECT DDBH FROM DDZL " & _
-                  "WHERE KHPO = '" & Replace(KHPO, "'", "''") & "' " & _
-                  "AND ARTICLE = '" & Replace(ARTICLE, "'", "''") & "' " & _
-                  "AND DDZT = 'Y')"
+        SQL = "SET NOCOUNT ON; " & _
+              "IF OBJECT_ID('tempdb..#TempDDBH') IS NOT NULL DROP TABLE #TempDDBH; " & _
+              "SELECT DISTINCT DDBH " & _
+              "INTO #TempDDBH " & _
+              "FROM DDZL " & _
+              "WHERE KHPO = '" & KHPO & "' " & _
+              "AND ARTICLE = '" & ARTICLE & "' " & _
+              "AND DDZT = 'Y'; " & _
+              "CREATE CLUSTERED INDEX CX_TempDDBH ON #TempDDBH(DDBH); " & _
+              "SELECT CAST(MAX(MaxDate) AS DATE) AS EXEDATE " & _
+              "FROM (" & _
+              "    SELECT MAX(Y.EXEDATE) AS MaxDate " & _
+              "    FROM YWCP Y " & _
+              "    INNER JOIN #TempDDBH T ON Y.DDBH = T.DDBH " & _
+              "    UNION ALL " & _
+              "    SELECT MAX(Y.EXEDATE) AS MaxDate " & _
+              "    FROM YWCPOld Y " & _
+              "    INNER JOIN #TempDDBH T ON Y.DDBH = T.DDBH " & _
+              ") AS Result; " & _
+              "DROP TABLE #TempDDBH;"
 
             Set rs = CreateObject("ADODB.Recordset")
 
             rs.Open SQL, conn, 0, 1
 
             If Not rs.EOF Then
-                If IsNull(rs.Fields("EXEDATE").Value) Then
-                    ws.Cells(i, "E").Value = ""
-                Else
-                    ws.Cells(i, "E").Value = rs.Fields("EXEDATE").Value
-                    ws.Cells(i, "E").NumberFormat = "yyyy-mm-dd"
-                End If
+                ws.Cells(i, "Y").Value = rs.Fields("EXEDATE").Value
+                ws.Cells(i, "Y").NumberFormat = "yyyy-mm-dd"
             Else
-                ws.Cells(i, "E").Value = ""
+                'ws.Cells(i, "Y").Value = ""
             End If
 
             rs.Close
             Set rs = Nothing
 
         Else
-            ' ws.Cells(i, "E").Value = ""
+            'ws.Cells(i, "Y").Value = ""
         End If
 
     Next i

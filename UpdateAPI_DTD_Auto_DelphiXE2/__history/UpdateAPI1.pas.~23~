@@ -102,21 +102,24 @@ begin
       'Provider=SQLOLEDB;' +
       'Data Source=192.168.71.7;' +
       'Initial Catalog=LYS_ERP;' +
-      'User ID=tyh;' +
-      'Password=tyh;';
-
+      'User ID=tyxuan;' +
+      'Password=jack;';
     Conn.LoginPrompt := False;
     Conn.Connected := True;
 
+    Qry.Connection := Conn;
+    Qry.CommandTimeout := 0;
+
+    QryCurrentDate.Connection := Conn;
+    QryCurrentDate.CommandTimeout := 0;
+
     //Lấy ngày từ SQL
     QryCurrentDate.Connection := Conn;
-    QryCurrentDate.SQL.Text :=
-      'SELECT CONVERT(varchar(10), GETDATE(), 120) AS CurrentDate';
+    QryCurrentDate.SQL.Text := 'SELECT CONVERT(varchar(10), GETDATE(), 120) AS CurrentDate';
 
     QryCurrentDate.Open;
 
-    CurrentDate :=
-      QryCurrentDate.FieldByName('CurrentDate').AsString;
+    CurrentDate := QryCurrentDate.FieldByName('CurrentDate').AsString;
 
     QryCurrentDate.Close;
 
@@ -138,40 +141,7 @@ begin
     {======================================================
       3. SQL lấy danh sách KHPO
     ======================================================}
-    Qry.SQL.Text :=
-      'WITH X AS (' +
-      '    SELECT DISTINCT y.*, d.KHPO, d.ARTICLE ' +
-      '    FROM (' +
-      '        SELECT * FROM YWCP ' +
-      '        UNION ALL ' +
-      '        SELECT * FROM YWCPOld' +
-      '    ) y ' +
-      '    INNER JOIN DDZL d ON d.DDBH = y.DDBH ' +
-      '    WHERE SB IN (''1'',''2'',''4'') ' +
-      '      AND DDZT = ''Y'' ' +
-      '), ' +
-      'ResultData AS (' +
-      '    SELECT ' +
-      '        X.KHPO, ' +
-      '        X.ARTICLE, ' +
-      '        ISNULL(SUM(Qty), 0) AS InQty, ' +
-      '        (' +
-      '            SELECT TOP 1 p.fg10 ' +
-      '            FROM po_daily p ' +
-      '            WHERE p.khpo = X.KHPO ' +
-      '              AND (p.style_no + ''-'' + p.color_code) = X.ARTICLE ' +
-      '            ORDER BY UserDate DESC' +
-      '        ) AS fg10 ' +
-      '    FROM X ' +
-      '    WHERE X.ARTICLE NOT LIKE ''BG%'' ' +
-      '      AND CAST(INDATE AS date) < CAST(GETDATE() AS date) ' +
-      '    GROUP BY X.KHPO, X.ARTICLE ' +
-      ') ' +
-      'SELECT DISTINCT KHPO ' +
-      'FROM ResultData ' +
-      'WHERE InQty <> ISNULL(fg10, 0) ' +
-      '  AND KHPO <> '''' ' +
-      'ORDER BY KHPO';
+    Qry.SQL.Text :='EXEC sp_updateapifg10';
 
     Qry.Open;
 
@@ -234,7 +204,7 @@ begin
           GET + JSON body
         --------------------------------------------}
         Http.Open(
-          'GET',
+          'POST',
           'http://localhost:8081/api/v1/deckers/RePoList',
           False
         );
@@ -261,8 +231,7 @@ begin
           FormatDateTime('yyyy-mm-dd hh:nn:ss', Now) +
           ' | KHPO=' + KHPO +
           ' | Status=' + IntToStr(StatusCode) +
-          ' | Request=' + Json +
-          ' | Response=' + ResponseText
+          ' | Request=' + Json
         );
 
       except

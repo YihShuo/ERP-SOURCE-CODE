@@ -32,14 +32,14 @@ CREATE TABLE #FileList (FileName NVARCHAR(255), Depth INT, IsFile INT);
 -- 1. Tìm file FULL mới nhất
 INSERT INTO #FileList EXEC master.dbo.xp_dirtree @FullFolder, 1, 1;
 SELECT TOP 1 @LatestFullFile = @FullFolder + FileName
-FROM #FileList WHERE IsFile = 1 AND FileName LIKE '%.bak'
+FROM #FileList WHERE IsFile = 1 AND FileName LIKE 'LYS_ERP_FULL_%.bak'
 ORDER BY FileName DESC;
 DELETE FROM #FileList;
 
 -- 2. Tìm file DIFF mới nhất
 INSERT INTO #FileList EXEC master.dbo.xp_dirtree @DiffFolder, 1, 1;
 SELECT TOP 1 @LatestDiffFile = @DiffFolder + FileName
-FROM #FileList WHERE IsFile = 1 AND FileName LIKE '%.bak'
+FROM #FileList WHERE IsFile = 1 AND FileName LIKE 'LYS_ERP_DIFF_%.bak'
 ORDER BY FileName DESC;
 DELETE FROM #FileList;
 

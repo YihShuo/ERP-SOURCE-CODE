@@ -1,42 +1,43 @@
 USE LYS_ERP;
+
 DECLARE @date DATE = CAST(GETDATE() AS DATE);
-        DECLARE @start DATETIME = DATEADD(HOUR, -2, CAST(@date AS DATETIME)); 
-        DECLARE @end   DATETIME = DATEADD(HOUR, 22, CAST(@date AS DATETIME));
+DECLARE @start DATETIME = DATEADD(HOUR, -2, CAST(@date AS DATETIME)); 
+DECLARE @end   DATETIME = DATEADD(HOUR, 22, CAST(@date AS DATETIME));
 
-        WITH ListKHPO AS (
-            -- Ngu?n 1: B?ng YWCP v?i ngay xu?t ho?c ngay nh?p hom nay
-            SELECT DISTINCT DDZL.KHPO
-            FROM YWCP 
-            INNER JOIN DDZL
-                ON DDZL.DDBH = YWCP.DDBH
-            WHERE (
-                YWCP.EXEDATE >= @start AND YWCP.EXEDATE < @end OR 
-                YWCP.INDATE   >= @start AND YWCP.INDATE   < @end OR 
-                YWCP.REDATE   >= @start AND YWCP.REDATE   < @end
-            )
-            AND DDZL.KHPO > ''
+WITH ListKHPO AS (
+    -- Ngu?n 1: B?ng YWCP v?i ngay xu?t ho?c ngay nh?p hom nay
+    SELECT DISTINCT DDZL.KHPO
+    FROM YWCP 
+    INNER JOIN DDZL
+        ON DDZL.DDBH = YWCP.DDBH
+    WHERE (
+        YWCP.EXEDATE >= @start AND YWCP.EXEDATE < @end OR 
+        YWCP.INDATE   >= @start AND YWCP.INDATE   < @end OR 
+        YWCP.REDATE   >= @start AND YWCP.REDATE   < @end
+    )
+    AND DDZL.KHPO > ''
 
             
-            UNION
+    UNION
             
-            -- Ngu?n 2: B?ng SMDDSS v?i ngay quet hom nay
-            SELECT DISTINCT KHPO
-            FROM SMDD 
-                INNER JOIN SMDDSS on SMDDSS.DDBH = SMDD.DDBH and SMDD.GXLB = SMDDSS.GXLB
-                INNER JOIN DDZL ON DDZL.DDBH = SMDD.YSBH
-            WHERE CONVERT(DATE, ScanEDate) = CONVERT(DATE, @date)
+    -- Ngu?n 2: B?ng SMDDSS v?i ngay quet hom nay
+    SELECT DISTINCT KHPO
+    FROM SMDD 
+        INNER JOIN SMDDSS on SMDDSS.DDBH = SMDD.DDBH and SMDD.GXLB = SMDDSS.GXLB
+        INNER JOIN DDZL ON DDZL.DDBH = SMDD.YSBH
+    WHERE CONVERT(DATE, ScanEDate) = CONVERT(DATE, @date)
             
-            UNION
+    UNION
             
-            -- Ngu?n 3: B?ng KCRK + KCRKS v?i ngay xac nh?n nh?p kho hom nay
-            SELECT  distinct DDZL.KHPO
-            FROM KCRK
-            LEFT JOIN KCRKS ON KCRK.RKNO = KCRKS.RKNO
-            INNER JOIN DDZL ON DDZL.DDBH = KCRKS.CGBH
-            WHERE CONVERT(DATE, CFMDATE) = CONVERT(DATE, @date)
-            AND KCRK.GSBH = 'HBA'
-            AND (KCRKS.CGBH LIKE 'F%' OR KCRKS.CGBH LIKE 'HK%' OR KCRKS.CGBH LIKE 'HFS%' OR KCRKS.CGBH LIKE 'JHS%' OR KCRKS.CGBH LIKE 'JTS%')
-        ),
+    -- Ngu?n 3: B?ng KCRK + KCRKS v?i ngay xac nh?n nh?p kho hom nay
+    SELECT  distinct DDZL.KHPO
+    FROM KCRK
+    LEFT JOIN KCRKS ON KCRK.RKNO = KCRKS.RKNO
+    INNER JOIN DDZL ON DDZL.DDBH = KCRKS.CGBH
+    WHERE CONVERT(DATE, CFMDATE) = CONVERT(DATE, @date)
+    AND KCRK.GSBH = 'HBA'
+    AND (KCRKS.CGBH LIKE 'F%' OR KCRKS.CGBH LIKE 'HK%' OR KCRKS.CGBH LIKE 'HFS%' OR KCRKS.CGBH LIKE 'JHS%' OR KCRKS.CGBH LIKE 'JTS%')
+),
         
 FG AS (
     SELECT
@@ -212,7 +213,7 @@ HAVING
     )
 
 ORDER BY 
-    K.diff_fg10,
+    --K.diff_fg10,
     K.KHPO,
     K.style_number, 
     K.color_code, 

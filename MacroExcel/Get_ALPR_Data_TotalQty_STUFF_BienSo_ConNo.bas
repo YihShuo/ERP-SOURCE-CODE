@@ -32,6 +32,8 @@ Sub Get_ALPR_Data()
     Dim ColPO As String
     Dim ColStyle As String
     Dim ColColor As String
+    Dim ColInTime As String
+    Dim ColOutTime As String
     
     Dim ColQty As String
     Dim ColConNo As String
@@ -46,7 +48,8 @@ Sub Get_ALPR_Data()
     ColQty = "S"
     ColConNo = "T"
     ColBienSo = "U"
-
+    ColInTime = "V"
+    ColOutTime = "W"
 
     Set ws = ActiveSheet
 
@@ -60,22 +63,27 @@ Sub Get_ALPR_Data()
     
     ws.Range(ColBienSo & "1").Offset(0, -1).Copy _
         Destination:=ws.Range(ColBienSo & "1")
+        
+    ws.Range(ColInTime & "1").Offset(0, -1).Copy _
+        Destination:=ws.Range(ColInTime & "1")
+        
+    ws.Range(ColOutTime & "1").Offset(0, -1).Copy _
+        Destination:=ws.Range(ColOutTime & "1")
     
     
     ws.Range(ColQty & "1").Value = "ExQty"
     ws.Range(ColConNo & "1").Value = "ConNo"
     ws.Range(ColBienSo & "1").Value = "BienSo"
+    ws.Range(ColInTime & "1").Value = "InTime"
+    ws.Range(ColOutTime & "1").Value = "OutTime"
     
     
     ' To nen cam
     ws.Range(ColQty & "1").Interior.Color = RGB(255, 192, 0)
     ws.Range(ColConNo & "1").Interior.Color = RGB(255, 192, 0)
     ws.Range(ColBienSo & "1").Interior.Color = RGB(255, 192, 0)
-    
-    ' AutoFit 3 cot
-    ws.Columns(ColQty).AutoFit
-    ws.Columns(ColConNo).AutoFit
-    ws.Columns(ColBienSo).AutoFit
+    ws.Range(ColInTime & "1").Interior.Color = RGB(255, 192, 0)
+    ws.Range(ColOutTime & "1").Interior.Color = RGB(255, 192, 0)
     
     If LastRow < 2 Then
         MsgBox "Khong co du lieu!", vbInformation
@@ -128,7 +136,7 @@ Sub Get_ALPR_Data()
     SQL2 = SQL2 & "DROP TABLE #Ex_Data; "
 
     SQL3 = ""
-    SQL3 = SQL3 & "SELECT CAST(r.outtime AS date) AS OutTime, "
+    SQL3 = SQL3 & "SELECT CAST(r.outtime AS date) AS OutTime, CAST(r.Exfty_Date AS DATE) AS InTime, "
     SQL3 = SQL3 & "r.Plate_Id, r.CON_NO, i.RYNO, "
     SQL3 = SQL3 & "Y.TotalQty, x.Barcode "
     SQL3 = SQL3 & "INTO #Ex_Data "
@@ -195,7 +203,21 @@ Sub Get_ALPR_Data()
     SQL8 = SQL8 & "FROM #Ex_Data E2 "
     SQL8 = SQL8 & "WHERE E2.Plate_Id IS NOT NULL "
     SQL8 = SQL8 & "FOR XML PATH(''), TYPE "
-    SQL8 = SQL8 & ").value('.', 'VARCHAR(MAX)'), 1, 1, '') AS Plate_Id "
+    SQL8 = SQL8 & ").value('.', 'VARCHAR(MAX)'), 1, 1, '') AS Plate_Id, "
+        
+    SQL8 = SQL8 & "STUFF(( "
+    SQL8 = SQL8 & "SELECT DISTINCT ',' + LTRIM(RTRIM(E2.InTime)) "
+    SQL8 = SQL8 & "FROM #Ex_Data E2 "
+    SQL8 = SQL8 & "WHERE E2.InTime IS NOT NULL "
+    SQL8 = SQL8 & "FOR XML PATH(''), TYPE "
+    SQL8 = SQL8 & ").value('.', 'VARCHAR(MAX)'), 1, 1, '') AS InTime, "
+        
+    SQL8 = SQL8 & "STUFF(( "
+    SQL8 = SQL8 & "SELECT DISTINCT ',' + LTRIM(RTRIM(E2.OutTime)) "
+    SQL8 = SQL8 & "FROM #Ex_Data E2 "
+    SQL8 = SQL8 & "WHERE E2.OutTime IS NOT NULL "
+    SQL8 = SQL8 & "FOR XML PATH(''), TYPE "
+    SQL8 = SQL8 & ").value('.', 'VARCHAR(MAX)'), 1, 1, '') AS OutTime "
 
     SQL8 = SQL8 & "FROM #Ex_Data E;"
 
@@ -284,12 +306,18 @@ Sub Get_ALPR_Data()
                     ws.Cells(i, ColBienSo).Value = _
                         Rs.Fields("Plate_Id").Value
                 End If
+                
+                ws.Cells(i, ColInTime).Value = _
+                        Rs.Fields("InTime").Value
+                        
+                ws.Cells(i, ColOutTime).Value = _
+                        Rs.Fields("OutTime").Value
 
             Else
 
-                ws.Cells(i, ColQty).Value = "0"
-                ws.Cells(i, ColConNo).Value = ""
-                ws.Cells(i, ColBienSo).Value = ""
+                'ws.Cells(i, ColQty).Value = "0"
+                'ws.Cells(i, ColConNo).Value = ""
+                'ws.Cells(i, ColBienSo).Value = ""
 
             End If
 
@@ -299,9 +327,9 @@ Sub Get_ALPR_Data()
 
         Else
 
-            ws.Cells(i, ColQty).Value = "0"
-            ws.Cells(i, ColConNo).Value = ""
-            ws.Cells(i, ColBienSo).Value = ""
+            'ws.Cells(i, ColQty).Value = "0"
+            'ws.Cells(i, ColConNo).Value = ""
+            'ws.Cells(i, ColBienSo).Value = ""
 
         End If
 
@@ -354,7 +382,13 @@ Sub Get_ALPR_Data()
     Application.ScreenUpdating = True
     Application.EnableEvents = True
     Application.Calculation = xlCalculationAutomatic
-
+    
+    ' AutoFit 3 cot
+    ws.Columns(ColQty).AutoFit
+    ws.Columns(ColConNo).AutoFit
+    ws.Columns(ColBienSo).AutoFit
+    ws.Columns(ColOutTime).AutoFit
+    ws.Columns(ColInTime).AutoFit
 
     MsgBox _
         "Da xu ly xong " & TotalRows & " dong.", _
