@@ -127,9 +127,10 @@ ALL_KEYS AS (
     SELECT KHPO, style_number, color_code, ship_id FROM FG_KEY
     UNION
     SELECT KHPO, style_number, color_code, ship_id FROM DTD_KEY
-)
+),
 
 -- 最終查詢
+FinalQuery AS (
 SELECT
     FG.factory_code,
     FG.factory_name,
@@ -211,13 +212,16 @@ HAVING
         FROM ListKHPO L
         WHERE L.KHPO = K.KHPO
     )
-
+)
+SELECT * from FinalQuery
+--WHERE factory_warehouse_fg10 >= dtd_tracking_fg10
+--and factory_warehouse_fg14 >= dtd_tracking_fg14
 ORDER BY 
-    --K.diff_fg10,
-    K.KHPO,
-    K.style_number, 
-    K.color_code, 
-    K.ship_id ;
+    diff_fg10,
+    KHPO,
+    style_number, 
+    color_code, 
+    ship_id
 --1. Nếu factory_code là NULL và số lượng factory_warehouse_fg10 bằng 0:
 --Vui lòng sử dụng Postman để hủy đơn đặt hàng (PO).
 --2. Nếu dtdtracking_fg10 <> factory_warehouse_fg10:
