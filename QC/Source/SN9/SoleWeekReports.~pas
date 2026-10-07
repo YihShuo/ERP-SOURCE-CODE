@@ -496,7 +496,7 @@ var
   s: WideString;
 begin
 
-  AppDir := ExtractFilePath(Application.ExeName);
+  {AppDir := ExtractFilePath(Application.ExeName);
 
   if not DirectoryExists(AppDir) then
     ForceDirectories(AppDir);
@@ -505,7 +505,7 @@ begin
   DstFile := IncludeTrailingPathDelimiter(AppDir) + 'RejectedMaterial.xlsx';
 
   if not CopyFile(PChar(SrcFile), PChar(DstFile), False) then
-    ShowMessage('Copy file that bai');
+    ShowMessage('Copy file that bai');}
 
   DuongDanFile := ExtractFilePath(ParamStr(0)) + 'RejectedMaterial.xlsx';
 

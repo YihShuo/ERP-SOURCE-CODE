@@ -153,7 +153,7 @@ SELECT
     BIEN_SO AS Plate2,
     BIEN_SO AS Plate3,
     STUFFED_INV_NO AS PackingList_Barcode,
-    '1' AS Invoice_no,
+    CONVERT(varchar(10), GETDATE(), 120) AS Invoice_no,
     CON_NO,
     REPLACE(
         CONVERT(VARCHAR(10), EXEDATE_FULL, 120),

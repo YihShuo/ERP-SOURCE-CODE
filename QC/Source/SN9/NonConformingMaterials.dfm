@@ -784,27 +784,7 @@ object NonConformingMaterial: TNonConformingMaterial
       '  USERID = :USERID,'
       '  USERDATE = :USERDATE'
       'where'
-      '  ReportID = :OLD_ReportID and'
-      '  ZSBH = :OLD_ZSBH and'
-      '  InDate = :OLD_InDate and'
-      '  Qty = :OLD_Qty and'
-      '  DDBH = :OLD_DDBH and'
-      '  SKU = :OLD_SKU and'
-      '  MaterialSpec = :OLD_MaterialSpec and'
-      '  Issue = :OLD_Issue and'
-      '  RandomQty = :OLD_RandomQty and'
-      '  DeQty = :OLD_DeQty and'
-      '  Result = :OLD_Result and'
-      '  SCFID = :OLD_SCFID and'
-      '  SCFDate = :OLD_SCFDate and'
-      '  LCFID = :OLD_LCFID and'
-      '  LCFDate = :OLD_LCFDate and'
-      '  PreparedID = :OLD_PreparedID and'
-      '  DepUID = :OLD_DepUID and'
-      '  DepCFDate = :OLD_DepCFDate and'
-      '  YN = :OLD_YN and'
-      '  USERID = :OLD_USERID and'
-      '  USERDATE = :OLD_USERDATE')
+      '  ReportID = :OLD_ReportID')
     InsertSQL.Strings = (
       'insert into QC_NonConformingMaterial'
       
@@ -825,27 +805,7 @@ object NonConformingMaterial: TNonConformingMaterial
     DeleteSQL.Strings = (
       'delete from QC_NonConformingMaterial'
       'where'
-      '  ReportID = :OLD_ReportID and'
-      '  ZSBH = :OLD_ZSBH and'
-      '  InDate = :OLD_InDate and'
-      '  Qty = :OLD_Qty and'
-      '  DDBH = :OLD_DDBH and'
-      '  SKU = :OLD_SKU and'
-      '  MaterialSpec = :OLD_MaterialSpec and'
-      '  Issue = :OLD_Issue and'
-      '  RandomQty = :OLD_RandomQty and'
-      '  DeQty = :OLD_DeQty and'
-      '  Result = :OLD_Result and'
-      '  SCFID = :OLD_SCFID and'
-      '  SCFDate = :OLD_SCFDate and'
-      '  LCFID = :OLD_LCFID and'
-      '  LCFDate = :OLD_LCFDate and'
-      '  PreparedID = :OLD_PreparedID and'
-      '  DepUID = :OLD_DepUID and'
-      '  DepCFDate = :OLD_DepCFDate and'
-      '  YN = :OLD_YN and'
-      '  USERID = :OLD_USERID and'
-      '  USERDATE = :OLD_USERDATE')
+      '  ReportID = :OLD_ReportID')
     Left = 528
     Top = 400
   end

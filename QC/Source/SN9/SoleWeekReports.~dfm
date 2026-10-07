@@ -784,29 +784,7 @@ object RejectedMaterial: TRejectedMaterial
       '  YN = :YN,'
       '  DefectName = :DefectName'
       'where'
-      '  ReportID = :OLD_ReportID and'
-      '  InDate = :OLD_InDate and'
-      '  DDBH = :OLD_DDBH and'
-      '  InsDate = :OLD_InsDate and'
-      '  Brand = :OLD_Brand and'
-      '  MatName = :OLD_MatName and'
-      '  Supplier = :OLD_Supplier and'
-      '  DeReason = :OLD_DeReason and'
-      '  DeQty = :OLD_DeQty and'
-      '  ShoePO = :OLD_ShoePO and'
-      '  XFDate = :OLD_XFDate and'
-      '  Result = :OLD_Result and'
-      '  SCFID = :OLD_SCFID and'
-      '  SCFDate = :OLD_SCFDate and'
-      '  MSCFID = :OLD_MSCFID and'
-      '  MSCFDate = :OLD_MSCFDate and'
-      '  LCFID = :OLD_LCFID and'
-      '  LCFDate = :OLD_LCFDate and'
-      '  PreparedID = :OLD_PreparedID and'
-      '  USERDate = :OLD_USERDate and'
-      '  USERID = :OLD_USERID and'
-      '  YN = :OLD_YN and'
-      '  DefectName = :OLD_DefectName')
+      '  ReportID = :OLD_ReportID')
     InsertSQL.Strings = (
       'insert into QC_RejectMat'
       
@@ -829,28 +807,7 @@ object RejectedMaterial: TRejectedMaterial
     DeleteSQL.Strings = (
       'delete from QC_RejectMat'
       'where'
-      '  ReportID = :OLD_ReportID and'
-      '  InDate = :OLD_InDate and'
-      '  DDBH = :OLD_DDBH and'
-      '  InsDate = :OLD_InsDate and'
-      '  Brand = :OLD_Brand and'
-      '  MatName = :OLD_MatName and'
-      '  Supplier = :OLD_Supplier and'
-      '  DeReason = :OLD_DeReason and'
-      '  DeQty = :OLD_DeQty and'
-      '  ShoePO = :OLD_ShoePO and'
-      '  XFDate = :OLD_XFDate and'
-      '  Result = :OLD_Result and'
-      '  SCFID = :OLD_SCFID and'
-      '  SCFDate = :OLD_SCFDate and'
-      '  MSCFID = :OLD_MSCFID and'
-      '  MSCFDate = :OLD_MSCFDate and'
-      '  LCFID = :OLD_LCFID and'
-      '  LCFDate = :OLD_LCFDate and'
-      '  PreparedID = :OLD_PreparedID and'
-      '  USERDate = :OLD_USERDate and'
-      '  USERID = :OLD_USERID and'
-      '  YN = :OLD_YN')
+      '  ReportID = :OLD_ReportID')
     Left = 608
     Top = 216
   end
