@@ -294,9 +294,36 @@ implementation
   uses main1,ShowShoePic1, BOMM_Print1, FunUnit;
 {$R *.dfm}
 
+// Ham chung thuc ket noi mang ngam (khong tao o dia ao)
+function ConnectNetworkShare(const RemotePath, UserName, Password: string): Boolean;
+var
+  NetResource: TNetResource;
+  Res: DWORD;
+begin
+  FillChar(NetResource, SizeOf(TNetResource), 0);
+  NetResource.dwType := RESOURCETYPE_DISK;
+  NetResource.lpRemoteName := PChar(RemotePath);
+  NetResource.lpLocalName := nil; // Khong map thanh o dia (VD: Z:), chi mo ket noi ngam de xai
+
+  // Goi API chung thuc cua Windows
+  Res := WNetAddConnection2(NetResource, PChar(Password), PChar(UserName), 0);
+
+  // NO_ERROR (0): Ket noi thanh cong
+  // ERROR_SESSION_CREDENTIAL_CONFLICT (1219): May tinh nay da ket noi tu truoc voi tai khoan khac
+  Result := (Res = NO_ERROR) or (Res = ERROR_SESSION_CREDENTIAL_CONFLICT);
+end;
+
+// Ham huy ket noi mang
+procedure DisconnectNetworkShare(const RemotePath: string);
+begin
+  // Tham so True: Ep buoc huy ket noi ngay ca khi dang co file mo
+  WNetCancelConnection2(PChar(RemotePath), 0, True);
+end;
+
 procedure TBOMM.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   action:=cafree;
+  ShowShoePic := nil;
 end;
 
 procedure TBOMM.ReadIni();
@@ -307,7 +334,7 @@ var MyIni :Tinifile;
     index:integer;
 begin
   UserIDList:='33101,53282';
-  ShoePicPath := '\\192.168.23.11\A_DataCenter\CDC\Sales\BOM';
+  ShoePicPath := '\\192.168.84.55\BOM New';
   AppDir:=ExtractFilePath(Application.ExeName);
   if FileExists(AppDir+'\ComName.ini')=true then
   begin
@@ -781,6 +808,8 @@ var
 end;
 
 procedure TBOMM.FormCreate(Sender: TObject);
+var
+  SharePath, User, Pass: string;
 begin
   AppDir:=ExtractFilePath(Application.ExeName);
   PC1.ActivePage:=TS1;
@@ -801,13 +830,24 @@ begin
   Print.visible := False;
   Excel.Visible := False;
   end;
+
+
+  SharePath := '\\192.168.84.55\BOM New';
+  User := 'itdongthap'; // Thay bang user tren may 192.168.84.55
+  Pass := 'Tythac@20';      // Thay bang password tuong ung
+
+  if not ConnectNetworkShare(SharePath, User, Pass) then
+  begin
+    ShowMessage('Khong the ket noi den may chu hinh anh. Vui long kiem tra lai mang hoac phan quyen!');
+  end;
 end;
 
 procedure TBOMM.FormDestroy(Sender: TObject);
 begin
   if ShowShoePic<>nil then ShowShoePic.Free;
   BOMM:=nil;
-
+  // Xoa chung thuc mang khi dong Form de bao mat
+  DisconnectNetworkShare('\\192.168.84.55\BOM New');
 end;
 
 procedure TBOMM.DBGrid1GetCellParams(Sender: TObject; Column: TColumnEh;
@@ -819,13 +859,17 @@ begin
   end;
 end;
 //顯示圖片
-procedure TBOMM.XXZLAfterScroll(DataSet: TDataSet);
-var ShoePic:string;
+{procedure TBOMM.XXZLAfterScroll(DataSet: TDataSet);
+var ShoePic,BasePath,ImgNameFromDB:string;
 begin
   //
   if IsExport=false then
   begin
-    shoePic:=StringReplace(XXZL.FieldByName('IMGName').Asstring,'H:',ShoePicPath, [rfReplaceAll, rfIgnoreCase]);
+    //shoePic:=StringReplace(XXZL.FieldByName('IMGName').Asstring,'Y:',ShoePicPath, [rfReplaceAll, rfIgnoreCase]);
+    BasePath:= '\\192.168.84.55\BOM New';
+    ImgNameFromDB := xxzl.FieldByName('IMGName').AsString;
+    showmessage (ImgNameFromDB);
+    ShoePic := IncludeTrailingPathDelimiter(BasePath) + ImgNameFromDB;
     if FileExists(shoePic)=true then
     begin
        ShoeImage.Picture.LoadFromFile(shoePic);
@@ -838,6 +882,46 @@ begin
          ShowShoePic.ShoeImage.Picture.Bitmap:=nil;
     end;
    end;
+end; }
+
+
+procedure TBOMM.XXZLAfterScroll(DataSet: TDataSet);
+var 
+  ShoePic, BasePath, ImgNameFromDB: string;
+begin
+  if IsExport = false then
+  begin
+    BasePath := '\\192.168.84.55\BOM New';
+    ImgNameFromDB := XXZL.FieldByName('IMGName').AsString;
+    
+    // showmessage(ImgNameFromDB); // Ban nen comment hoac xoa dong nay sau khi test xong de tranh bi hien bang thong bao lien tuc
+
+    // Kiem tra neu chuoi du dai va cat bo 3 ky tu dau tien (Y:\)
+    // Ham Copy se lay tu ky tu thu 4 tro di den het chuoi
+    if Length(ImgNameFromDB) > 3 then
+      ImgNameFromDB := Copy(ImgNameFromDB, 4, MaxInt);
+
+    // Noi voi BasePath. 
+    // Ham IncludeTrailingPathDelimiter se tu dong them dau '\' vao sau chuoi '\\192.168.84.55\BOM New' neu chua co
+    ShoePic := IncludeTrailingPathDelimiter(BasePath) + ImgNameFromDB;
+    
+    if FileExists(ShoePic) = true then
+    begin
+       ShoeImage.Picture.LoadFromFile(ShoePic);
+
+       if ShowShoePic = nil then 
+         ShowShoePic := TShowShoePic.Create(self);
+         
+       ShowShoePic.ShoeImage.Picture.LoadFromFile(ShoePic);
+    end 
+    else
+    begin
+       ShoeImage.Picture.Bitmap := nil;
+
+       if ShowShoePic <> nil then
+         ShowShoePic.ShoeImage.Picture.Bitmap := nil;
+    end;
+  end;
 end;
 
 procedure TBOMM.DetectMouseMove(Sender: TObject; Shift: TShiftState; X,
@@ -1343,5 +1427,9 @@ begin
     active:=true;
   end;
 end;
+
+
+
+
 
 end.

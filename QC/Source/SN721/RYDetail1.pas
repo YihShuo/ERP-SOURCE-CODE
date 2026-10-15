@@ -119,6 +119,8 @@ begin
         sql.Add('     left Join ZSZL on ZSZL.ZSDH =CGZL.ZSBH');
         sql.Add('     Left Join CLZL on CLZL.cldh=CGZLS.CLBH');
         sql.Add('where cgzl.GSBH=''' + main.Edit2.Text + '''');
+        if ckRKDate.Checked then
+          SQL.Add(' and CAST(CGZLS.USERDATE AS DATE) = '''+FormatDateTime('yyyy-mm-dd',dtpRKDate.Date)+''' ');
         if CGNOEdit.Text <> '' then
           SQL.Add('     and CGZL.CGNO like ''' + CGNOEdit.Text + '%'' ');
         SQL.Add('     and CGZLS.CLBH like ''' + MatNOEdit.Text + '%'' ');

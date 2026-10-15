@@ -1,4 +1,4 @@
-unit Deliver_EquipmentF1;
+Ôªøunit Deliver_EquipmentF1;
 
 interface
 
@@ -232,7 +232,7 @@ procedure TDeliver_EquipmentF.Init_LB();
 begin
   LB:='FFFFFFFFFF';
 end;
-//≤ß∞ ≥Ê Column Show or Not
+//Áï∞ÂãïÂñÆ Column Show or Not
 procedure TDeliver_EquipmentF.DelDetAfterOpen_ColumnShow();
 var i,GroupBox_Left:integer;
 begin
@@ -242,15 +242,15 @@ begin
     DBGrid2.Columns[i].Visible:=false;
   DBGrid2.Columns[7].Visible:=true;
   DBGrid2.Columns[7].ReadOnly:=true;
-  DBGrid2.Columns[7].Title.Caption:='≥°™˘|Don vi';
+  DBGrid2.Columns[7].Title.Caption:='ÈÉ®ÈñÄ|Don vi';
   DBGrid2.Columns[9].Visible:=true;
-  DBGrid2.Columns[9].Title.Caption:='∞_©l§È|Ngay Bat Dau';
+  DBGrid2.Columns[9].Title.Caption:='Ëµ∑ÂßãÊó•|Ngay Bat Dau';
   DBGrid2.Columns[12].Visible:=true;
-  DBGrid2.Columns[12].Title.Caption:='µ≤ßÙ§È|Ngay Ket Thuc';
+  DBGrid2.Columns[12].Title.Caption:='ÁµêÊùüÊó•|Ngay Ket Thuc';
   DBGrid2.Columns[15].Visible:=true;
-  DBGrid2.Columns[15].Title.Caption:='≥∆µ˘|Ghi chu';
+  DBGrid2.Columns[15].Title.Caption:='ÂÇôË®ª|Ghi chu';
   DBGrid2.Columns[22].Visible:=true;
-  DBGrid2.Columns[22].Title.Caption:='¡pµ∏§H|nguoi lien lac';
+  DBGrid2.Columns[22].Title.Caption:='ËÅØÁµ°‰∫∫|nguoi lien lac';
   MM_GBox.Visible:=true;
   MM_GBox.Left:=GroupBox_Left;
   //
@@ -261,7 +261,7 @@ begin
   with DelDet do
   begin
     Edit;
-    //≠…•X Cho Muon
+    //ÂÄüÂá∫ Cho Muon
     DBGrid2.columns[7].ButtonStyle:=cbsEllipsis;
     FieldByName('PARAMENT1').Value:='JRTS';
     FieldByName('PARAMENT2').Value:='JRBDATE';
@@ -301,7 +301,7 @@ begin
   begin
     active:=false;
     sql.Clear;
-    sql.add('select top 1 ID,DepName from TSCD_BDepartment where DepMemo like ''%§u∞»%'' ');
+    sql.add('select top 1 ID,DepName from TSCD_BDepartment where DepMemo like ''%Â∑•Âãô%'' ');
     active:=true;
     DepID_CD:=FieldByName('ID').AsString;
     DepName_CD:=FieldByName('DepName').AsString;
@@ -504,7 +504,7 @@ begin
            begin
              if DelMas.FieldByName('USERID').value<>main.Edit1.Text then
                begin
-                 showmessage('§£¨OßA™∫°A§£≠n∂√∞ °Ckhong phai ban khong duoc tu sua');
+                 showmessage('‰∏çÊòØ‰Ω†ÁöÑÔºå‰∏çË¶Å‰∫ÇÂãï„ÄÇkhong phai ban khong duoc tu sua');
                end
                else
                  begin
@@ -781,7 +781,7 @@ begin
 
   with DelDet do
   begin
-    if DelMas.fieldbyname('LB').AsString ='FFFFFFFFFF' then  //≠…•X Cho Muon
+    if DelMas.fieldbyname('LB').AsString ='FFFFFFFFFF' then  //ÂÄüÂá∫ Cho Muon
     begin
       if ((FieldByName('VALUE1').Isnull) or (FieldByName('VALUE2').Isnull) or (FieldByName('VALUE3').Isnull) or (FieldByName('VALUE4').Isnull) ) then
       begin
@@ -791,7 +791,7 @@ begin
   end;
   result:=IRes;
 end;
-//∑sºW≥]≥∆
+//Êñ∞Â¢ûË®≠ÂÇô
 Function TDeliver_EquipmentF.InsertTSCD(Qty:double):String;
 begin
     //
@@ -809,7 +809,7 @@ begin
     if length(sMonth)<2 then
       sMonth:='0'+sMonth;
     //
-    with Qtemp do    //≠p∫‚≥]≥∆≥Ê¨y§Ù∏π
+    with Qtemp do    //Ë®àÁÆóË®≠ÂÇôÂñÆÊµÅÊ∞¥Ëôü
     begin
       active:=false;
       sql.Clear;
@@ -850,7 +850,9 @@ begin
     TSCDQry.FieldByName('CFMID_RK').Value:='NO';
     TSCDQry.FieldByName('CFMID_LL').Value:='NO';
     TSCDQry.FieldByName('LB').Value:='1';
-    TSCDQry.fieldbyname('RKNO').Value:=DelMas.fieldbyname('LLNO').Value;
+    //TSCDQry.fieldbyname('RKNO').Value:=DelMas.fieldbyname('LLNO').Value;
+    // S·ª≠a ch·ªó n√†y: Th√™m ch·ªØ 'F' v√†o tr∆∞·ªõc LLNO khi l∆∞u xu·ªëng RKNO
+    TSCDQry.fieldbyname('RKNO').Value := 'F' + DelMas.fieldbyname('LLNO').AsString;
     UpdTSCD.Apply(ukinsert);
     TSCDQry.Active:=false;
     //
@@ -876,7 +878,7 @@ begin
           begin
             if DelMas.FieldByName('USERID').value<>main.Edit1.Text then
             begin
-                showmessage('§£¨OßA™∫°A§£≠n∂√∞ °Ckhong phai ban khong duoc tu sua');
+                showmessage('‰∏çÊòØ‰Ω†ÁöÑÔºå‰∏çË¶Å‰∫ÇÂãï„ÄÇkhong phai ban khong duoc tu sua');
               end else
               begin
                   if DelDet.fieldbyname('TSID').isnull then
@@ -884,7 +886,7 @@ begin
                     DelDet.delete;
                   end else
                   begin
-                    //∑sºWTSCDΩs∏π
+                    //Êñ∞Â¢ûTSCDÁ∑®Ëôü
                     TSID:=InsertTSCD(1);
                     //
                     DelDet_LB_Edit();
@@ -902,7 +904,7 @@ begin
            begin
                if DelDet.FieldByName('USERID').value<>main.Edit1.Text then
                begin
-                 showmessage('§£¨OßA°A§£≠n∂√∞ °Ckhong phai ban khong duoc tu sua');
+                 showmessage('‰∏çÊòØ‰Ω†Ôºå‰∏çË¶Å‰∫ÇÂãï„ÄÇkhong phai ban khong duoc tu sua');
                end
                else
                  begin
@@ -925,7 +927,9 @@ begin
                        begin
                         active:=false;
                         sql.Clear;
-                        sql.Add('Delete from TSCD where RKNO='''+DelDet.FieldByName('LLNO').AsString+''' and SBBH='''+DelDet.FieldByName('SBBH').AsString+''' and CFMID_RK=''NO''  and LB=''1'' ');
+                        //sql.Add('Delete from TSCD where RKNO='''+DelDet.FieldByName('LLNO').AsString+''' and SBBH='''+DelDet.FieldByName('SBBH').AsString+''' and CFMID_RK=''NO''  and LB=''1'' ');
+                        // Th√™m ch·ªØ F v√†o tr∆∞·ªõc DelDet.FieldByName('LLNO').AsString
+                        sql.Add('Delete from TSCD where RKNO=''F'+DelDet.FieldByName('LLNO').AsString+''' and SBBH='''+DelDet.FieldByName('SBBH').AsString+''' and CFMID_RK=''NO''  and LB=''1'' ');
                         funcObj.WriteErrorLog(sql.Text);
                         ExecSQL();
                        end;

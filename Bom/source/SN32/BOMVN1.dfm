@@ -415,7 +415,7 @@ object BOMVN: TBOMVN
     Top = 194
     Width = 1002
     Height = 272
-    ActivePage = TS3
+    ActivePage = TS1
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText

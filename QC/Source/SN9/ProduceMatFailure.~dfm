@@ -767,7 +767,7 @@ object ProducMatFailure: TProducMatFailure
     object Query1XieMing: TStringField
       FieldName = 'XieMing'
       FixedChar = True
-      Size = 30
+      Size = 100
     end
     object Query1Qty: TStringField
       FieldName = 'Qty'

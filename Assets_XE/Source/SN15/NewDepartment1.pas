@@ -61,6 +61,7 @@ type
     btnSyn: TBitBtn;
     TmpQuery: TQuery;
     CheckBox1: TCheckBox;
+    Query1Name_en: TStringField;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormDestroy(Sender: TObject);
     procedure Button1Click(Sender: TObject);

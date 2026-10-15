@@ -24,7 +24,7 @@ object NewEquipment: TNewEquipment
     Top = 0
     Width = 1513
     Height = 811
-    ActivePage = TS1
+    ActivePage = TS2
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -152,11 +152,11 @@ object NewEquipment: TNewEquipment
           Layout = blGlyphTop
           NumGlyphs = 2
           ParentFont = False
-          TabOrder = 3
+          TabOrder = 4
           OnClick = BB4Click
         end
         object BB5: TBitBtn
-          Left = 186
+          Left = 185
           Top = 7
           Width = 45
           Height = 46
@@ -184,7 +184,7 @@ object NewEquipment: TNewEquipment
           Layout = blGlyphTop
           NumGlyphs = 2
           ParentFont = False
-          TabOrder = 4
+          TabOrder = 3
           OnClick = BB5Click
         end
         object BB6: TBitBtn
@@ -343,6 +343,43 @@ object NewEquipment: TNewEquipment
           TabOrder = 8
           OnClick = bbt7Click
         end
+        object RadioGroup1: TRadioGroup
+          Left = 446
+          Top = 9
+          Width = 211
+          Height = 45
+          TabOrder = 9
+        end
+        object RBDT: TRadioButton
+          Left = 465
+          Top = 20
+          Width = 61
+          Height = 21
+          Caption = 'DT'
+          Checked = True
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -27
+          Font.Name = 'Tahoma'
+          Font.Style = []
+          ParentFont = False
+          TabOrder = 10
+          TabStop = True
+        end
+        object RBDC: TRadioButton
+          Left = 545
+          Top = 20
+          Width = 61
+          Height = 21
+          Caption = 'DC'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -27
+          Font.Name = 'Tahoma'
+          Font.Style = []
+          ParentFont = False
+          TabOrder = 11
+        end
       end
       object Panel3: TPanel
         Left = 0
@@ -461,6 +498,7 @@ object NewEquipment: TNewEquipment
           Font.Name = 'VNI-Times'
           Font.Style = []
           ParentFont = False
+          Visible = False
         end
         object Label10: TLabel
           Left = 916
@@ -643,6 +681,7 @@ object NewEquipment: TNewEquipment
           Width = 238
           Height = 24
           TabOrder = 10
+          Visible = False
           Items.Strings = (
             'Z207000022-'#38651#33126'-MAY VI TINH'
             'Z207000016-LCD '#29074#24149'-MAN HINH LCD'
@@ -1222,6 +1261,12 @@ object NewEquipment: TNewEquipment
           Height = 65
           Align = alTop
           TabOrder = 0
+          object SpeedButton1: TSpeedButton
+            Left = 384
+            Top = 32
+            Width = 23
+            Height = 22
+          end
           object BC2: TBitBtn
             Left = 56
             Top = 8
@@ -1440,6 +1485,37 @@ object NewEquipment: TNewEquipment
             ParentFont = False
             TabOrder = 6
             OnClick = btc6Click
+          end
+          object BitBtn1: TBitBtn
+            Left = 520
+            Top = 10
+            Width = 113
+            Height = 49
+            Hint = 'Modify Current'
+            Caption = 'Print_Machine'
+            Font.Charset = ANSI_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -15
+            Font.Name = 'Arial'
+            Font.Style = []
+            Glyph.Data = {
+              76010000424D7601000000000000760000002800000020000000100000000100
+              04000000000000010000130B0000130B00001000000000000000000000000000
+              800000800000008080008000000080008000808000007F7F7F00BFBFBF000000
+              FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF0033333333B333
+              333B33FF33337F3333F73BB3777BB7777BB3377FFFF77FFFF77333B000000000
+              0B3333777777777777333330FFFFFFFF07333337F33333337F333330FFFFFFFF
+              07333337F3FF3FFF7F333330F00F000F07333337F77377737F333330FFFFFFFF
+              07333FF7F3FFFF3F7FFFBBB0F0000F0F0BB37777F7777373777F3BB0FFFFFFFF
+              0BBB3777F3FF3FFF77773330F00F000003333337F773777773333330FFFF0FF0
+              33333337F3FF7F37F3333330F08F0F0B33333337F7737F77FF333330FFFF003B
+              B3333337FFFF77377FF333B000000333BB33337777777F3377FF3BB3333BB333
+              3BB33773333773333773B333333B3333333B7333333733333337}
+            Layout = blGlyphTop
+            NumGlyphs = 2
+            ParentFont = False
+            TabOrder = 7
+            OnClick = BitBtn1Click
           end
         end
         object Panel6: TPanel
@@ -1909,8 +1985,10 @@ object NewEquipment: TNewEquipment
         'CD.NSX, TSCD.Status,TSCD.Label_Tag,TSCD.RFID_Tag,'
       
         '        TSCD.USERID_Tag, TSCD.USERDATE_Tag,TSCD.RKNO, TSCD.LLNO,' +
-        'TSCD.Memo,TSCD.DepID_Memo,'
-      '        TSCD_SB.ywpm,TSCD_SB.zwpm,BDepartment.DepName'
+        'TSCD.Memo,TSCD.DepID_Memo,TSCD.InDATE,'
+      
+        '        TSCD_SB.ywpm,TSCD_SB.zwpm,BDepartment.DepName,TSCD_SB.VW' +
+        'PM'
       'from TSCD'
       'Left join TSCD_SB on TSCD_SB.SBBH=TSCD.SBBH'
       
@@ -2009,6 +2087,14 @@ object NewEquipment: TNewEquipment
     object TSCDQryDepID_Memo: TStringField
       FieldName = 'DepID_Memo'
       FixedChar = True
+    end
+    object TSCDQryInDATE: TDateTimeField
+      FieldName = 'InDATE'
+    end
+    object TSCDQryVWPM: TStringField
+      FieldName = 'VWPM'
+      FixedChar = True
+      Size = 255
     end
   end
   object TSCDUPDet: TUpdateSQL

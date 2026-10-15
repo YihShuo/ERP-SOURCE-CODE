@@ -1,6 +1,6 @@
 object main: Tmain
-  Left = 1323
-  Top = 163
+  Left = 1180
+  Top = 113
   Width = 736
   Height = 406
   Caption = 'BOM'
@@ -262,6 +262,10 @@ object main: Tmain
         Caption = 'N4A BOM Material Manufacturer'
         OnClick = SN4AClick
       end
+      object SN4B: TMenuItem
+        Caption = 'N4B Material Customer'
+        OnClick = SN4BClick
+      end
     end
     object SN5: TMenuItem
       Caption = 'N5 Prodcution'
@@ -285,6 +289,10 @@ object main: Tmain
       object SN55: TMenuItem
         Caption = 'N55 INK Revise Usae'
         OnClick = SN55Click
+      end
+      object SN57: TMenuItem
+        Caption = 'N57 UsageRecord'
+        OnClick = SN57Click
       end
     end
     object SN6: TMenuItem

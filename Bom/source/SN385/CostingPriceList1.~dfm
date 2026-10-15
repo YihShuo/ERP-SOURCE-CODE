@@ -3125,9 +3125,6 @@ object CostingPriceList: TCostingPriceList
     UpdateObject = UpdateSQL2
     Left = 164
     Top = 208
-    object UploadlQueryNo: TSmallintField
-      FieldName = 'No'
-    end
     object UploadlQueryPricingSeason: TStringField
       FieldName = 'PricingSeason'
       FixedChar = True
@@ -3138,216 +3135,42 @@ object CostingPriceList: TCostingPriceList
       FixedChar = True
       Size = 10
     end
+    object UploadlQueryRound: TStringField
+      FieldName = 'Round'
+      Origin = 'DB.CostingPriceList.Round'
+      FixedChar = True
+      Size = 50
+    end
     object UploadlQueryModelDescription: TStringField
       FieldName = 'ModelDescription'
       FixedChar = True
       Size = 25
-    end
-    object UploadlQueryRemark: TStringField
-      FieldName = 'Remark'
-      FixedChar = True
-      Size = 30
     end
     object UploadlQueryUpperMatDetail: TStringField
       FieldName = 'UpperMatDetail'
       FixedChar = True
       Size = 10
     end
-    object UploadlQueryCheckID: TStringField
-      FieldName = 'CheckID'
+    object UploadlQueryColorway: TStringField
+      FieldName = 'Colorway'
+      Origin = 'DB.CostingPriceList.Colorway'
+      FixedChar = True
+      Size = 50
+    end
+    object UploadlQueryColor_Code: TStringField
+      FieldName = 'Color_Code'
+      Origin = 'DB.CostingPriceList.Color_Code'
       FixedChar = True
       Size = 10
-    end
-    object UploadlQueryCheckDate: TDateTimeField
-      FieldName = 'CheckDate'
-    end
-    object UploadlQueryAvailableDate: TDateTimeField
-      FieldName = 'AvailableDate'
-    end
-    object UploadlQueryAvailableBy: TStringField
-      FieldName = 'AvailableBy'
-      FixedChar = True
-      Size = 10
-    end
-    object UploadlQuerySendCTSDate: TDateTimeField
-      FieldName = 'SendCTSDate'
     end
     object UploadlQueryFOB: TCurrencyField
       FieldName = 'FOB'
       Origin = 'DB.CostingPriceList.FOB'
-      currency = False
     end
-    object UploadlQueryMaterial: TCurrencyField
-      FieldName = 'Material'
-      currency = False
-    end
-    object UploadlQueryLabor: TCurrencyField
-      FieldName = 'Labor'
-      currency = False
-    end
-    object UploadlQueryC2B_RL: TCurrencyField
-      FieldName = 'C2B_RL'
-      Origin = 'DB.CostingPriceList.C2B_RL'
-      currency = False
-    end
-    object UploadlQuerySecondL_RL: TCurrencyField
-      FieldName = 'SecondL_RL'
-      Origin = 'DB.CostingPriceList.SecondL_RL'
-      currency = False
-    end
-    object UploadlQueryOH: TCurrencyField
-      FieldName = 'OH'
-      currency = False
-    end
-    object UploadlQuerySecondLabor: TCurrencyField
-      FieldName = 'SecondLabor'
-      currency = False
-    end
-    object UploadlQuerySecondOH: TCurrencyField
-      FieldName = 'SecondOH'
-      currency = False
-    end
-    object UploadlQueryOtherAdject: TCurrencyField
-      FieldName = 'OtherAdject'
-      currency = False
-    end
-    object UploadlQueryProfitRate: TCurrencyField
-      FieldName = 'ProfitRate'
-      DisplayFormat = '0.00%'
-      currency = False
-    end
-    object UploadlQueryProfit: TCurrencyField
-      FieldName = 'Profit'
-      currency = False
-    end
-    object UploadlQueryFreight: TCurrencyField
-      FieldName = 'Freight'
-      currency = False
-    end
-    object UploadlQueryMoldCharge: TCurrencyField
-      FieldName = 'MoldCharge'
-      currency = False
-    end
-    object UploadlQueryTooling: TCurrencyField
-      FieldName = 'Tooling'
-      currency = False
-    end
-    object UploadlQueryFH17KeptLabor: TCurrencyField
-      FieldName = 'FH17KeptLabor'
-      currency = False
-    end
-    object UploadlQueryOutsoleAssembly: TCurrencyField
-      FieldName = 'OutsoleAssembly'
-      currency = False
-    end
-    object UploadlQuerySocklinerByPrs: TCurrencyField
-      FieldName = 'SocklinerByPrs'
-      currency = False
-    end
-    object UploadlQuerySpecialOffer: TCurrencyField
-      FieldName = 'SpecialOffer'
-      currency = False
-    end
-    object UploadlQueryStrobelPrintingRemoveal: TCurrencyField
-      FieldName = 'StrobelPrintingRemoveal'
-      currency = False
-    end
-    object UploadlQueryMMDeduction: TCurrencyField
-      FieldName = 'MMDeduction'
-      currency = False
-    end
-    object UploadlQueryMMAutoCutLectraSaving: TCurrencyField
-      FieldName = 'MMAutoCutLectraSaving'
-      currency = False
-    end
-    object UploadlQueryHanyoungNetCut: TCurrencyField
-      FieldName = 'HanyoungNetCut'
-      currency = False
-    end
-    object UploadlQueryAutoBuffingSaving: TCurrencyField
-      FieldName = 'AutoBuffingSaving'
-      currency = False
-    end
-    object UploadlQuerySupportFrictiontape: TCurrencyField
-      FieldName = 'SupportFrictiontape'
-      currency = False
-    end
-    object UploadlQueryVolumeEfficiencyGain: TCurrencyField
-      FieldName = 'VolumeEfficiencyGain'
-      currency = False
-    end
-    object UploadlQueryRemovedNonBuffing: TCurrencyField
-      FieldName = 'RemovedNonBuffing'
-      currency = False
-    end
-    object UploadlQueryVolumeEfficiencyGainOverhead: TCurrencyField
-      FieldName = 'VolumeEfficiencyGainOverhead'
-      currency = False
-    end
-    object UploadlQueryKFCQ: TStringField
-      FieldName = 'KFCQ'
+    object UploadlQueryRemark: TStringField
+      FieldName = 'Remark'
       FixedChar = True
-      Size = 10
-    end
-    object UploadlQueryRecyclingUn_Cured_25S: TCurrencyField
-      FieldName = 'RecyclingUn_Cured_25S'
-      currency = False
-    end
-    object UploadlQueryRemoveSocklinerCement_25S: TCurrencyField
-      FieldName = 'RemoveSocklinerCement_25S'
-      currency = False
-    end
-    object RSHConstructionOptimizat_25S: TCurrencyField
-      FieldName = 'RSHConstructionOptimizat_25S'
-      currency = False
-    end
-    object UploadlQueryCBYWeightedCosting_25S: TCurrencyField
-      FieldName = 'CBYWeightedCosting_25S'
-      currency = False
-    end
-    object UploadlQuerySeasonalColor_25S: TCurrencyField
-      FieldName = 'SeasonalColor_25S'
-      currency = False
-    end
-    object UploadlQueryOrtholiteSockliner_25S: TCurrencyField
-      FieldName = 'OrtholiteSockliner_25S'
-      currency = False
-    end
-    object UploadlQueryInnerBox_25S: TCurrencyField
-      FieldName = 'InnerBox_25S'
-      currency = False
-    end
-    object UploadlQueryMOC_25S: TCurrencyField
-      FieldName = 'MOC_25S'
-      currency = False
-    end
-    object UploadlQueryCkmesh_25S: TCurrencyField
-      FieldName = 'Ckmesh_25S'
-      currency = False
-    end
-    object UploadlQuerySealTapeOIA_LK_25U: TCurrencyField
-      FieldName = 'SealTapeOIA_LK_25U'
-      Origin = 'DB.CostingPriceList.SealTapeOIA_LK_25U'
-      currency = False
-    end
-    object UploadlQueryShoelaceLength_25U: TCurrencyField
-      FieldName = 'ShoelaceLength_25U'
-      Origin = 'DB.CostingPriceList.ShoelaceLength_25U'
-      currency = False
-    end
-    object UploadlQueryTissueOIA_LK_25U: TCurrencyField
-      FieldName = 'TissueOIA_LK_25U'
-      Origin = 'DB.CostingPriceList.TissueOIA_LK_25U'
-      currency = False
-    end
-    object UploadlQueryCL98LaborPrecommit_25F: TCurrencyField
-      FieldName = 'CL98LaborPrecommit_25F'
-      currency = False
-    end
-    object UploadlQueryFY25_CostMitigation: TCurrencyField
-      FieldName = 'FY25_CostMitigation'
-      Origin = 'DB.CostingPriceList.FY25_CostMitigation'
-      currency = False
+      Size = 30
     end
   end
   object UpdateSQL2: TUpdateSQL

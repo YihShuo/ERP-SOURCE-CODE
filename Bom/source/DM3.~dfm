@@ -6,7 +6,7 @@ object DM2: TDM2
   Height = 249
   Width = 309
   object DBBOM: TDatabase
-    AliasName = 'LYS_ERPNew'
+    AliasName = 'LYS_ERPnew'
     DatabaseName = 'DB'
     Params.Strings = (
       'USER NAME=tyxuan'
@@ -17,7 +17,7 @@ object DM2: TDM2
     Top = 16
   end
   object DBSHIP: TDatabase
-    AliasName = 'LYS_ERPNew'
+    AliasName = 'LYS_ERP'
     DatabaseName = 'db2'
     Params.Strings = (
       'USER NAME=sa')

@@ -137,7 +137,10 @@ uses
   CheckNoInCostingPriceList1 in 'source\SN386\CheckNoInCostingPriceList1.pas' {CheckNoInCostingPriceList},
   PrintingInk1 in 'source\SN386\PrintingInk1.pas' {PrintingInk},
   BomUsing1 in 'source\SN388\BomUsing1.pas' {BomUsing},
-  UsageRecord1 in 'source\SN57\UsageRecord1.pas' {UsageRecord};
+  UsageRecord1 in 'source\SN57\UsageRecord1.pas' {UsageRecord},
+  Material_Customer1 in 'source\SN4B\Material_Customer1.pas' {Material_Customer},
+  Material_Yihshuo1 in 'source\SN4B\Material_Yihshuo1.pas' {Material_Customer_Select},
+  Material_CLZL1 in 'source\SN4B\Material_CLZL1.pas' {Material_CLZL};
 
 {$R *.TLB}
 

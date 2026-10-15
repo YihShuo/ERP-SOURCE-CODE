@@ -137,8 +137,8 @@ object Deliver_EquipmentF: TDeliver_EquipmentF
       OnClick = BB4Click
     end
     object BB5: TBitBtn
-      Left = 200
-      Top = 8
+      Left = 193
+      Top = 10
       Width = 49
       Height = 49
       Hint = 'Save Current'
@@ -849,7 +849,7 @@ object Deliver_EquipmentF: TDeliver_EquipmentF
     Top = 130
     Width = 1025
     Height = 512
-    ActivePage = TS1
+    ActivePage = TS2
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -1003,8 +1003,8 @@ object Deliver_EquipmentF: TDeliver_EquipmentF
         object Label1: TLabel
           Left = 6
           Top = 18
-          Width = 34
-          Height = 16
+          Width = 36
+          Height = 17
           Caption = 'LLNo:'
           Font.Charset = ANSI_CHARSET
           Font.Color = clWindowText
@@ -1016,8 +1016,8 @@ object Deliver_EquipmentF: TDeliver_EquipmentF
         object Label2: TLabel
           Left = 159
           Top = 18
-          Width = 61
-          Height = 16
+          Width = 59
+          Height = 17
           Caption = 'DepName:'
           Font.Charset = ANSI_CHARSET
           Font.Color = clWindowText
@@ -1029,8 +1029,8 @@ object Deliver_EquipmentF: TDeliver_EquipmentF
         object Label3: TLabel
           Left = 299
           Top = 19
-          Width = 34
-          Height = 16
+          Width = 32
+          Height = 17
           Caption = 'From:'
           Font.Charset = ANSI_CHARSET
           Font.Color = clWindowText
@@ -1042,8 +1042,8 @@ object Deliver_EquipmentF: TDeliver_EquipmentF
         object Label4: TLabel
           Left = 456
           Top = 19
-          Width = 17
-          Height = 16
+          Width = 19
+          Height = 17
           Caption = 'To:'
           Font.Charset = ANSI_CHARSET
           Font.Color = clWindowText
@@ -1056,7 +1056,7 @@ object Deliver_EquipmentF: TDeliver_EquipmentF
           Left = 45
           Top = 16
           Width = 105
-          Height = 24
+          Height = 25
           AutoSelect = False
           CharCase = ecUpperCase
           Font.Charset = ANSI_CHARSET
@@ -1071,7 +1071,7 @@ object Deliver_EquipmentF: TDeliver_EquipmentF
           Left = 224
           Top = 16
           Width = 65
-          Height = 24
+          Height = 25
           CharCase = ecUpperCase
           Font.Charset = ANSI_CHARSET
           Font.Color = clWindowText
@@ -1104,7 +1104,7 @@ object Deliver_EquipmentF: TDeliver_EquipmentF
           Left = 336
           Top = 16
           Width = 113
-          Height = 24
+          Height = 25
           Date = 39255.000000000000000000
           Format = 'yyyy/MM/dd'
           Time = 39255.000000000000000000
@@ -1120,7 +1120,7 @@ object Deliver_EquipmentF: TDeliver_EquipmentF
           Left = 480
           Top = 16
           Width = 113
-          Height = 24
+          Height = 25
           Date = 39255.000000000000000000
           Format = 'yyyy/MM/dd'
           Time = 39255.000000000000000000
@@ -2409,7 +2409,7 @@ object Deliver_EquipmentF: TDeliver_EquipmentF
     object TSCDQryRKNO: TStringField
       FieldName = 'RKNO'
       FixedChar = True
-      Size = 11
+      Size = 12
     end
     object TSCDQryCFMID: TStringField
       FieldName = 'CFMID'

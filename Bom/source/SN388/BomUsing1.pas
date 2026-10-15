@@ -79,6 +79,17 @@ type
     Edit4: TEdit;
     FOBDanhSachMaCon: TStringField;
     FOBYWPM: TStringField;
+    TabSheet2: TTabSheet;
+    Panel5: TPanel;
+    Label7: TLabel;
+    Label8: TLabel;
+    Label9: TLabel;
+    Edit5: TEdit;
+    Edit6: TEdit;
+    Button4: TButton;
+    DBGrid2: TDBGridEh;
+    DS3: TDataSource;
+    PriceQry: TQuery;
     procedure FormDestroy(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure Button2Click(Sender: TObject);
@@ -89,6 +100,7 @@ type
     procedure bbt6Click(Sender: TObject);
     procedure Button3Click(Sender: TObject);
     procedure ExcelClick(Sender: TObject);
+    procedure Button4Click(Sender: TObject);
   private
     { Private declarations }
   public
@@ -524,6 +536,140 @@ begin
 end;
 
 
+
+procedure TBomUsing.Button4Click(Sender: TObject);
+begin
+  if Trim(Edit5.Text) = '' then
+  begin
+    ShowMessage('Please input Article!');
+    Exit;
+  end;
+  if Trim(Edit6.Text) = '' then
+  begin
+    ShowMessage('Please input Season!');
+    Exit;
+  end;
+
+  with PriceQry do
+  begin
+    Active := False;
+    SQL.Clear;
+    SQL.Add('WITH BASE AS (');
+    SQL.Add('    SELECT ');
+    SQL.Add('        xxzl.ARTICLE, xxzl.XieXing, xxzl.SheHao, xxzl.gender, xxzl.bzcc,');
+    SQL.Add('        Costing_Size = ');
+    SQL.Add('        CASE ');
+    SQL.Add('            WHEN xxzl.gender IN (''Men'',''M'') THEN ''10''');
+    SQL.Add('            WHEN xxzl.gender IN (''Women'',''W'') THEN ''08''');
+    SQL.Add('            WHEN xxzl.gender IN (''Unisex'',''U'') THEN ''09''');
+    SQL.Add('            WHEN xxzl.gender IN (''Youth'',''Y'') THEN ''05.5''');
+    SQL.Add('            WHEN xxzl.gender IN (''Kid'',''K'',''Children'') THEN '' 13.5''');
+    SQL.Add('            ELSE xxzl.bzcc');
+    SQL.Add('        END');
+    SQL.Add('    FROM xxzl');
+    SQL.Add('),');
+    SQL.Add('XXZLS_EXPANDED AS (');
+    SQL.Add('    SELECT XXZLS.XH, XXZLS.BWBH, XXZLS.XieXing, XXZLS.SheHao,');
+    SQL.Add('           XXZLS.CLBH AS CLBH, ''Assembly'' AS DType');
+    SQL.Add('    FROM XXZLS');
+    SQL.Add('    UNION ALL');
+    SQL.Add('    SELECT XXZLS.XH, XXZLS.BWBH, XXZLS.XieXing, XXZLS.SheHao,');
+    SQL.Add('           Z1.cldh1 AS CLBH, ''Extra'' AS DType');
+    SQL.Add('    FROM XXZLS');
+    SQL.Add('    INNER JOIN clzhzl Z1 ON XXZLS.CLBH = Z1.cldh');
+    SQL.Add('    UNION ALL');
+    SQL.Add('    SELECT XXZLS.XH, XXZLS.BWBH, XXZLS.XieXing, XXZLS.SheHao,');
+    SQL.Add('           Z2.cldh1 AS CLBH, ''Extra'' AS DType');
+    SQL.Add('    FROM XXZLS');
+    SQL.Add('    INNER JOIN clzhzl Z1 ON XXZLS.CLBH = Z1.cldh');
+    SQL.Add('    INNER JOIN clzhzl Z2 ON Z1.cldh1 = Z2.cldh');
+    SQL.Add('    WHERE Z2.cldh1 <> XXZLS.CLBH');
+    SQL.Add('),');
+    SQL.Add('D AS (');
+    SQL.Add('SELECT DISTINCT');
+    SQL.Add('       XE.XH, XE.BWBH, BWZL.ywsm as BWMC, XE.CLBH, XE.DType,');
+    SQL.Add('       CLZL.YWPM as CLMC, CLZL.ZWPM as CLZW, CLZL.DWBH,');
+    SQL.Add('       XTBWYL.CLSL AS CLSL,');
+    SQL.Add('       Round(MaterialCBD_BomUsing.Qty, 4) AS Qty,');
+    SQL.Add('       MaterialCBD_His.SamplePrice,');
+    SQL.Add('       CAST(MaterialCBDEx.CWHL AS FLOAT) AS CWHL,');
+    SQL.Add('       CASE');
+    SQL.Add('         WHEN CLZL.CLZMLB = ''Y'' THEN');
+    SQL.Add('           CASE');
+    SQL.Add('             WHEN JGBJS.USPrice IS NOT NULL THEN CAST(JGBJS.USPrice AS FLOAT)');
+    SQL.Add('             WHEN JGBJS.VNPrice IS NOT NULL AND ISNULL(MaterialCBDEx.CWHL, 0) > 0');
+    SQL.Add('               THEN CAST(JGBJS.VNPrice / MaterialCBDEx.CWHL AS FLOAT)');
+    SQL.Add('             ELSE NULL');
+    SQL.Add('           END');
+    SQL.Add('         WHEN CGBJS.USPrice IS NOT NULL THEN CAST(CGBJS.USPrice AS FLOAT)');
+    SQL.Add('         WHEN CGBJS.VNPrice IS NOT NULL AND ISNULL(MaterialCBDEx.CWHL, 0) > 0');
+    SQL.Add('           THEN CAST(CGBJS.VNPrice / MaterialCBDEx.CWHL AS FLOAT)');
+    SQL.Add('         ELSE NULL');
+    SQL.Add('       END AS USPrice');
+    SQL.Add('FROM XXZLS_EXPANDED XE');
+    SQL.Add('left join BASE xxzl on xxzl.XieXing = XE.XieXing and xxzl.SheHao = XE.SheHao');
+    SQL.Add('left join BWZL on XE.BWBH = BWZL.bwdh');
+    SQL.Add('left join CLZL on XE.CLBH = CLZL.cldh');
+    SQL.Add('left join MaterialCBD_BomUsing');
+    SQL.Add('  on MaterialCBD_BomUsing.BWBH = XE.BWBH');
+    SQL.Add(' and MaterialCBD_BomUsing.ARTICLE =');
+    SQL.Add('     CASE');
+    SQL.Add('       WHEN CHARINDEX(''-'', xxzl.ARTICLE) > 0');
+    SQL.Add('         THEN LEFT(xxzl.ARTICLE, CHARINDEX(''-'', xxzl.ARTICLE) - 1)');
+    SQL.Add('       ELSE xxzl.ARTICLE');
+    SQL.Add('     END');
+    SQL.Add('left join XTBWYL');
+    SQL.Add('       on XTBWYL.XieXing = xxzl.XieXing');
+    SQL.Add('      and XTBWYL.SheHao = xxzl.SheHao');
+    SQL.Add('      and XTBWYL.BWBH = XE.BWBH');
+    SQL.Add('      and XTBWYL.XTCC = xxzl.Costing_Size');
+    SQL.Add('left join (');
+    SQL.Add('    SELECT CLBH, Season, SamplePrice,');
+    SQL.Add('           ROW_NUMBER() OVER (PARTITION BY CLBH, Season ORDER BY USERDATE DESC) AS RN');
+    SQL.Add('    FROM MaterialCBD_His');
+    SQL.Add('    WHERE YN = 0 AND SamplePrice > 0');
+    SQL.Add(') MaterialCBD_His');
+    SQL.Add('  on MaterialCBD_His.CLBH = XE.CLBH');
+    SQL.Add(' and MaterialCBD_His.Season = ''' + Trim(Edit6.Text) + ''' and MaterialCBD_His.RN = 1');
+    SQL.Add('left join CGBJS on CGBJS.CLBH = XE.CLBH and CGBJS.Season = ''' + Trim(Edit6.Text) + '''');
+    SQL.Add('  and CGBJS.Memo = ''' + Trim(Edit6.Text) + '''');
+    SQL.Add('left join (');
+    SQL.Add('    SELECT CLBH, JGNO, USPrice, VNPrice, UserDate');
+    SQL.Add('    FROM (');
+    SQL.Add('        SELECT');
+    SQL.Add('            JGZLS.CLBH,');
+    SQL.Add('            JGZLS.JGNO,');
+    SQL.Add('            JGZLS.USPrice,');
+    SQL.Add('            JGZLS.VNPrice,');
+    SQL.Add('            JGZLS.UserDate,');
+    SQL.Add('            ROW_NUMBER() OVER (');
+    SQL.Add('                PARTITION BY JGZLS.CLBH');
+    SQL.Add('                ORDER BY JGZLS.UserDate DESC, JGZLS.JGNO DESC');
+    SQL.Add('            ) AS rn');
+    SQL.Add('        FROM JGZLS');
+    SQL.Add('        LEFT JOIN JGZL ON JGZL.JGNO = JGZLS.JGNO');
+    SQL.Add('        WHERE JGZLS.ZMLB <> ''ZZZZZZZZZZ''');
+    SQL.Add('          AND JGZL.CFMID2 <> ''NO''');
+    SQL.Add('    ) T');
+    SQL.Add('    WHERE rn = 1');
+    SQL.Add(') JGBJS on JGBJS.CLBH = XE.CLBH');
+    SQL.Add('left join MaterialCBDEx on MaterialCBDEx.Season = ''' + Trim(Edit6.Text) + '''');
+    SQL.Add('where xxzl.ARTICLE like ''%' + Trim(Edit5.Text) + '%''');
+    SQL.Add(')');
+    SQL.Add('SELECT D.*,');
+    SQL.Add('       CAST(D.Qty * D.SamplePrice AS FLOAT) AS CBDCost,');
+    SQL.Add('       CAST(D.CLSL * D.USPrice AS FLOAT) AS ProdCost,');
+    SQL.Add('       CAST((D.CLSL * D.USPrice) - (D.Qty * D.SamplePrice) AS FLOAT) AS CostDiff');
+    SQL.Add('FROM D');
+    SQL.Add('ORDER BY D.BWBH, D.DType');
+    try
+      Active := True;
+    except
+      on E: Exception do
+        ShowMessage('Loi SQL: ' + E.Message);
+    end;
+  end;
+end;
 
 procedure TBomUsing.ExcelClick(Sender: TObject);
 var

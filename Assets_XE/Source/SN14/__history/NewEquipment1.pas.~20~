@@ -137,6 +137,11 @@ type
     ComboBox1: TComboBox;
     Label12: TLabel;
     QueryIT: TQuery;
+    RadioGroup1: TRadioGroup;
+    RBDT: TRadioButton;
+    RBDC: TRadioButton;
+    SpeedButton1: TSpeedButton;
+    BitBtn1: TBitBtn;
     procedure BB1Click(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormDestroy(Sender: TObject);
@@ -294,7 +299,7 @@ begin
   CheckUserID();
 end;
 
-procedure TNewEquipment.BB5Click(Sender: TObject);
+{procedure TNewEquipment.BB5Click(Sender: TObject);
 var x,y,m,TSID,tsbh,depid,depmemo:string;
     i:integer;
 begin
@@ -367,6 +372,9 @@ begin
           end;
           TSID :=y+m+TSID;
           active:=false;
+      // them phần tách DT và DC
+      if RBDT.Checked then
+             begin
           if rb2.Checked = true then
             begin
               with queryIT do
@@ -494,10 +502,16 @@ begin
                       sql.Add('SELECT TOP 1 TSBH FROM TSCD WHERE TSBH LIKE ''LAPTOP%''');
                       sql.Add('ORDER BY TSBH DESC');
                     end;
-                    21:
+                  21:
                     begin
                       X := 'WCAM';
                       sql.Add('SELECT TOP 1 TSBH FROM TSCD WHERE TSBH LIKE ''WCAM%''');
+                      sql.Add('ORDER BY TSBH DESC');
+                    end;
+                  22:
+                    begin
+                      X := 'MATB';
+                      sql.Add('SELECT TOP 1 TSBH FROM TSCD WHERE TSBH LIKE ''MATB%''');
                       sql.Add('ORDER BY TSBH DESC');
                     end;
                 else
@@ -507,6 +521,7 @@ begin
                       sql.Add('ORDER BY TSBH DESC');
                     end;
                 end;
+              end;
                 active := true;
                 if recordcount >0 then
                   begin
@@ -600,7 +615,7 @@ begin
                 upMas.apply(ukdelete);
               end else
               begin
-                if (NDate-TSCD.FieldByName('USERDATE').value)<=7  then
+                if ((NDate-TSCD.FieldByName('USERDATE').value)<=30) or (main.edit1.text='321541') or (main.edit1.text='316503') then
                 begin
                   TSCD.edit;
                   TSCD.FieldByName('userID').Value:=main.edit1.text;
@@ -608,7 +623,268 @@ begin
                   upMas.apply(ukmodify);
                 end else
                 begin
-                  showmessage('Date>7, can not modify.');
+                  showmessage('Date>30, can not modify.');
+                end;
+              end;
+            end;
+          end;
+        end;
+      end;
+      TSCD.next;
+    end;
+    TSCD.active:=false;
+    TSCD.cachedupdates:=false;
+    TSCD.requestlive:=false;
+    TSCD.active:=true;
+    //
+    BB5.enabled:=false;
+    BB6.enabled:=false;
+    DBGridEh1.columns[2].ButtonStyle:=cbsnone;
+    DBGridEh1.columns[8].ButtonStyle:=cbsnone;
+    DBGridEh1.columns[11].ButtonStyle:=cbsnone;
+    showmessage('Succeed.');
+  except
+    Messagedlg('Have wrong, can not save data!',mtwarning,[mbyes],0);
+  end;
+end; }
+
+procedure TNewEquipment.BB5Click(Sender: TObject);
+var
+  x,y,m,TSID,tsbh,depid,depmemo:string;
+  i:integer;
+begin
+  if ((TSCD.fieldbyname('SBBH').Value = NULL) or (TSCD.fieldbyname('DepID').Value = NULL )) then
+  begin
+    showmessage('Chua nhap Ma tai san hoac Don vi.');
+    abort;
+  end;
+
+  with Qtemp do
+  begin
+    active:=false;
+    sql.Clear;
+    sql.Add('select year(getdate()) as FY,month(getdate()) as FM,getdate() as NDate ');
+    active:=true;
+    y:=fieldbyname('FY').asstring;
+    m:=fieldbyname('FM').asstring;
+    NDate:=fieldbyname('NDate').Value;
+    active:=false;
+  end;
+
+  if length(m)<2 then
+    m:='0'+m;
+
+  try
+    TSCD.first;
+    if (main.edit1.text='83489') then
+    begin
+      if (edit1.Text<>'') or (edit2.Text<>'') then
+      begin
+        tsbh:=TSCD.fieldbyname('TSBH').AsString;
+        depid:=TSCD.fieldbyname('DEPID').AsString;
+        depmemo:=TSCD.fieldbyname('DEPID_MEMO').AsString;
+        if messagedlg('Cap nhat dong loat ?',mtinformation,[mbYes,mbNo],0)=mrYes then
+        begin
+          for i:=1 to TSCD.RecordCount do
+          begin
+            TSCD.edit;
+            TSCD.FieldByName('TSBH').Value:=tsbh;
+            TSCD.FieldByName('DEPID').Value:=depid;
+            TSCD.FieldByName('DEPID_MEMO').Value:=depmemo;
+            TSCD.Next;
+          end;
+        end;
+      end;
+    end;
+
+    TSCD.first;
+    for i:=1 to TSCD.RecordCount do
+    begin
+      case TSCD.updatestatus of
+        usinserted:
+        begin
+          with Qtemp do
+          begin
+            active:=false;
+            sql.Clear;
+            sql.Add('select TSID from TSCD where TSID like '''+y+m+'%''');
+            sql.add('order by TSID');
+            active:=true;
+            if recordcount >0 then
+            begin
+              last;
+              TSID:=fieldbyname('TSID').AsString;
+              TSID:=copy(TSID,7,5);
+              TSID:=inttostr(strtoint(TSID)+1);
+              while length(TSID)<5 do
+              begin
+                TSID:='0'+TSID;
+              end;
+            end else
+            begin
+              TSID:='00001';
+            end;
+            TSID :=y+m+TSID;
+            active:=false;
+
+            // Tách DT và DC đã được tối ưu
+            if RBDT.Checked or RBDC.Checked then
+            begin
+              if rb2.Checked = true then
+              begin
+                with queryIT do
+                begin
+                  active:=false;
+                  sql.Clear;
+
+                  // 1. Xác định mã tài sản gốc dựa trên ComboBox1
+                  case StrToIntDef(Copy(ComboBox1.Text, 1, 2), 0) of
+                    01: X := 'CAM';
+                    02: X := 'TCPU';
+                    03: X := 'ACPU';
+                    04: X := 'INKI';
+                    05: X := 'MHMT';
+                    06: X := 'NASS';
+                    07: X := 'MEPN';
+                    08: X := 'INVP';
+                    09: X := 'MCHI';
+                    10: X := 'FIRE';
+                    11: X := 'SCAN';
+                    12: X := 'MCVP';
+                    13: X := 'HTCAM';
+                    14: X := 'TIVI';
+                    15: X := 'BLD';
+                    16: X := 'WIFI';
+                    17: X := 'PCOM';
+                    18: X := 'OMCC';
+                    19: X := 'INHAN';
+                    20: X := 'LAPTOP';
+                    21: X := 'WCAM';
+                    22: X := 'MATB';
+                    else X := 'HLOA';
+                  end;
+
+                  // 2. Nếu là RBDC, thêm tiền tố 'DC-' vào trước biến X
+                  if RBDC.Checked then
+                  begin
+                    X := 'DC-' + X;
+                  end;
+
+                  // 3. Tạo truy vấn SQL (Hoạt động chuẩn trên MSSQL 2008 R2)
+                  sql.Add('SELECT TOP 1 TSBH FROM TSCD WHERE TSBH LIKE ''' + X + '%''');
+                  sql.Add('ORDER BY TSBH DESC');
+
+                  active := true;
+                  if recordcount > 0 then
+                  begin
+                    last;
+                    TSBH:=fieldbyname('TSBH').AsString;
+                    // Lấy 4 ký tự số cuối cùng bất kể độ dài prefix (VD: CAM0001 hay DC-CAM0001 đều cắt chuẩn)
+                    TSBH := Copy(TSBH, Length(TSBH) - 3, 4);
+                    TSBH:=inttostr(strtoint(TSBH)+1);
+                    while length(TSBH)<4 do
+                    begin
+                      TSBH :='0'+TSBH ;
+                    end;
+                  end else
+                  begin
+                    TSBH :='0001';
+                  end;
+
+                  TSBH := X + TSBH;
+                  active:=false;
+                end;
+              end;
+            end;
+          end;
+
+          TSCD.edit;
+          TSCD.fieldbyname('TSID').Value:=TSID;
+          TSCD.fieldbyname('TSBH').Value:=TSBH;
+          TSCD.FieldByName('Qty').Value:=1;
+          TSCD.FieldByName('Status').Value:='Y';
+          TSCD.FieldByName('LLNO').Value:='ZZZZZZZZZZ';
+
+          if TSCD.FieldByName('LB').IsNull then
+          begin
+            // ERP
+            if ((Copy(TSCD.fieldbyname('SBBH').AsString,1,1)='X') or (Copy(TSCD.fieldbyname('SBBH').AsString,1,1)='Y') or (Copy(TSCD.fieldbyname('SBBH').AsString,1,1)='Z'))   then
+            begin
+              if RBDC.Checked then
+                TSCD.FieldByName('LB').Value := '3'
+              else
+                TSCD.FieldByName('LB').Value := '2';
+            end else
+            begin
+              TSCD.FieldByName('LB').Value:='1';
+            end;
+          end;
+
+          TSCD.FieldByName('userID').Value:=main.edit1.text;
+          TSCD.FieldByName('userdate').Value:=NDate;
+          TSCD.FieldByName('YN').Value:='1';
+
+          upMas.apply(ukinsert);
+        end;
+        usmodified:
+        begin
+          if IsAdmin=true then
+          begin
+            if TSCD.fieldbyname('YN').value='0' then
+            begin
+              with BDelRec do
+              begin
+                active:=false;
+                sql.Clear;
+                sql.add('insert into BDelRec ');
+                sql.add('(TableName ,TNO,CLBH,OldID,DelID,DelDate)');
+                sql.add('values (''TSCD'','''+TSCD.fieldbyname('TSID').Value+'''');
+                sql.add(','''','''+TSCD.fieldbyname('USERID').Value+''',');
+                sql.add(''''+main.Edit1.Text+''',Getdate())');
+                execsql;
+                active:=false;
+              end;
+              upMas.apply(ukdelete);
+            end else
+            begin
+              TSCD.edit;
+              TSCD.FieldByName('userID').Value:=main.edit1.text;
+              TSCD.FieldByName('userdate').Value:=Ndate;
+              upMas.apply(ukmodify);
+            end;
+          end else
+          begin
+            if TSCD.FieldByName('USERID').value<>main.Edit1.Text then
+            begin
+              showmessage('不是你的，不要亂動。khong phai ban khong duoc tu sua');
+            end else
+            begin
+              if TSCD.fieldbyname('YN').value='0' then
+              begin
+                with BDelRec do
+                begin
+                  active:=false;
+                  sql.Clear;
+                  sql.add('insert into BDelRec ');
+                  sql.add('(TableName ,TNO,CLBH,OldID,DelID,DelDate)');
+                  sql.add('values (''TSCD'','''+TSCD.fieldbyname('TSID').Value+'''');
+                  sql.add(','''','''+TSCD.fieldbyname('USERID').Value+''',');
+                  sql.add(''''+main.Edit1.Text+''',Getdate())');
+                  execsql;
+                  active:=false;
+                end;
+                upMas.apply(ukdelete);
+              end else
+              begin
+                if ((NDate-TSCD.FieldByName('USERDATE').value)<=30) or (main.edit1.text='321541') or (main.edit1.text='316503') then
+                begin
+                  TSCD.edit;
+                  TSCD.FieldByName('userID').Value:=main.edit1.text;
+                  TSCD.FieldByName('userdate').Value:=Ndate;
+                  upMas.apply(ukmodify);
+                end else
+                begin
+                  showmessage('Date>30, can not modify.');
                 end;
               end;
             end;
@@ -782,8 +1058,149 @@ begin
 end;
 
 procedure TNewEquipment.BitBtn1Click(Sender: TObject);
+var
+  eclApp, WorkBook: olevariant;
+  i, j: integer;
+  QrCodeInfoList: TStringList;
+  TSBH, Label_Tag, RFID_Tag, Memo: String;
+  InDate, TenTiengViet, TenTiengTrung: String; // Khai báo thêm 3 trường mới
 begin
+  if TSCDQry.Active then
+  begin
+    if (not DirectoryExists(AppDir + 'Additional\')) then
+      ForceDirectories(AppDir + 'Additional\');
 
+    // Copy file mẫu có số 1
+    CopyFile(PChar('\\' + main.ServerIP + '\liy_erp\Additional\Production_SN326_ERP_TSCDLIst1.xls'),
+             PChar(AppDir + 'Additional\Production_SN326_ERP_TSCDLIst1.xls'), False);
+
+    if FileExists(AppDir + 'Additional\Production_SN326_ERP_TSCDLIst1.xls') then
+    begin
+      try
+        eclApp := CreateOleObject('Excel.Application');
+        WorkBook := CreateOleObject('Excel.Sheet');
+      except
+        Application.MessageBox('No Microsoft Excel', 'Microsoft Excel', MB_OK + MB_ICONWarning);
+        Exit;
+      end;
+
+      try
+        eclApp.DisplayAlerts := False;
+        eclApp.WorkBooks.Open(AppDir + 'Additional\Production_SN326_ERP_TSCDLIst1.xls');
+        QrCodeInfoList := TStringList.Create;
+        Label_Tag := '';
+        RFID_Tag := '';
+        InDate := '';
+        TenTiengViet := '';
+        TenTiengTrung := '';
+
+        j := 2;
+        TSCDQry.First;
+        for i := 0 to TSCDQry.RecordCount - 1 do
+        begin
+          // Nếu đổi sang mã tài sản khác thì ghi dòng dữ liệu cũ ra Excel
+          if (Label_Tag <> TSCDQry.FieldByName('Label_Tag').AsString) and (Label_Tag <> '') then
+          begin
+            // Ghi dữ liệu ra Excel
+            eclApp.Cells(j, 1) := Label_Tag;
+            eclApp.Cells(j, 2) := RFID_Tag;
+            eclApp.Cells(j, 4) := Trim(QrCodeInfoList.Text);
+            eclApp.Cells(j, 5) := Memo;
+            eclApp.Cells(j, 6) := TSBH;
+            // 3 cột bổ sung
+            eclApp.Cells(j, 7) := InDate;
+            eclApp.Cells(j, 8) := TenTiengViet;
+            eclApp.Cells(j, 9) := TenTiengTrung;
+
+            QrCodeInfoList.Clear;
+            Label_Tag := '';
+            RFID_Tag := '';
+            InDate := '';
+            TenTiengViet := '';
+            TenTiengTrung := '';
+            Inc(j);
+          end;
+
+          // Gán thông tin thẻ/tài sản mới
+          if Label_Tag = '' then
+          begin
+            Label_Tag := TSCDQry.FieldByName('Label_Tag').AsString;
+            RFID_Tag := TSCDQry.FieldByName('RFID_Tag').AsString;
+            Memo := TSCDQry.FieldByName('DepName').AsString;
+            TSBH := TSCDQry.FieldByName('TSBH').AsString;
+
+            // Lấy 3 trường dữ liệu mới từ Query
+            InDate := TSCDQry.FieldByName('INDATE').AsString;
+            TenTiengViet := TSCDQry.FieldByName('VWPM').AsString;
+            TenTiengTrung := TSCDQry.FieldByName('ZWPM').AsString;
+
+            QrCodeInfoList.Add(Label_Tag); // Tài sản編號
+            QrCodeInfoList.Add(TSBH);
+            //QrCodeInfoList.Add('Don vi bao quan:' + TSCDQry.FieldByName('DepName').AsString);
+           // QrCodeInfoList.Add('*********************');
+          end;
+
+          if TSCDQry.FieldByName('Memo').AsString <> '' then
+            QrCodeInfoList.Add(TSCDQry.FieldByName('YWPM').AsString + '//' + TSCDQry.FieldByName('Memo').AsString)
+          else
+            QrCodeInfoList.Add(TSCDQry.FieldByName('YWPM').AsString);
+
+          TSCDQry.Next;
+        end;
+
+        // Ghi bản ghi cuối cùng ra Excel
+        if (QrCodeInfoList.Text <> '') and (Label_Tag <> '') then
+        begin
+          eclApp.Cells(j, 1) := Label_Tag;
+          eclApp.Cells(j, 2) := RFID_Tag;
+          eclApp.Cells(j, 4) := Trim(QrCodeInfoList.Text);
+          eclApp.Cells(j, 5) := Memo;
+          eclApp.Cells(j, 6) := TSBH;
+          // 3 cột bổ sung cho bản ghi cuối
+          eclApp.Cells(j, 7) := InDate;
+          eclApp.Cells(j, 8) := TenTiengViet;
+          eclApp.Cells(j, 9) := TenTiengTrung;
+
+          QrCodeInfoList.Clear;
+          Label_Tag := '';
+          RFID_Tag := '';
+          InDate := '';
+          TenTiengViet := '';
+          TenTiengTrung := '';
+        end;
+
+        QrCodeInfoList.Free;
+
+        // Lưu file Excel kết quả (TSCDLIst1.xls)
+        if FileExists(AppDir + 'TSCDLIst1.xls') then
+          DeleteFile(AppDir + 'TSCDLIst1.xls');
+        eclApp.ActiveWorkbook.SaveAs(AppDir + 'TSCDLIst1.xls', -4143);
+        eclApp.Quit;
+
+        // Mở file thiết kế in BarTender (ERP_TSCD_RFID1.btw)
+        if FileExists(ExtractFilePath(Application.ExeName) + 'ERP_TSCD_RFID1.btw') then
+        begin
+          ShellExecute(Handle, 'open',
+                       PChar(ExtractFilePath(Application.ExeName) + 'ERP_TSCD_RFID1.btw'),
+                       nil,
+                       PChar(ExtractFilePath(Application.ExeName)),
+                       SW_SHOW);
+        end
+        else
+        begin
+          ShowMessage('Pls setup the program ERP_TSCD_RFID1.btw first. Abort');
+        end;
+
+      except
+        on F: Exception do
+          ShowMessage(F.Message);
+      end;
+    end
+    else
+    begin
+      ShowMessage('Pls setup Production_SN326_ERP_TSCDLIst1.xls first');
+    end;
+  end;
 end;
 
 //Excel File Import
@@ -879,7 +1296,7 @@ procedure TNewEquipment.btc6Click(Sender: TObject);
 var eclApp,WorkBook:olevariant;
     i,j:integer;
     QrCodeInfoList:TStringList;
-    Label_Tag,RFID_Tag,Memo:String;
+    TSBH,Label_Tag,RFID_Tag,Memo:String;
 begin
   if  TSCDQry.Active  then
   begin
@@ -911,7 +1328,10 @@ begin
               eclApp.Cells(j,1):=Label_Tag;
               eclApp.Cells(j,2):=RFID_Tag;
               eclApp.Cells(j,4):=trim(QrCodeInfoList.Text);
-              eclApp.Cells(j,5):=Memo;
+              {if Copy(Label_Tag,1,1)='A' then
+                eclApp.Cells(j,5):=''
+              else }eclApp.Cells(j,5):=Memo;
+              eclApp.Cells(j,6):=TSBH;
               QrCodeInfoList.Clear;
               Label_Tag:='';
               RFID_Tag:='';
@@ -922,9 +1342,10 @@ begin
             begin
               Label_Tag:=TSCDQry.FieldByName('Label_Tag').AsString;
               RFID_Tag:=TSCDQry.FieldByName('RFID_Tag').AsString;
-              Memo:=TSCDQry.FieldByName('DepID_Memo').AsString;
+              Memo:=TSCDQry.FieldByName('DepName').AsString;
+              TSBH:=TSCDQry.FieldByName('TSBH').AsString;
               QrCodeInfoList.Add(Label_Tag); //財產編號
-              QrCodeInfoList.Add(TSCDQry.FieldByName('TSBH').AsString);
+              QrCodeInfoList.Add(TSBH);
               //QrCodeInfoList.Add('Ma So nhap kho:'+ TSCDQry.FieldByName('RKNO').AsString);
               //QrCodeInfoList.Add('Ma so vat lieu:'+ TSCDQry.FieldByName('LLNO').AsString);
               //QrCodeInfoList.Add('don vi lanh vat tu:'+ TSCDQry.FieldByName('DepName').AsString);
@@ -943,10 +1364,10 @@ begin
             eclApp.Cells(j,1):=Label_Tag;
             eclApp.Cells(j,2):=RFID_Tag;
             eclApp.Cells(j,4):=trim(QrCodeInfoList.Text);
-            if Copy(Label_Tag,1,1)='A' then
+            {if Copy(Label_Tag,1,1)='A' then
               eclApp.Cells(j,5):=''
-            else eclApp.Cells(j,5):=Memo;
-            eclApp.Cells(j,6):= TSCDQry.FieldByName('TSBH').AsString;
+            else} eclApp.Cells(j,5):=Memo;
+            eclApp.Cells(j,6):=TSBH;
             QrCodeInfoList.Clear;
             Label_Tag:='';
             RFID_Tag:='';
@@ -1258,9 +1679,9 @@ begin
     Active:=false;
     SQL.Clear;
     SQL.Add('Select  TSCD.TSID,TSCD.TSBH, TSCD.SBBH , TSCD.Qty, TSCD.XSBH, TSCD.NSX, TSCD.Status,TSCD.Label_Tag,TSCD.RFID_Tag,');
-    SQL.Add('        TSCD.USERID_Tag, TSCD.USERDATE_Tag,TSCD.RKNO, TSCD.LLNO, ');
+    SQL.Add('        TSCD.USERID_Tag, TSCD.USERDATE_Tag,TSCD.RKNO, TSCD.LLNO,TSCD.InDATE, ');
     SQL.Add('        BDepartment.DepName,TSCD.Memo, TSCD.DepID_Memo, ');
-    SQL.Add('        IsNull(TSCD_SB.YWPM,CLZL.YWPM) as YWPM,IsNull(TSCD_SB.ZWPM,CLZL.ZWPM) as ZWPM ');
+    SQL.Add('        IsNull(TSCD_SB.YWPM,CLZL.YWPM) as YWPM,IsNull(TSCD_SB.ZWPM,CLZL.ZWPM) as ZWPM,TSCD_SB.VWPM ');
     SQL.Add('from TSCD ');
     sql.add('left join clzl on TSCD.SBBH = clzl.cldh ');
     sql.add('left join TSCD_SB on TSCD.SBBH = TSCD_SB.SBBH ');

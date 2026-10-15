@@ -805,7 +805,7 @@ object EntryEquipment: TEntryEquipment
     Top = 130
     Width = 1370
     Height = 619
-    ActivePage = TS1
+    ActivePage = TS2
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText

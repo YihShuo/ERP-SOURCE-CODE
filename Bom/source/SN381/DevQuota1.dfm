@@ -1,6 +1,6 @@
 object DevQuota: TDevQuota
-  Left = 611
-  Top = 151
+  Left = 507
+  Top = 107
   Width = 1299
   Height = 578
   Caption = 'CostingMTL cost'
@@ -3773,6 +3773,13 @@ object DevQuota: TDevQuota
           end
           item
             EditButtons = <>
+            FieldName = 'CLMC'
+            Footers = <>
+            ReadOnly = True
+            Width = 180
+          end
+          item
+            EditButtons = <>
             FieldName = 'SamplePrice'
             Footers = <>
             ReadOnly = True
@@ -5264,6 +5271,7 @@ object DevQuota: TDevQuota
     SQL.Strings = (
       'select CostingPriceList.PricingSeason as  season--'#23395#31680
       ',YWBZPO.CLBH--'#22806#31665#32232#34399
+      ',CLZL.YWPM as CLMC'
       ',DDZL.GSBH'
       ',MaterialCBD_His.ZSBH'
       ',MaterialCBD_His.SamplePrice'
@@ -5281,6 +5289,7 @@ object DevQuota: TDevQuota
         'left join DDZL on DDZL.article=CostingPriceList.SKU+'#39'-'#39'+CostingP' +
         'riceList.Color_Code'
       'left join YWBZPO on YWBZPO.DDBH=DDZL.DDBH'
+      'left join CLZL on CLZL.CLDH=YWBZPO.CLBH'
       
         'left join MaterialCBD_His on CostingPriceList.PricingSeason=Mate' +
         'rialCBD_His.season and MaterialCBD_His.CLBH=YWBZPO.CLBH and Mate' +
@@ -5370,6 +5379,12 @@ object DevQuota: TDevQuota
     end
     object Qry_CTUSERDATE: TDateTimeField
       FieldName = 'USERDATE'
+    end
+    object Qry_CTCLMC: TStringField
+      DisplayWidth = 40
+      FieldName = 'CLMC'
+      FixedChar = True
+      Size = 100
     end
   end
   object DS8: TDataSource

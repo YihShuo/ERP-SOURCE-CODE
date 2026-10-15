@@ -545,7 +545,7 @@ object NewDepartment: TNewDepartment
       Left = 78
       Top = 24
       Width = 95
-      Height = 26
+      Height = 29
       AutoSelect = False
       CharCase = ecUpperCase
       Font.Charset = ANSI_CHARSET
@@ -583,7 +583,7 @@ object NewDepartment: TNewDepartment
       Left = 247
       Top = 24
       Width = 121
-      Height = 26
+      Height = 29
       AutoSelect = False
       CharCase = ecUpperCase
       Font.Charset = ANSI_CHARSET
@@ -787,6 +787,14 @@ object NewDepartment: TNewDepartment
         FieldName = 'YN'
         Footers = <>
         Width = 20
+      end
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'Name_en'
+        Footers = <>
+        Width = 200
       end>
     object RowDetailData: TRowDetailPanelControlEh
     end
@@ -845,6 +853,12 @@ object NewDepartment: TNewDepartment
       FixedChar = True
       Size = 1
     end
+    object Query1Name_en: TStringField
+      FieldName = 'Name_en'
+      Origin = 'DB.TSCD_BDepartment.Name_en'
+      FixedChar = True
+      Size = 50
+    end
   end
   object UpSQL1: TUpdateSQL
     ModifySQL.Strings = (
@@ -857,17 +871,20 @@ object NewDepartment: TNewDepartment
       '  ProYN = :ProYN,'
       '  UserID = :UserID,'
       '  UserDate = :UserDate,'
-      '  YN = :YN'
+      '  YN = :YN,'
+      '  name_en = :name_en'
       'where'
       '  ID = :OLD_ID and'
       '  GSBH = :OLD_GSBH')
     InsertSQL.Strings = (
       'insert into TSCD_BDepartment'
-      '  (ID, GSBH, DepName, DepMemo, ProYN,  UserID, UserDate, YN)'
+      
+        '  (ID, GSBH, DepName, DepMemo, ProYN,  UserID, UserDate, YN, Nam' +
+        'e_en)'
       'values'
       
         '  (:ID, :GSBH, :DepName, :DepMemo, :ProYN, :UserID, :UserDate,:Y' +
-        'N)')
+        'N,:name_en)')
     DeleteSQL.Strings = (
       'delete from TSCD_BDepartment'
       'where'

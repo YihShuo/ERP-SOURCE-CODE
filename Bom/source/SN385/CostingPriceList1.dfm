@@ -99,7 +99,7 @@ object CostingPriceList: TCostingPriceList
     Top = 0
     Width = 1395
     Height = 753
-    ActivePage = TabSheet2
+    ActivePage = TabSheet1
     Align = alClient
     TabOrder = 0
     OnChange = PageControl1Change

@@ -395,6 +395,7 @@ type
     btn1: TButton;
     Qry_CTUSERID: TStringField;
     Qry_CTUSERDATE: TDateTimeField;
+    Qry_CTCLMC: TStringField;
     Delete2: TMenuItem;
     UpdateQuery1: TUpdateSQL;
     Query1XieXing: TStringField;
@@ -1371,11 +1372,11 @@ begin
       while not eof do
       begin
 
-        {if (Query.fieldbyname('PriceFormula').Value<>Query.fieldbyname('PriceFormula').OldValue)
+        if (Query.fieldbyname('PriceFormula').Value<>Query.fieldbyname('PriceFormula').OldValue)
             OR(Query.fieldbyname('CostingRemark').Value<>Query.fieldbyname('CostingRemark').OldValue)
             OR(Query.fieldbyname('Freight').Value<>Query.fieldbyname('Freight').OldValue)
-            OR(Query.fieldbyname('flag').Value<>Query.fieldbyname('flag').OldValue) then     }
-        if 1=1 then
+            OR(Query.fieldbyname('flag').Value<>Query.fieldbyname('flag').OldValue) then
+       // if 1=1 then     05/08/2026 ys it fix
         begin
          with TemQry do
           begin
@@ -1397,7 +1398,7 @@ begin
             else
               sql.Add('and GSBH='''+main.Edit2.Text+'''');
             sql.add('and KFCQ='''+KFCQ+''' ');      
-            sql.add('and HDH='''+KHDH+''' ') ;
+            sql.add('and KHDH='''+KHDH+''' ') ;
             active:=true;
             //如果價格有修改
             //if TemQry.fieldbyname('SamplePrice').value<>Query.fieldbyname('SamplePrice').Value then
@@ -1828,7 +1829,12 @@ begin
     SQL.Clear;
 
     SQL.Add('select CONVERT(Bit,IsNull(MaterialCBD_His.YN,0)) as YN,MaterialCBD_His.CLBH,CLZL.YWPM, CLZL.ZWPM,CLZL.DWBH,MaterialCBD_His.ZSBH as ZSDH');
-    sql.Add('   ,Max(ZSZL.ZSYWJC) as ZSYWJC,MaterialCBD_His.SamplePrice,Max(MaterialCBD_His.PriceFormula)as PriceFormula');
+    sql.Add('   ,Max(ZSZL.ZSYWJC) as ZSYWJC');
+    //2026-07-23 add: if this customer(KHDH) has no price, fall back to display another customer's price (from OtherKH join below)
+    sql.Add('   ,(case when MaterialCBD_His.SamplePrice is not null then MaterialCBD_His.SamplePrice else max(OtherKH.SamplePrice) end) as SamplePrice');
+    sql.Add('   ,(case when MaterialCBD_His.SamplePrice is null and max(OtherKH.SamplePrice) is not null then 1 else 0 end) as IsOtherKHPrice');
+    sql.Add('   ,max(OtherKH.KHDH) as OtherKHKHDH');
+    sql.Add('   ,Max(MaterialCBD_His.PriceFormula)as PriceFormula');
     sql.Add('	   ,max(MaterialCBD_His.CostingRemark) as CostingRemark ,MaterialCBD_His.userID,MaterialCBD_His.userdate,CLZL.CQDH');
     sql.add('   ,max(MaterialMOQ.ProdLeadTime)as ProdLeadTime,max(MaterialMOQ.Forecast_Leadtime)as Forecast_Leadtime,max(MaterialMOQ.ProdMOQ) as ProdMOQ');
     sql.add('   ,max(MaterialMOQ.Surcharge) as Surcharge,max(MaterialMOQ.Dyingfee) as Dyingfee,max(MaterialMOQ.ExtraPrice) as ExtraPrice');
@@ -1850,6 +1856,9 @@ begin
     sql.add('Left JOIN MaterialMOQ on MaterialMOQ_Temp.CLBH=MaterialMOQ.CLBH and MaterialMOQ_Temp.ZSBH=MaterialMOQ.ZSBH');
 
     sql.add('  LEFT JOIN ZSZL_DEV on ZSZL_DEV.ZSDH=ZSZL.ZSDH  and ZSZL_DEV.GSBH = ''VDH''');
+    //2026-07-23 add: separate join to MaterialCBD_His without KHDH filter, to find price already set under another customer/brand
+    sql.add('  LEFT JOIN MaterialCBD_His OtherKH on OtherKH.CLBH=MaterialCBD_His.CLBH and OtherKH.Season=MaterialCBD_His.Season');
+    sql.add('       and OtherKH.GSBH=MaterialCBD_His.GSBH and OtherKH.YN=0 and OtherKH.KHDH<>MaterialCBD_His.KHDH and OtherKH.SamplePrice is not null');
 
     if not CKKFCQ.Checked then SQL.Add('where CLZL.CLZMLB=''N''')//  and MaterialCBD_His.KFCQ='''+KFCQ+'''');
     else  SQL.Add('where CLZL.CLZMLB=''N'' and MaterialCBD_His.KFCQ='''+KFCQ+'''');
@@ -1916,6 +1925,17 @@ procedure TDevQuota.DBGrid2GetCellParams(Sender: TObject;
   Column: TColumnEh; AFont: TFont; var Background: TColor;
   State: TGridDrawState);
 begin
+  //2026-07-23 add: DBGridEh5(Query1) - SamplePrice shows another customer/brand's price as fallback when this
+  //customer(KHDH) has none; IsOtherKHPrice flags that case -> inverted color as reminder
+  if (Sender = DBGridEh5) then
+  begin
+    if (Query1.FieldByName('IsOtherKHPrice').AsInteger = 1) then
+    begin
+      Background := clBlack;
+      AFont.Color := clWhite;
+    end;
+    exit;
+  end;
   if ((XXZlS.FieldByName('PriceFormula').IsNull) or (XXZlS.FieldByName('PriceFormula').AsString='') ) and (XXZlS.fieldbyname('flag').Value=false)  then
   begin
     dbgrid2.canvas.font.color:=clred;
@@ -2853,6 +2873,7 @@ begin
     sql.add(',YWBZPO.CLBH--外箱編號');
     sql.add(',MaterialCBD_His.GSBH');
     sql.add(',MaterialCBD_His.ZSBH');
+    sql.add(',Max(CLZL.YWPM) as CLMC');
     sql.add(',MaterialCBD_His.SamplePrice');
     sql.add(',MaterialCBD_His.PriceFormula');
     sql.add(',MaterialCBD_His.Freight');
@@ -2867,6 +2888,7 @@ begin
     sql.add('From CostingPriceList');
     sql.add('left join DDZL on DDZL.article=CostingPriceList.SKU+''-''+CostingPriceList.Color_Code');
     sql.add('left join YWBZPO on YWBZPO.DDBH=DDZL.DDBH');
+    sql.add('left join CLZL on CLZL.CLDH=YWBZPO.CLBH');
     sql.add('left join MaterialCBD_His on CostingPriceList.PricingSeason=MaterialCBD_His.season and MaterialCBD_His.CLBH=YWBZPO.CLBH and MaterialCBD_His.KFCQ=CostingPriceList.KFCQ');
     sql.add('where PricingSeason like '''+Edit40.text+'%''');
     //sql.add('and CostingPriceList.KFCQ='''+KFCQ+'''');

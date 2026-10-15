@@ -494,10 +494,16 @@ begin
                       sql.Add('SELECT TOP 1 TSBH FROM TSCD WHERE TSBH LIKE ''LAPTOP%''');
                       sql.Add('ORDER BY TSBH DESC');
                     end;
-                    21:
+                  21:
                     begin
                       X := 'WCAM';
                       sql.Add('SELECT TOP 1 TSBH FROM TSCD WHERE TSBH LIKE ''WCAM%''');
+                      sql.Add('ORDER BY TSBH DESC');
+                    end;
+                  22:
+                    begin
+                      X := 'MATB';
+                      sql.Add('SELECT TOP 1 TSBH FROM TSCD WHERE TSBH LIKE ''MATB%''');
                       sql.Add('ORDER BY TSBH DESC');
                     end;
                 else
@@ -600,7 +606,7 @@ begin
                 upMas.apply(ukdelete);
               end else
               begin
-                if (NDate-TSCD.FieldByName('USERDATE').value)<=7  then
+                if ((NDate-TSCD.FieldByName('USERDATE').value)<=30) or (main.edit1.text='321541') or (main.edit1.text='316503') then
                 begin
                   TSCD.edit;
                   TSCD.FieldByName('userID').Value:=main.edit1.text;
@@ -608,7 +614,7 @@ begin
                   upMas.apply(ukmodify);
                 end else
                 begin
-                  showmessage('Date>7, can not modify.');
+                  showmessage('Date>30, can not modify.');
                 end;
               end;
             end;
@@ -914,7 +920,7 @@ begin
               {if Copy(Label_Tag,1,1)='A' then
                 eclApp.Cells(j,5):=''
               else }eclApp.Cells(j,5):=Memo;
-              eclApp.Cells(j,2):=TSBH;
+              eclApp.Cells(j,6):=TSBH;
               QrCodeInfoList.Clear;
               Label_Tag:='';
               RFID_Tag:='';
@@ -925,9 +931,10 @@ begin
             begin
               Label_Tag:=TSCDQry.FieldByName('Label_Tag').AsString;
               RFID_Tag:=TSCDQry.FieldByName('RFID_Tag').AsString;
-              Memo:=TSCDQry.FieldByName('DepID_Memo').AsString;
+              Memo:=TSCDQry.FieldByName('DepName').AsString;
+              TSBH:=TSCDQry.FieldByName('TSBH').AsString;
               QrCodeInfoList.Add(Label_Tag); //財產編號
-              QrCodeInfoList.Add(TSCDQry.FieldByName('TSBH').AsString);
+              QrCodeInfoList.Add(TSBH);
               //QrCodeInfoList.Add('Ma So nhap kho:'+ TSCDQry.FieldByName('RKNO').AsString);
               //QrCodeInfoList.Add('Ma so vat lieu:'+ TSCDQry.FieldByName('LLNO').AsString);
               //QrCodeInfoList.Add('don vi lanh vat tu:'+ TSCDQry.FieldByName('DepName').AsString);
@@ -949,7 +956,7 @@ begin
             {if Copy(Label_Tag,1,1)='A' then
               eclApp.Cells(j,5):=''
             else} eclApp.Cells(j,5):=Memo;
-            eclApp.Cells(j,6):= TSCDQry.FieldByName('TSBH').AsString;
+            eclApp.Cells(j,6):=TSBH;
             QrCodeInfoList.Clear;
             Label_Tag:='';
             RFID_Tag:='';

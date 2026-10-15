@@ -88,6 +88,7 @@ type
     SN71: TMenuItem;
     SN388: TMenuItem;
     SN57: TMenuItem;
+    SN4B: TMenuItem;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure SN10Click(Sender: TObject);
@@ -143,6 +144,7 @@ type
     procedure SN387Click(Sender: TObject);
     procedure SN388Click(Sender: TObject);
     procedure SN57Click(Sender: TObject);
+    procedure SN4BClick(Sender: TObject);
   private
      MKID:String;
      LanguageID:String;
@@ -178,7 +180,7 @@ uses DM3,BOMM1, BOMVN1, PartType1, MaterialNew1, PARTNEW1, ProdRate1,
   KhuonInInWarehouse1, KhuonInOutWarehouse1, KhuonInStockMonth1,
   KhuonInDeliver1, SOPProcessCapcity1, SKU_Price_BUYNO1, BOM_OrderList1,
   CostingPriceList1,SKU_SA_CODE1,CostingCBD1, BOM_N385_LYS, BomUsing1,
-  UsageRecord1;
+  UsageRecord1, Material_Customer1;
 
 {$R *.dfm}
 //
@@ -780,6 +782,11 @@ end;
 procedure Tmain.SN57Click(Sender: TObject);
 begin
     showFm(Pointer(UsageRecord), TUsageRecord, TMenuItem(Sender).Name);
+end;
+
+procedure Tmain.SN4BClick(Sender: TObject);
+begin
+     showFm(Pointer(Material_Customer), TMaterial_Customer, TMenuItem(Sender).Name);
 end;
 
 end.

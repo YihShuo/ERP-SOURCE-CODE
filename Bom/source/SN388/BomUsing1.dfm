@@ -714,6 +714,217 @@ object BomUsing: TBomUsing
           end>
       end
     end
+    object TabSheet2: TTabSheet
+      Caption = 'Business/Mass Price'
+      ImageIndex = 2
+      object Panel5: TPanel
+        Left = 0
+        Top = 0
+        Width = 1423
+        Height = 70
+        Align = alTop
+        TabOrder = 0
+        object Label7: TLabel
+          Left = 24
+          Top = 8
+          Width = 40
+          Height = 16
+          Caption = 'Article:'
+        end
+        object Label8: TLabel
+          Left = 240
+          Top = 8
+          Width = 50
+          Height = 16
+          Caption = 'Season:'
+        end
+        object Label9: TLabel
+          Left = 24
+          Top = 46
+          Width = 400
+          Height = 16
+          Caption =
+            #20633#35387#65306'Qty('#37327')'#28858'BOM'#20998#38913#40643#33394#36664#20837'('#27396#20301'Formula)'#25152#22635#23531#30340'CBD'#29992#37327#12290
+        end
+        object Edit5: TEdit
+          Left = 72
+          Top = 8
+          Width = 150
+          Height = 24
+          CharCase = ecUpperCase
+          Color = clYellow
+          TabOrder = 0
+        end
+        object Edit6: TEdit
+          Left = 296
+          Top = 8
+          Width = 100
+          Height = 24
+          CharCase = ecUpperCase
+          Color = clYellow
+          TabOrder = 1
+        end
+        object Button4: TButton
+          Left = 416
+          Top = 6
+          Width = 74
+          Height = 33
+          Caption = 'QUERY'
+          TabOrder = 2
+          OnClick = Button4Click
+        end
+      end
+      object DBGrid2: TDBGridEh
+        Left = 0
+        Top = 49
+        Width = 1423
+        Height = 491
+        Align = alClient
+        DataSource = DS3
+        Flat = False
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -15
+        Font.Name = 'MS Sans Serif'
+        Font.Style = []
+        FooterColor = clWindow
+        FooterFont.Charset = DEFAULT_CHARSET
+        FooterFont.Color = clWindowText
+        FooterFont.Height = -12
+        FooterFont.Name = 'MS Sans Serif'
+        FooterFont.Style = []
+        FooterRowCount = 1
+        Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgConfirmDelete, dgCancelOnExit, dgMultiSelect]
+        OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghMultiSortMarking, dghDialogFind]
+        ParentFont = False
+        SumList.Active = True
+        TabOrder = 1
+        TitleFont.Charset = DEFAULT_CHARSET
+        TitleFont.Color = clWindowText
+        TitleFont.Height = -15
+        TitleFont.Name = 'MS Sans Serif'
+        TitleFont.Style = []
+        UseMultiTitle = True
+        Columns = <
+          item
+            EditButtons = <>
+            FieldName = 'XH'
+            Footer.ValueType = fvtCount
+            Footers = <>
+            Title.Caption = #24207#34399'|XH'
+            Width = 50
+          end
+          item
+            EditButtons = <>
+            FieldName = 'BWBH'
+            Footers = <>
+            Title.Caption = #37096#20301#32232#34399'|BWBH'
+            Width = 60
+          end
+          item
+            EditButtons = <>
+            FieldName = 'BWMC'
+            Footers = <>
+            Title.Caption = #37096#20301#21517#31281'|PartName'
+            Width = 150
+          end
+          item
+            EditButtons = <>
+            FieldName = 'CLBH'
+            Footers = <>
+            Title.Caption = #26448#26009#32232#34399'|CLBH'
+            Width = 100
+          end
+          item
+            EditButtons = <>
+            FieldName = 'DType'
+            Footers = <>
+            Title.Caption = #26448#26009#39006#21029'|DType'
+            Width = 70
+          end
+          item
+            EditButtons = <>
+            FieldName = 'CLMC'
+            Footers = <>
+            Title.Caption = #26448#26009#33521#25991#21517'|YWPM'
+            Width = 250
+          end
+          item
+            EditButtons = <>
+            FieldName = 'CLZW'
+            Footers = <>
+            Title.Caption = #26448#26009#20013#25991#21517'|ZWPM'
+            Width = 250
+          end
+          item
+            EditButtons = <>
+            FieldName = 'DWBH'
+            Footers = <>
+            Title.Caption = #21934#20301'|DWBH'
+            Width = 60
+          end
+          item
+            EditButtons = <>
+            FieldName = 'CLSL'
+            Footers = <>
+            Title.Caption = #27161#28310#29992#37327'|Usage'
+            Width = 80
+          end
+          item
+            EditButtons = <>
+            FieldName = 'Qty'
+            Footers = <>
+            Title.Caption = 'CBD'#29992#37327'|Qty'
+            Width = 80
+          end
+          item
+            EditButtons = <>
+            FieldName = 'SamplePrice'
+            Footers = <>
+            Title.Caption = #26989#21209#20729'|SamplePrice'
+            Width = 100
+          end
+          item
+            EditButtons = <>
+            FieldName = 'CWHL'
+            Footers = <>
+            Title.Caption = #21295#29575'|ExRate'
+            Width = 80
+          end
+          item
+            EditButtons = <>
+            FieldName = 'USPrice'
+            Footers = <>
+            DisplayFormat = '0.00'
+            Title.Caption = #37327#29986#21934#20729'|USPrice(USD)'
+            Width = 100
+          end
+          item
+            EditButtons = <>
+            FieldName = 'CBDCost'
+            Footers = <>
+            DisplayFormat = '0.00'
+            Title.Caption = 'CBD'#25104#26412'|CBDCost'
+            Width = 100
+          end
+          item
+            EditButtons = <>
+            FieldName = 'ProdCost'
+            Footers = <>
+            DisplayFormat = '0.00'
+            Title.Caption = #37327#29986#25104#26412'|ProdCost'
+            Width = 100
+          end
+          item
+            EditButtons = <>
+            FieldName = 'CostDiff'
+            Footers = <>
+            DisplayFormat = '0.00'
+            Title.Caption = #25104#26412#20729#24046'|CostDiff'
+            Width = 100
+          end>
+      end
+    end
   end
   object DS1: TDataSource
     DataSet = XXZLS
@@ -1028,5 +1239,35 @@ object BomUsing: TBomUsing
       FixedChar = True
       Size = 200
     end
+  end
+  object DS3: TDataSource
+    DataSet = PriceQry
+    Left = 436
+    Top = 308
+  end
+  object PriceQry: TQuery
+    DatabaseName = 'DB'
+    SQL.Strings = (
+
+        'select distinct CLZL.CLDH as CLBH, CLZL.YWPM, CLZL.ZWPM, CLZL.DW' +
+        'BH,'
+      '       MaterialCBD_His.Season, MaterialCBD_His.SamplePrice,'
+      '       CGBJS.USPrice, CGBJS.VNPrice, CGBJS.Discount'
+      'from XXZLS'
+
+        'left join XXZL on XXZL.XieXing = XXZLS.XieXing and XXZL.SheHao =' +
+        ' XXZLS.SheHao'
+      'left join CLZL on CLZL.CLDH = XXZLS.CLBH'
+      'left join MaterialCBD_His on MaterialCBD_His.CLBH = XXZLS.CLBH'
+
+        '  and MaterialCBD_His.Season = :Season and MaterialCBD_His.YN = ' +
+        '0'
+
+        'left join CGBJS on CGBJS.CLBH = XXZLS.CLBH and CGBJS.Season = :S' +
+        'eason'
+      'where XXZL.ARTICLE like :Article'
+      'order by CLZL.CLDH')
+    Left = 436
+    Top = 268
   end
 end

@@ -1,8 +1,8 @@
 object main: Tmain
-  Left = 1323
-  Top = 163
+  Left = 1180
+  Top = 113
   Width = 736
-  Height = 406
+  Height = 410
   Caption = 'BOM'
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -23,7 +23,7 @@ object main: Tmain
     Left = 0
     Top = 0
     Width = 720
-    Height = 325
+    Height = 329
     Align = alClient
     AutoSize = True
     Stretch = True
@@ -38,7 +38,7 @@ object main: Tmain
   end
   object StatusBar1: TStatusBar
     Left = 0
-    Top = 325
+    Top = 329
     Width = 720
     Height = 22
     Panels = <>
@@ -261,6 +261,10 @@ object main: Tmain
       object SN4A: TMenuItem
         Caption = 'N4A BOM Material Manufacturer'
         OnClick = SN4AClick
+      end
+      object SN4B: TMenuItem
+        Caption = 'N4B Material Customer'
+        OnClick = SN4BClick
       end
     end
     object SN5: TMenuItem

@@ -1,0 +1,102 @@
+unit Material_CLZL1;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, GridsEh, DBGridEh, DB, DBTables, StdCtrls, ExtCtrls;
+
+type
+  TMaterial_CLZL = class(TForm)
+    Panel1: TPanel;
+    Label1: TLabel;
+    Edit1: TEdit;
+    Label2: TLabel;
+    Edit2: TEdit;
+    Label3: TLabel;
+    Edit3: TEdit;
+    Button1: TButton;
+    DataSource1: TDataSource;
+    Query1: TQuery;
+    DBGridEh1: TDBGridEh;
+    Query1CLDH: TStringField;
+    Query1YWPM: TStringField;
+    Query1ZWPM: TStringField;
+    procedure Button1Click(Sender: TObject);
+    procedure DBGridEh1DblClick(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure FormDestroy(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  Material_CLZL: TMaterial_CLZL;
+
+implementation
+
+// KHAI BAO FORM CHINH DE GIAO TIEP DU LIEU
+uses Material_Customer1; 
+
+{$R *.dfm}
+
+procedure TMaterial_CLZL.Button1Click(Sender: TObject);
+begin
+  with Query1 do
+  begin
+    Active := False;
+    SQL.Clear;
+    
+    // Truy van bang CLZL tren he thong MSSQL 2008 R2
+    SQL.Add('SELECT CLDH, YWPM, ZWPM FROM CLZL ');
+    SQL.Add('WHERE 1=1 ');
+    SQL.Add('AND CLDH LIKE ''%' + Edit1.Text + '%'' ');
+    SQL.Add('AND YWPM LIKE ''%' + Edit2.Text + '%'' ');
+    SQL.Add('AND ZWPM LIKE ''%' + Edit3.Text + '%'' ');
+    SQL.Add('AND CLDH NOT LIKE ''[XYZ]%'' ');
+    Active := True;
+  end;
+end;
+
+procedure TMaterial_CLZL.DBGridEh1DblClick(Sender: TObject);
+begin
+  // 1. Kiem tra co du lieu de chon hay khong
+  if not Query1.Active or Query1.IsEmpty then Exit;
+
+  // 2. Kiem tra form chinh da mo va Query2 dang o che do Insert hoac Edit
+  if Assigned(Material_Customer) and (Material_Customer.Query2.State in [dsEdit, dsInsert]) then
+  begin
+    // Gan ma CLDH tu luoi cua so nho sang cot CLDH cua form chinh
+    Material_Customer.Query2.FieldByName('CLDH').AsString := Query1.FieldByName('CLDH').AsString;
+    
+    // Gan them ten vat tu (tieng Anh va tieng Trung) de hien thi tren luoi chinh
+    if Material_Customer.Query2.FindField('ywpm') <> nil then
+      Material_Customer.Query2.FieldByName('ywpm').AsString := Query1.FieldByName('YWPM').AsString;
+
+    if Material_Customer.Query2.FindField('zwpm') <> nil then
+      Material_Customer.Query2.FieldByName('zwpm').AsString := Query1.FieldByName('ZWPM').AsString;
+
+    // Dong cua so pop-up sau khi chon xong
+    Close;
+  end
+  else
+  begin
+    ShowMessage('Vui long bam nut Insert hoac Modify ben man hinh chinh truoc khi chon!');
+  end;
+end;
+
+procedure TMaterial_CLZL.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+  // Giai phong bo nho cua cua so nho khi tat
+  Action := caFree;
+end;
+
+procedure TMaterial_CLZL.FormDestroy(Sender: TObject);
+begin
+  // Reset bien ve nil de form chinh biet va tao lai vao lan sau (nut ... click)
+  Material_CLZL := nil;
+end;
+
+end.

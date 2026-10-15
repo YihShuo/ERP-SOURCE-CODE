@@ -384,7 +384,7 @@ begin
       SQL.Add(' TSCD.CFMID_RK, TSCD.CFMDATE_RK, TSCD.RKNO, TSCD.LB, TSCD.RFID_Tag, TSCD.LABEL_Tag, TSCD.USERID_Tag,');
       SQL.Add(' TSCD.USERDATE_Tag, TSCD.Memo, TSCD.MSBBH, TSCD.VND, TSCD.USD, TSCD.USERID_Price, TSCD.USERDATE_Price, TSCD.CycleDate_M, TSCD.Machine_Type, TSCD.Lean_ID, TSCD.CycleDate_S, TSCD.CycleDate_Y, ');
       SQL.Add('      TSCD.Machine_Status, TSCD.USERID_Modify, TSCD.USERDATE_Modify, TSCD.Unit_Name,TSCD.License');
-          if RB2.Checked= true or RB4.Checked= true then            // thiet bi IT
+          if RB2.Checked or RB4.Checked then            // thiet bi IT
             begin
             SQL.Add('       ,TSCD_IT.NameVN as YWPM,TSCD_IT.NameVN as VWPM,TSCD_IT.NameTW as zwpm');
             end else
@@ -406,7 +406,10 @@ begin
       SQL.Add('left join ZSZL on ZSZL.ZSDH=KCRK.ZSBH');
       SQL.Add('left join BDepartment JDBDep on JDBDep.ID=TSCD.JDTS ');
       SQL.Add('left join TSCD_BDepartment Lean_Dep on Lean_Dep.ID=TSCD.Lean_ID ');
-      SQL.Add('left join TSCD_IT on TSCD_IT.TSBH = SUBSTRING(TSCD.TSBH, 1, CHARINDEX(''0'', TSCD.TSBH) - 1)');
+      if RB2.Checked then
+        SQL.Add('left join TSCD_IT on TSCD_IT.TSBH = REPLACE(SUBSTRING(TSCD.TSBH, 1, CHARINDEX(''0'', TSCD.TSBH) - 1), ''DC-'', '''')')
+        else if RB4.Checked then
+        SQL.Add('left join TSCD_IT on TSCD_IT.TSBH = REPLACE(SUBSTRING(TSCD.TSBH, 1, CHARINDEX(''0'', TSCD.TSBH) - 1), ''DC-'', '''')');
       SQL.Add('left join TSCD_SB on TSCD_SB.SBBH = TSCD.SBBH');
       SQL.Add('where TSCD.LB in (2,3)');
       //ERP 入庫單來源
