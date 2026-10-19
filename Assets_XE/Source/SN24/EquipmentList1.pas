@@ -219,6 +219,9 @@ type
     RB4: TRadioButton;
     TSCDQryFullname: TStringField;
     Button8: TButton;
+    TSCDQryit_date: TDateTimeField;
+    TSCDQrykk_date: TDateTimeField;
+    TSCDQryLocation_VI: TStringField;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormDestroy(Sender: TObject);
     procedure Button1Click(Sender: TObject);
@@ -469,7 +472,20 @@ begin
         SQL.Add('and TSCD.VNPrice < 30000000');
       //
       SQL.add('order by TSCD.DepID,TSCD.Status ');
-      SQL.Add('select * from #tmp order by TSID');
+      //old thay doi ngay 16/10/2026. them cot
+      //SQL.Add('select * from #tmp order by TSID');
+      SQL.Add('select A.*, CAST(C.Location_VI AS nvarchar(255)) AS Location_VI, CAST(D.kk_date AS smalldatetime) AS kk_date,');
+      SQL.Add('CAST(D.it_date AS smalldatetime) AS it_date from #tmp A  ');
+     // SQL.Add('left join TSCD_Location B  on a.TSBH=b.TSBH   ');
+     SQL.Add('OUTER APPLY (');
+      SQL.Add('    SELECT TOP 1 B.IDLocation');
+      SQL.Add('    FROM TSCD_Location B');
+      SQL.Add('    WHERE B.TSBH = A.TSBH');
+      SQL.Add('    ORDER BY B.IDLocation DESC'); // Bạn có thể thay đổi cột sắp xếp trong B nếu cần lấy dòng mới nhất theo ý muốn
+      SQL.Add(') B');
+      SQL.Add('left join TSCD_LocationList C on C.IDLocation=b.IDLocation ');
+      SQL.Add('left JOIN Asset_details D ON D.item_id = a.LABEL_Tag  AND D.date = CONVERT(varchar(6), GETDATE(), 112)');
+      SQL.Add('order by TSID ');
       //showmessage(sql.Text);
       Active:=true;
     end;

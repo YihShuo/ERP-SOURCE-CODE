@@ -1055,6 +1055,35 @@ object EquipmentList: TEquipmentList
             FieldName = 'Fullname'
             Footers = <>
             Width = 200
+          end
+          item
+            CellButtons = <>
+            DynProps = <>
+            EditButtons = <>
+            FieldName = 'Location_VI'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -13
+            Font.Name = 'Arial'
+            Font.Style = []
+            Footers = <>
+            Width = 150
+          end
+          item
+            CellButtons = <>
+            DynProps = <>
+            EditButtons = <>
+            FieldName = 'it_date'
+            Footers = <>
+            Width = 100
+          end
+          item
+            CellButtons = <>
+            DynProps = <>
+            EditButtons = <>
+            FieldName = 'kk_date'
+            Footers = <>
+            Width = 100
           end>
         object RowDetailData: TRowDetailPanelControlEh
         end
@@ -1457,7 +1486,9 @@ object EquipmentList: TEquipmentList
         'as YWSM,TSCD_LB.ZWSM,TSCD.CycleDate_M,TSCD.Machine_Type,TSCD.Cyc' +
         'leDate_S,TSCD.CycleDate_Y,TSCD.Lean_ID,Lean_DEP.Depname as LeanD' +
         'ep,Lean_Dep.Depmemo as LeanMemo,TSCD.Machine_Status,'#39#39' as Unit_N' +
-        'ame,TSCD.License,'#39#39' as Fullname'
+        'ame,TSCD.License,'#39#39' as Fullname, CAST(NULL AS nvarchar(255)) AS ' +
+        'Location_VI, CAST(NULL AS smalldatetime) AS it_date,'
+      'CAST(NULL AS smalldatetime) AS kk_date'
       'from TSCD_History TSCD'
       
         'left join TSCD_KCLLS on TSCD.TSID=TSCD_KCLLS.TSID and TSCD.LLNO=' +
@@ -1481,7 +1512,9 @@ object EquipmentList: TEquipmentList
         'as YWSM,TSCD_LB.ZWSM,TSCD.CycleDate_M,TSCD.Machine_Type,TSCD.Cyc' +
         'leDate_S,TSCD.CycleDate_Y,TSCD.Lean_ID,Lean_DEP.Depname as LeanD' +
         'ep,Lean_Dep.Depmemo as LeanMemo,TSCD.Machine_Status,TSCD.Unit_Na' +
-        'me,TSCD.License,'#39#39' as Fullname'
+        'me,TSCD.License,'#39#39' as Fullname, CAST(NULL AS nvarchar(255)) AS L' +
+        'ocation_VI, CAST(NULL AS smalldatetime) AS it_date,'
+      'CAST(NULL AS smalldatetime) AS kk_date'
       'from TSCD'
       
         'left join TSCD_KCLLS on TSCD.TSID=TSCD_KCLLS.TSID and TSCD.LLNO=' +
@@ -1825,6 +1858,17 @@ object EquipmentList: TEquipmentList
       FieldName = 'Fullname'
       FixedChar = True
       Size = 1
+    end
+    object TSCDQryit_date: TDateTimeField
+      FieldName = 'it_date'
+    end
+    object TSCDQrykk_date: TDateTimeField
+      FieldName = 'kk_date'
+    end
+    object TSCDQryLocation_VI: TStringField
+      FieldName = 'Location_VI'
+      FixedChar = True
+      Size = 255
     end
   end
   object DS1: TDataSource

@@ -23,7 +23,7 @@ Sub Update_ReWIP()
 
         If Trim(CStr(ws.Cells(i, "A").Value)) = "" Then GoTo ContinueLoop
 
-        ApiDate = Format(ws.Cells(i, "A").Value, "yyyy-mm-dd")
+        ApiDate = Trim(Format(ws.Cells(i, "A").Value, "yyyy-mm-dd"))
 
         Http.Open "POST", _
             "http://192.168.71.18:8080/api/v1/deckers/ReWIP?date=" & _

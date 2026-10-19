@@ -1683,7 +1683,7 @@ begin
     SQL.Add('Select  TSCD.TSID,TSCD.TSBH, TSCD.SBBH , TSCD.Qty, TSCD.XSBH, TSCD.NSX, TSCD.Status,TSCD.Label_Tag,TSCD.RFID_Tag,');
     SQL.Add('        TSCD.USERID_Tag, TSCD.USERDATE_Tag,TSCD.RKNO, TSCD.LLNO,TSCD.InDATE, ');
     SQL.Add('        BDepartment.DepName,TSCD.Memo, TSCD.DepID_Memo, ');
-    SQL.Add('        IsNull(TSCD_SB.YWPM,CLZL.YWPM) as YWPM,ISNULL(TSCD_SB.ZWPM, CLZL.ZWPM) + '' '' + ISNULL(TSCD_SB.LSBH, '''') AS ZWPM,TSCD_SB.VWPM ');
+    SQL.Add('        IsNull(TSCD_SB.YWPM,CLZL.YWPM) as YWPM, IsNull(TSCD_SB.ZWPM,CLZL.ZWPM) + IsNull(tscd_sb.lsbh, '''') as ZWPM, TSCD_SB.VWPM ');
     SQL.Add('from TSCD ');
     sql.add('left join clzl on TSCD.SBBH = clzl.cldh ');
     sql.add('left join TSCD_SB on TSCD.SBBH = TSCD_SB.SBBH ');
