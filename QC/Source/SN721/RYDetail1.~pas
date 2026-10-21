@@ -74,12 +74,14 @@ begin
     showmessage('Please select at least one');
     exit;
   end;
-  {if (CGNOEdit.Text = '') and (RKNOEdit.Text = '') then
+
+  if (not ckRKDate.Checked) and
+     ((Trim(CGNOEdit.Text) = '') and (Trim(RKNOEdit.Text) = '')) then
   begin
-    showmessage('RK/GC NO. or Material ID are not empty.');
+    ShowMessage('Please enter RK/GC NO. or Material ID, or check RKDate.');
     CGNOEdit.SetFocus;
-    abort;
-  end;}
+    Abort;
+  end;
 
   with qry_Pur do
   begin
@@ -119,6 +121,8 @@ begin
         sql.Add('     left Join ZSZL on ZSZL.ZSDH =CGZL.ZSBH');
         sql.Add('     Left Join CLZL on CLZL.cldh=CGZLS.CLBH');
         sql.Add('where cgzl.GSBH=''' + main.Edit2.Text + '''');
+        if ckRKDate.Checked then
+          SQL.Add(' and CAST(CGZLS.USERDATE AS DATE) = '''+FormatDateTime('yyyy-mm-dd',dtpRKDate.Date)+''' ');
         if CGNOEdit.Text <> '' then
           SQL.Add('     and CGZL.CGNO like ''' + CGNOEdit.Text + '%'' ');
         SQL.Add('     and CGZLS.CLBH like ''' + MatNOEdit.Text + '%'' ');
