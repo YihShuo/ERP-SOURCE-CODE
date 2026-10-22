@@ -41,12 +41,13 @@ MinDate AS (
             ELSE NULL
         END
 ),
-MaxTimeInMinDate AS (
+MinMaxTimeInMinDate AS (
     SELECT
         R.BIEN_SO,
         R.CON_NO,
         M.EXEDATE_FULL,
-        MAX(R.EXEDATE) AS EXEDATE_GOC
+        MIN(R.EXEDATE) AS EXEDATE_MIN_GOC,
+        MAX(R.EXEDATE) AS EXEDATE_MAX_GOC
     FROM RawData R
     INNER JOIN MinDate M
         ON R.BIEN_SO = M.BIEN_SO
@@ -62,7 +63,8 @@ StuffedData AS (
         A.BIEN_SO,
         A.CON_NO,
         A.EXEDATE_FULL,
-        A.EXEDATE_GOC,
+        A.EXEDATE_MIN_GOC,
+        A.EXEDATE_MAX_GOC,
         STUFF((
             SELECT ';' + X.INV_NO
             FROM (
@@ -75,20 +77,21 @@ StuffedData AS (
             ) X
             FOR XML PATH(''), TYPE
         ).value('.', 'NVARCHAR(MAX)'), 1, 1, '') AS STUFFED_INV_NO
-    FROM MaxTimeInMinDate A
+    FROM MinMaxTimeInMinDate A
 ),
 RandomizedData AS (
     SELECT
         YWCP.BIEN_SO,
         YWCP.CON_NO,
         YWCP.EXEDATE_FULL,
-        YWCP.EXEDATE_GOC,
+        YWCP.EXEDATE_MIN_GOC,
+        YWCP.EXEDATE_MAX_GOC,
         YWCP.STUFFED_INV_NO,
         CASE
             WHEN DATEADD(
                     MINUTE,
                     -R.RandomMinsIn,
-                    YWCP.EXEDATE_GOC
+                    YWCP.EXEDATE_MIN_GOC
                  ) < CAST(YWCP.EXEDATE_FULL AS DATETIME)
             THEN DATEADD(
                     MINUTE,
@@ -98,14 +101,14 @@ RandomizedData AS (
             ELSE DATEADD(
                     MINUTE,
                     -R.RandomMinsIn,
-                    YWCP.EXEDATE_GOC
+                    YWCP.EXEDATE_MIN_GOC
                  )
         END AS InTime,
         CASE
             WHEN DATEADD(
                     MINUTE,
                     R.RandomMinsOut,
-                    YWCP.EXEDATE_GOC
+                    YWCP.EXEDATE_MAX_GOC
                  ) >= DATEADD(
                     DAY,
                     1,
@@ -123,14 +126,14 @@ RandomizedData AS (
             ELSE DATEADD(
                     MINUTE,
                     R.RandomMinsOut,
-                    YWCP.EXEDATE_GOC
+                    YWCP.EXEDATE_MAX_GOC
                  )
         END AS OutTime
     FROM StuffedData YWCP
     CROSS APPLY (
         SELECT
-            (ABS(CHECKSUM(NEWID())) % 121) + 60 AS RandomMinsIn,
-            (ABS(CHECKSUM(NEWID())) % 121) + 60 AS RandomMinsOut,
+            (ABS(CHECKSUM(NEWID())) % 61) + 30 AS RandomMinsIn,  -- Random từ 30 đến 90 phút
+            (ABS(CHECKSUM(NEWID())) % 61) + 30 AS RandomMinsOut, -- Random từ 30 đến 90 phút
             ABS(CHECKSUM(NEWID())) % 60 AS FallbackMinsIn,
             ABS(CHECKSUM(NEWID())) % 60 AS FallbackMinsOut
     ) R
@@ -153,7 +156,7 @@ SELECT
     BIEN_SO AS Plate2,
     BIEN_SO AS Plate3,
     STUFFED_INV_NO AS PackingList_Barcode,
-    CONVERT(varchar(10), GETDATE(), 120) AS Invoice_no,
+    CONVERT(VARCHAR(10), GETDATE(), 120) AS Invoice_no,
     CON_NO,
     REPLACE(
         CONVERT(VARCHAR(10), EXEDATE_FULL, 120),
@@ -174,5 +177,4 @@ SELECT
     NULL AS UserUpdate,
     '1' AS Type
 FROM RandomizedData
-WHERE CAST(InTime AS DATE) < CAST(GETDATE() AS DATE)
-ORDER BY EXEDATE_GOC DESC;
+ORDER BY EXEDATE_MIN_GOC DESC;
