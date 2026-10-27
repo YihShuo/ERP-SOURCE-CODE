@@ -166,7 +166,8 @@ uses
   ChemicalStockIns in 'ChemicalStockIns.pas' {ChemicalStockIn},
   ChemicalSearch in 'ChemicalSearch.pas' {ChemicalSearchs},
   ChemicalStockOuts in 'ChemicalStockOuts.pas' {ChemicalStockOut},
-  N721Detail in 'Source\SN9\N721Detail.pas' {N721Detail1};
+  N721Detail in 'Source\SN9\N721Detail.pas' {N721Detail1},
+  MaterialDeduction1 in 'Source\SN9\MaterialDeduction1.pas' {MaterialDeduction};
 
 {$R *.res}
 
@@ -191,6 +192,7 @@ begin
   Application.Title := 'Lai Yih ERP system----QC';
   Application.CreateForm(TDM2, DM2);
   Application.CreateForm(Tmain, main);
+  Application.CreateForm(TMaterialDeduction, MaterialDeduction);
   //Application.CreateForm(TN721Detail1, N721Detail1);
   //Application.CreateForm(TChemicalStockIn, ChemicalStockIn);
   //Application.CreateForm(TChemicalSearchs, ChemicalSearchs);

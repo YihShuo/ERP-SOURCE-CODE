@@ -132,7 +132,7 @@ RandomizedData AS (
     FROM StuffedData YWCP
     CROSS APPLY (
         SELECT
-            (ABS(CHECKSUM(NEWID())) % 61) + 30 AS RandomMinsIn,  -- Random từ 30 đến 90 phút
+            (ABS(CHECKSUM(NEWID())) % 61) + 60 AS RandomMinsIn,  -- Random từ 60 đến 120 phút
             (ABS(CHECKSUM(NEWID())) % 61) + 30 AS RandomMinsOut, -- Random từ 30 đến 90 phút
             ABS(CHECKSUM(NEWID())) % 60 AS FallbackMinsIn,
             ABS(CHECKSUM(NEWID())) % 60 AS FallbackMinsOut

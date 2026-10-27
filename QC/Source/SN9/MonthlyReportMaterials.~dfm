@@ -1026,19 +1026,7 @@ object MonthlyReportMaterial: TMonthlyReportMaterial
       '  MSCFID = :MSCFID,'
       '  MSCFDate = :MSCFDate'
       'where'
-      '  ReportID = :OLD_ReportID and'
-      '  Brand = :OLD_Brand and'
-      '  MonthReport = :OLD_MonthReport and'
-      '  SCFID = :OLD_SCFID and'
-      '  SCFDate = :OLD_SCFDate and'
-      '  LCFID = :OLD_LCFID and'
-      '  LCFDate = :OLD_LCFDate and'
-      '  PreparedID = :OLD_PreparedID and'
-      '  USERDate = :OLD_USERDate and'
-      '  USERID = :OLD_USERID and'
-      '  YN = :OLD_YN and'
-      '  MSCFID = :OLD_MSCFID and'
-      '  MSCFDate = :OLD_MSCFDate')
+      '  ReportID = :OLD_ReportID')
     InsertSQL.Strings = (
       'insert into QC_MonthlyMaterial'
       
@@ -1053,19 +1041,7 @@ object MonthlyReportMaterial: TMonthlyReportMaterial
     DeleteSQL.Strings = (
       'delete from QC_MonthlyMaterial'
       'where'
-      '  ReportID = :OLD_ReportID and'
-      '  Brand = :OLD_Brand and'
-      '  MonthReport = :OLD_MonthReport and'
-      '  SCFID = :OLD_SCFID and'
-      '  SCFDate = :OLD_SCFDate and'
-      '  LCFID = :OLD_LCFID and'
-      '  LCFDate = :OLD_LCFDate and'
-      '  PreparedID = :OLD_PreparedID and'
-      '  USERDate = :OLD_USERDate and'
-      '  USERID = :OLD_USERID and'
-      '  YN = :OLD_YN and'
-      '  MSCFID = :OLD_MSCFID and'
-      '  MSCFDate = :OLD_MSCFDate')
+      '  ReportID = :OLD_ReportID')
     Left = 584
     Top = 248
   end

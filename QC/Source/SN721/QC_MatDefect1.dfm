@@ -1,6 +1,6 @@
 object QC_MatDefect: TQC_MatDefect
-  Left = 446
-  Top = 156
+  Left = 619
+  Top = 195
   Width = 323
   Height = 597
   BorderIcons = [biSystemMenu]

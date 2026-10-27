@@ -1,6 +1,6 @@
 object RYDetail: TRYDetail
-  Left = 468
-  Top = 229
+  Left = 456
+  Top = 215
   Width = 864
   Height = 643
   BorderIcons = [biSystemMenu]

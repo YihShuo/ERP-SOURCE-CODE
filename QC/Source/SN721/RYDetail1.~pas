@@ -109,7 +109,7 @@ begin
           SQL.Add('     and CLBH not in (select CLBH from MaterialQCcheck where CGNO = ''' + CGNOEdit.Text +
             ''' and RKNO like ''%''+KCRKS.RKNO+''%'') ');
         if ckRKDate.Checked then
-          SQL.Add(' and CAST(KCRKS.USERDATE AS DATE) = '''+FormatDateTime('yyyy-mm-dd',dtpRKDate.Date)+''' ');
+          SQL.Add(' and CAST(KCRK.USERDATE AS DATE) = '''+FormatDateTime('yyyy-mm-dd',dtpRKDate.Date)+''' ');
 
         SQL.Add('group by KCRK.ZSNO,KCRKS.CLBH,ZSZL.ZSDH,ZSZL.ZSYWJC,CLZL.YWPM,KCRK.RKNO');
       end
@@ -122,7 +122,7 @@ begin
         sql.Add('     Left Join CLZL on CLZL.cldh=CGZLS.CLBH');
         sql.Add('where cgzl.GSBH=''' + main.Edit2.Text + '''');
         if ckRKDate.Checked then
-          SQL.Add(' and CAST(CGZLS.USERDATE AS DATE) = '''+FormatDateTime('yyyy-mm-dd',dtpRKDate.Date)+''' ');
+          SQL.Add(' and CAST(CGZL.USERDATE AS DATE) = '''+FormatDateTime('yyyy-mm-dd',dtpRKDate.Date)+''' ');
         if CGNOEdit.Text <> '' then
           SQL.Add('     and CGZL.CGNO like ''' + CGNOEdit.Text + '%'' ');
         SQL.Add('     and CGZLS.CLBH like ''' + MatNOEdit.Text + '%'' ');
@@ -142,7 +142,7 @@ begin
       sql.Add('			and JGZLS.JGNO like ''' + RKNOEdit.Text + '%'' ');
       sql.Add('     and JGZLS.CLBH like ''' + MatNOEdit.Text + '%'' ');
       if ckRKDate.Checked then
-          SQL.Add(' and CAST(JGZLS.USERDATE AS DATE) = '''+FormatDateTime('yyyy-mm-dd',dtpRKDate.Date)+''' ');
+          SQL.Add(' and CAST(JGZL.USERDATE AS DATE) = '''+FormatDateTime('yyyy-mm-dd',dtpRKDate.Date)+''' ');
       sql.Add('group by JGZLS.JGNO,JGZLS.CLBH,ZSZL.ZSDH,ZSZL.ZSYWJC,CLZL.YWPM ');
     end;
     //showmessage(SQL.Text);

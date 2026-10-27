@@ -158,6 +158,7 @@ type
     SN9B: TMenuItem;
     SN9C: TMenuItem;
     SN9D: TMenuItem;
+    SN9E: TMenuItem;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure SN11Click(Sender: TObject);
@@ -271,6 +272,7 @@ type
     procedure SN9BClick(Sender: TObject);
     procedure SN9CClick(Sender: TObject);
     procedure SN9DClick(Sender: TObject);
+    procedure SN9EClick(Sender: TObject);
 
   private
     MKID: string;
@@ -314,7 +316,8 @@ uses DM3, QAStationP, Ontime1, QCIssue1, QCOntime1, QCDailyReport1, FeedbackWast
   DailyOutsourcingCheck_, IncomeMatRubberOutsole, IncomeMatMidInSoles,
   IncomeMatEvaPaintings, ProduceMatFailure, IncomeUpperMaterials,
   LeatherMatInspections, HumidityChecks, SoleWeekReports,
-  MonthlyReportMaterials, NonConformingMaterials, NGMaterials;
+  MonthlyReportMaterials, NonConformingMaterials, NGMaterials,
+  MaterialDeduction1;
 
 {$R *.dfm}
 //
@@ -1285,6 +1288,11 @@ end;
 procedure Tmain.SN9DClick(Sender: TObject);
 begin
   ShowFm(Pointer(NGMaterial), TNGMaterial, TMenuItem(Sender).Name);
+end;
+
+procedure Tmain.SN9EClick(Sender: TObject);
+begin
+  ShowFm(Pointer(MaterialDeduction), TMaterialDeduction, TMenuItem(Sender).Name);
 end;
 
 end.

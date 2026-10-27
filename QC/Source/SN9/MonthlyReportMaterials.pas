@@ -800,6 +800,7 @@ end;
 
 procedure TMonthlyReportMaterial.FormCreate(Sender: TObject);
 begin
+  dtpUSERDate.DateTime := Now;
   dtpMR.DateTime := Now;
   //DBGridEh1.DataSource.AutoEdit := false;
   DecimalSeparator := '.';

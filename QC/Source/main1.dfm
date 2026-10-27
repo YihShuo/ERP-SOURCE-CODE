@@ -601,6 +601,10 @@ object main: Tmain
         Caption = 'N9D NG Material Monthly'
         OnClick = SN9DClick
       end
+      object SN9E: TMenuItem
+        Caption = 'N9E Material Deduction'
+        OnClick = SN9EClick
+      end
     end
   end
   object Query1: TQuery

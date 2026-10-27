@@ -60,7 +60,7 @@ var
 implementation
 
 uses Main1, DailyReport1, LeatherSummary1, {RubberChemical1, (N17) } MatQcCheck1,
-  MonthlyReportMaterials, SoleWeekReports, NGMaterials;
+  MonthlyReportMaterials, SoleWeekReports, NGMaterials, MaterialDeduction1;
 
 {$R *.dfm}
 
@@ -150,6 +150,20 @@ begin
       if MonthlyReportMaterial.Query2.RequestLive then
       begin
         with MonthlyReportMaterial.Query2 do
+        begin
+            edit;
+            fieldbyname('Defects').AsString:=qry1.fieldbyname('CodeID').AsString + ',' + fieldbyname('Defects').AsString;
+            fieldbyname('DefectName').AsString:=qry1.fieldbyname('DefectName').AsString + ',' + fieldbyname('DefectName').AsString;
+        end;
+        qry1.Delete;
+      end ;
+    end;
+
+    if assigned(MaterialDeduction) then
+    begin
+      if MaterialDeduction.qry_Qc.RequestLive then
+      begin
+        with MaterialDeduction.qry_Qc do
         begin
             edit;
             fieldbyname('Defects').AsString:=qry1.fieldbyname('CodeID').AsString + ',' + fieldbyname('Defects').AsString;
