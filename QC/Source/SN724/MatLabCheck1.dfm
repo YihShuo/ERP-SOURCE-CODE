@@ -583,6 +583,7 @@ object MatLabCheck: TMatLabCheck
     UseMultiTitle = True
     VTitleMargin = 0
     OnDrawColumnCell = DBGridDetailDrawColumnCell
+    OnKeyPress = DBGridDetailKeyPress
     Columns = <
       item
         Color = cl3DLight
@@ -850,8 +851,7 @@ object MatLabCheck: TMatLabCheck
         Footers = <>
         ReadOnly = True
         Title.Caption = 'Lab Test|Confirmed Result'
-        Visible = False
-        Width = 65
+        Width = 70
       end
       item
         ButtonStyle = cbsNone

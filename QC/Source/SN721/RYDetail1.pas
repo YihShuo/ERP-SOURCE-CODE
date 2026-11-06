@@ -39,6 +39,11 @@ type
     ckRKDate: TCheckBox;
     dtpRKDate: TDateTimePicker;
     btInsertAll: TButton;
+    qry_purdwbh: TStringField;
+    Label5: TLabel;
+    Label6: TLabel;
+    edtZSBH: TEdit;
+    edtSupName: TEdit;
     procedure FormDestroy(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure DBGridEh1DblClick(Sender: TObject);
@@ -58,7 +63,7 @@ var
 
 implementation
 
-uses MatQcCheck1, Main1, FunUnit;
+uses MatQcCheck1, Main1, FunUnit, DailyReport1, MaterialDeduction1;
 
 {$R *.dfm}
 
@@ -92,7 +97,7 @@ begin
     begin
       if RB1.Checked then
       begin
-        SQL.Add('select top 5000 KCRK.ZSNO as CGNO,KCRKS.CLBH,ZSZL.ZSDH,ZSZL.ZSYWJC,CLZL.YWPM,Sum(KCRKS.Qty) as Qty,KCRK.RKNO,''Purchase'' AS Memo');
+        SQL.Add('select top 5000 KCRK.ZSNO as CGNO,KCRKS.CLBH,ZSZL.ZSDH,ZSZL.ZSYWJC,CLZL.YWPM,clzl.dwbh,Sum(KCRKS.Qty) as Qty,KCRK.RKNO,''Purchase'' AS Memo');
         SQL.Add('from KCRK');
         SQL.Add('   Left join KCRKS on KCRK.RKNO=KCRKS.RKNO  ');
         SQL.Add('   left Join ZSZL on ZSZL.ZSDH =KCRK.ZSBH');
@@ -110,12 +115,16 @@ begin
             ''' and RKNO like ''%''+KCRKS.RKNO+''%'') ');
         if ckRKDate.Checked then
           SQL.Add(' and CAST(KCRK.USERDATE AS DATE) = '''+FormatDateTime('yyyy-mm-dd',dtpRKDate.Date)+''' ');
+        if edtZSBH.Text <> '' then
+          SQL.Add(' and ZSZL.ZSDH like '''+edtZSBH.Text+'%'' ');
+        if edtSupName.Text <> '' then
+          SQL.Add(' and ZSZL.ZSYWJC like ''%'+edtSupName.Text+'%'' ');
 
-        SQL.Add('group by KCRK.ZSNO,KCRKS.CLBH,ZSZL.ZSDH,ZSZL.ZSYWJC,CLZL.YWPM,KCRK.RKNO');
+        SQL.Add('group by KCRK.ZSNO,KCRKS.CLBH,ZSZL.ZSDH,ZSZL.ZSYWJC,CLZL.YWPM,KCRK.RKNO,clzl.dwbh');
       end
       else if RB2.Checked then
       begin
-        sql.Add('select top 5000 CGZL.CGNO, CGZLS.CLBH,ZSZL.ZSDH,ZSZL.ZSYWJC,CLZL.YWPM,cgzls.Qty,''ZZZZZZZZZZ'' as RKNO,''Purchase'' AS Memo');
+        sql.Add('select top 5000 CGZL.CGNO, CGZLS.CLBH,ZSZL.ZSDH,ZSZL.ZSYWJC,CLZL.YWPM,clzl.dwbh,cgzls.Qty,''ZZZZZZZZZZ'' as RKNO,''Purchase'' AS Memo');
         sql.Add('from CGZL');
         sql.Add('     left join CGZLS on CGZL.CGNO=CGZLS.CGNO');
         sql.Add('     left Join ZSZL on ZSZL.ZSDH =CGZL.ZSBH');
@@ -125,6 +134,10 @@ begin
           SQL.Add(' and CAST(CGZL.USERDATE AS DATE) = '''+FormatDateTime('yyyy-mm-dd',dtpRKDate.Date)+''' ');
         if CGNOEdit.Text <> '' then
           SQL.Add('     and CGZL.CGNO like ''' + CGNOEdit.Text + '%'' ');
+        if edtZSBH.Text <> '' then
+          SQL.Add(' and ZSZL.ZSDH like '''+edtZSBH.Text+'%'' ');
+        if edtSupName.Text <> '' then
+          SQL.Add(' and ZSZL.ZSYWJC like ''%'+edtSupName.Text+'%'' ');
         SQL.Add('     and CGZLS.CLBH like ''' + MatNOEdit.Text + '%'' ');
       end;
     end;
@@ -133,7 +146,7 @@ begin
     //material Extra
     if (chkExt.Checked = true) then
     begin
-      sql.Add('select top 5000 ''ZZZZZZZZZZ'' as CGNO,JGZLS.CLBH,ZSZL.ZSDH,ZSZL.ZSYWJC,CLZL.YWPM,Sum(JGZLS.Qty) as Qty,JGZLS.JGNO as RKNO,''Extra'' AS Memo');
+      sql.Add('select top 5000 ''ZZZZZZZZZZ'' as CGNO,JGZLS.CLBH,ZSZL.ZSDH,ZSZL.ZSYWJC,CLZL.YWPM,clzl.dwbh,Sum(JGZLS.Qty) as Qty,JGZLS.JGNO as RKNO,''Extra'' AS Memo');
       sql.Add('from JGZLS');
       sql.Add('	  left Join JGZL ON JGZLS.JGNO=JGZL.JGNO ');
       sql.Add('   left Join ZSZL on ZSZL.ZSDH =JGZL.ZSBH ');
@@ -141,9 +154,13 @@ begin
       sql.Add('where JGZL.GSBH=''' + main.Edit2.Text + '''  and JGZLS.ZMLB=''ZZZZZZZZZZ'' ');
       sql.Add('			and JGZLS.JGNO like ''' + RKNOEdit.Text + '%'' ');
       sql.Add('     and JGZLS.CLBH like ''' + MatNOEdit.Text + '%'' ');
+      if edtZSBH.Text <> '' then
+        SQL.Add(' and ZSZL.ZSDH like '''+edtZSBH.Text+'%'' ');
+      if edtSupName.Text <> '' then
+        SQL.Add(' and ZSZL.ZSYWJC like ''%'+edtSupName.Text+'%'' ');
       if ckRKDate.Checked then
-          SQL.Add(' and CAST(JGZL.USERDATE AS DATE) = '''+FormatDateTime('yyyy-mm-dd',dtpRKDate.Date)+''' ');
-      sql.Add('group by JGZLS.JGNO,JGZLS.CLBH,ZSZL.ZSDH,ZSZL.ZSYWJC,CLZL.YWPM ');
+        SQL.Add(' and CAST(JGZL.USERDATE AS DATE) = '''+FormatDateTime('yyyy-mm-dd',dtpRKDate.Date)+''' ');
+      sql.Add('group by JGZLS.JGNO,JGZLS.CLBH,ZSZL.ZSDH,ZSZL.ZSYWJC,CLZL.YWPM,clzl.dwbh ');
     end;
     //showmessage(SQL.Text);
     //funcObj.WriteErrorLog(sql.Text);
@@ -243,32 +260,61 @@ begin
 
   if CLBH <> '' then
   begin
-    try
-      with MatQcCheck.qry_Qc do
+    if Assigned(MatQcCheck) then
+    begin
+      if MatQcCheck.qry_Qc.RequestLive then
       begin
-        edit;
-        fieldbyname('CGNO').AsString := qry_Pur.fieldbyname('CGNO').AsString;
-        fieldbyname('CLBH').AsString := qry_Pur.fieldbyname('CLBH').AsString;
-        fieldbyname('ZSBH').AsString := qry_Pur.fieldbyname('ZSDH').AsString;
-//        fieldbyname('RKNO').AsString := qry_Pur.fieldbyname('RKNO').AsString;
-//        FieldByName('Qty').Value := qry_Pur.fieldbyname('Qty').AsString;
-        fieldbyname('RKNO').AsString := RKNO;
-        FieldByName('Qty').Value := Qty;
-        FieldByName('Tracking').Value := 1;
-        FieldByName('SampleSent').Value := 1;
-        if qry_Pur.fieldbyname('Memo').AsString = 'Purchase' then
-          fieldbyname('LB').AsString := '1'
-        else
-          fieldbyname('LB').AsString := '2';
-        insert;
-        FieldByName('DateInput').Value := formatdatetime('yyyy/mm/dd', date);
-        FieldByName('Hours').Value := Nhour;
+        try
+          with MatQcCheck.qry_Qc do
+          begin
+            Edit;
+            fieldbyname('CGNO').AsString := qry_Pur.fieldbyname('CGNO').AsString;
+            fieldbyname('CLBH').AsString := qry_Pur.fieldbyname('CLBH').AsString;
+            fieldbyname('ZSBH').AsString := qry_Pur.fieldbyname('ZSDH').AsString;
+            //fieldbyname('RKNO').AsString := qry_Pur.fieldbyname('RKNO').AsString;
+            //FieldByName('Qty').Value := qry_Pur.fieldbyname('Qty').AsString;
+            fieldbyname('RKNO').AsString := RKNO;
+            FieldByName('Qty').Value := Qty;
+            FieldByName('Tracking').Value := 1;
+            FieldByName('SampleSent').Value := 1;
 
+            if qry_Pur.fieldbyname('Memo').AsString = 'Purchase' then
+              fieldbyname('LB').AsString := '1'
+            else
+              fieldbyname('LB').AsString := '2';
+
+            Insert;
+
+            FieldByName('DateInput').Value := formatdatetime('yyyy/mm/dd', date);
+            FieldByName('Hours').Value := Nhour;
+          end;
+          //Close;
+        except
+          showmessage('Can not insert data, pls double check again !!!');
+        end;
       end;
-      //Close;
-    except
-      showmessage('Can not insert data, pls double check again !!!');
     end;
+
+    if Assigned(MaterialDeduction) then
+    begin
+      if MaterialDeduction.qry_Qc.RequestLive then
+      begin
+        try
+          with MaterialDeduction.qry_Qc do
+          begin
+            Edit;
+            fieldbyname('CLBH').AsString := qry_Pur.fieldbyname('CLBH').AsString;
+            fieldbyname('ZSBH').AsString := qry_Pur.fieldbyname('ZSDH').AsString;
+            FieldByName('DateInput').Value := formatdatetime('yyyy/mm/dd', date);
+            Post;
+            Insert;
+          end;
+        except
+          showmessage('Can not insert data, pls double check again !!!');
+        end;
+      end;
+    end;
+
   end;
 end;
 
@@ -284,41 +330,75 @@ begin
 
   qry_Pur.First;
 
-  try
-    while not qry_Pur.Eof do
+  if Assigned(MatQcCheck) then
     begin
-      CLBH := qry_Pur.FieldByName('CLBH').Value;
-      CGNO := qry_Pur.FieldByName('CGNO').Value;
-      ZSBH := qry_Pur.FieldByName('ZSDH').Value;
-      Memo := qry_Pur.FieldByName('Memo').Value;
-
-      with MatQcCheck.qry_Qc do
+      if MatQcCheck.qry_Qc.RequestLive then
       begin
-        Insert;
-        FieldByName('CGNO').Value := CGNO;
-        FieldByName('CLBH').Value := CLBH;
-        FieldByName('ZSBH').Value := ZSBH;
-        FieldByName('RKNO').Value := qry_Pur.FieldByName('RKNO').Value;
-        FieldByName('Qty').Value := qry_Pur.FieldByName('Qty').Value;
-        FieldByName('Tracking').Value := 1;
-        FieldByName('SampleSent').Value := 1;
+        try
+          with MatQcCheck.qry_Qc do
+          begin
+            while not qry_Pur.Eof do
+            begin
+              CLBH := qry_Pur.FieldByName('CLBH').Value;
+              CGNO := qry_Pur.FieldByName('CGNO').Value;
+              ZSBH := qry_Pur.FieldByName('ZSDH').Value;
+              Memo := qry_Pur.FieldByName('Memo').Value;
 
-        if Memo = 'Purchase' then
-          FieldByName('LB').Value := '1'
-        else
-          FieldByName('LB').Value := '2';
+              Insert;
+              FieldByName('CGNO').Value := CGNO;
+              FieldByName('CLBH').Value := CLBH;
+              FieldByName('ZSBH').Value := ZSBH;
+              FieldByName('RKNO').Value := qry_Pur.FieldByName('RKNO').Value;
+              FieldByName('Qty').Value := qry_Pur.FieldByName('Qty').Value;
+              FieldByName('Tracking').Value := 1;
+              FieldByName('SampleSent').Value := 1;
 
-        FieldByName('DateInput').Value := Date;
-        FieldByName('Hours').Value := Nhour;
-        Post;
+              if Memo = 'Purchase' then
+                FieldByName('LB').Value := '1'
+              else
+                FieldByName('LB').Value := '2';
+
+              FieldByName('DateInput').Value := Date;
+              FieldByName('Hours').Value := Nhour;
+              Post;
+
+              qry_Pur.Next;
+            end;
+          end;
+        except
+          on E: Exception do
+            ShowMessage('Error: ' + E.Message);
+        end;
       end;
-
-      qry_Pur.Next;
     end;
-  except
-    on E: Exception do
-      ShowMessage('Can not insert data: ' + E.Message);
-  end;
+
+    if Assigned(MaterialDeduction) then
+    begin
+      if MaterialDeduction.qry_Qc.RequestLive then
+      begin
+        try
+          with MaterialDeduction.qry_Qc do
+          begin
+            while not qry_Pur.Eof do
+            begin
+              CLBH := qry_Pur.FieldByName('CLBH').Value;
+              ZSBH := qry_Pur.FieldByName('ZSDH').Value;
+
+              Insert;
+              FieldByName('CLBH').Value := CLBH;
+              FieldByName('ZSBH').Value := ZSBH;
+              FieldByName('DateInput').Value := Date;
+
+              qry_Pur.Next;
+            end;
+          end;
+        except
+          on E: Exception do
+            ShowMessage('Error: ' + E.Message);
+        end;
+      end;
+    end;
+
 end;
 
 

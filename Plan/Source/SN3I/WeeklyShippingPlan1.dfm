@@ -813,6 +813,10 @@ object WeeklyShippingPlan: TWeeklyShippingPlan
       Caption = 'Delete'
       OnClick = Delete1Click
     end
+    object DeleteDate1: TMenuItem
+      Caption = 'Delete Date'
+      OnClick = DeleteDate1Click
+    end
   end
   object QCarton: TQuery
     DatabaseName = 'DB'

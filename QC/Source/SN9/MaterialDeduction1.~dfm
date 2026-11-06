@@ -1,6 +1,6 @@
 object MaterialDeduction: TMaterialDeduction
-  Left = 243
-  Top = 131
+  Left = 251
+  Top = 128
   Width = 1305
   Height = 784
   Caption = 'MaterialDeduction'
@@ -10,7 +10,12 @@ object MaterialDeduction: TMaterialDeduction
   Font.Height = -11
   Font.Name = 'MS Sans Serif'
   Font.Style = []
+  FormStyle = fsMDIChild
   OldCreateOrder = False
+  Position = poDefault
+  Visible = True
+  WindowState = wsMaximized
+  OnClose = FormClose
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   PixelsPerInch = 96
@@ -212,6 +217,7 @@ object MaterialDeduction: TMaterialDeduction
       Font.Style = []
       ParentFont = False
       TabOrder = 5
+      OnClick = btnexcelClick
       Glyph.Data = {
         76010000424D7601000000000000760000002800000020000000100000000100
         04000000000000010000130B0000130B00001000000000000000000000000000
@@ -271,24 +277,9 @@ object MaterialDeduction: TMaterialDeduction
       Font.Style = []
       ParentFont = False
     end
-    object Label2: TLabel
-      Left = 288
-      Top = 6
-      Width = 55
-      Height = 16
-      Alignment = taRightJustify
-      AutoSize = False
-      Caption = 'PO#'
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -13
-      Font.Name = 'MS Sans Serif'
-      Font.Style = []
-      ParentFont = False
-    end
     object Label3: TLabel
       Left = 269
-      Top = 30
+      Top = 14
       Width = 74
       Height = 16
       Alignment = taRightJustify
@@ -316,37 +307,9 @@ object MaterialDeduction: TMaterialDeduction
       Font.Style = []
       ParentFont = False
     end
-    object Label6: TLabel
-      Left = 432
-      Top = 5
-      Width = 72
-      Height = 16
-      Alignment = taRightJustify
-      AutoSize = False
-      Caption = 'Database'
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -13
-      Font.Name = 'MS Sans Serif'
-      Font.Style = []
-      ParentFont = False
-    end
-    object Label7: TLabel
-      Left = 557
-      Top = 10
-      Width = 9
-      Height = 13
-      Caption = '~'
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -12
-      Font.Name = 'MS Sans Serif'
-      Font.Style = [fsBold]
-      ParentFont = False
-    end
     object Label8: TLabel
       Left = 288
-      Top = 54
+      Top = 38
       Width = 55
       Height = 16
       Alignment = taRightJustify
@@ -359,24 +322,9 @@ object MaterialDeduction: TMaterialDeduction
       Font.Style = []
       ParentFont = False
     end
-    object Label9: TLabel
-      Left = 441
-      Top = 30
-      Width = 63
-      Height = 16
-      Alignment = taRightJustify
-      AutoSize = False
-      Caption = 'Cust PO'
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -13
-      Font.Name = 'MS Sans Serif'
-      Font.Style = []
-      ParentFont = False
-    end
     object Label10: TLabel
-      Left = 441
-      Top = 54
+      Left = 57
+      Top = 62
       Width = 63
       Height = 16
       Alignment = taRightJustify
@@ -389,49 +337,27 @@ object MaterialDeduction: TMaterialDeduction
       Font.Style = []
       ParentFont = False
     end
-    object Label12: TLabel
-      Left = 8
-      Top = 54
-      Width = 118
-      Height = 16
-      Alignment = taRightJustify
-      AutoSize = False
-      Caption = 'Lab Test Final'
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -13
-      Font.Name = 'MS Sans Serif'
-      Font.Style = []
-      ParentFont = False
-    end
-    object Label1: TLabel
-      Left = 633
-      Top = 5
-      Width = 48
-      Height = 16
-      AutoSize = False
-      Caption = 'RKNO'
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -13
-      Font.Name = 'MS Sans Serif'
-      Font.Style = []
-      ParentFont = False
-    end
     object Label5: TLabel
       Left = 296
-      Top = 75
+      Top = 59
       Width = 46
       Height = 16
       Caption = 'Defects'
     end
-    object edt2: TEdit
+    object Label1: TLabel
+      Left = 432
+      Top = 14
+      Width = 57
+      Height = 16
+      Caption = 'Report ID'
+    end
+    object edtCLBH: TEdit
       Left = 345
-      Top = 26
+      Top = 10
       Width = 84
       Height = 24
       CharCase = ecUpperCase
-      Color = cl3DLight
+      Color = clWhite
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -13
@@ -439,20 +365,6 @@ object MaterialDeduction: TMaterialDeduction
       Font.Style = []
       ParentFont = False
       TabOrder = 0
-    end
-    object edt1: TEdit
-      Left = 345
-      Top = 2
-      Width = 84
-      Height = 24
-      Color = cl3DLight
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -13
-      Font.Name = 'MS Sans Serif'
-      Font.Style = []
-      ParentFont = False
-      TabOrder = 1
     end
     object DTP1: TDateTimePicker
       Left = 75
@@ -468,7 +380,7 @@ object MaterialDeduction: TMaterialDeduction
       Font.Name = 'MS Sans Serif'
       Font.Style = []
       ParentFont = False
-      TabOrder = 2
+      TabOrder = 1
     end
     object DTP2: TDateTimePicker
       Left = 181
@@ -484,11 +396,11 @@ object MaterialDeduction: TMaterialDeduction
       Font.Name = 'MS Sans Serif'
       Font.Style = []
       ParentFont = False
-      TabOrder = 3
+      TabOrder = 2
     end
     object Button1: TButton
-      Left = 803
-      Top = 9
+      Left = 667
+      Top = 25
       Width = 59
       Height = 24
       Caption = 'Query'
@@ -498,13 +410,13 @@ object MaterialDeduction: TMaterialDeduction
       Font.Name = 'MS Sans Serif'
       Font.Style = []
       ParentFont = False
-      TabOrder = 4
+      TabOrder = 3
       OnClick = Button1Click
     end
-    object edt3: TEdit
+    object edtSupName: TEdit
       Left = 128
       Top = 26
-      Width = 141
+      Width = 140
       Height = 24
       CharCase = ecUpperCase
       Font.Charset = DEFAULT_CHARSET
@@ -513,9 +425,9 @@ object MaterialDeduction: TMaterialDeduction
       Font.Name = 'MS Sans Serif'
       Font.Style = []
       ParentFont = False
-      TabOrder = 5
+      TabOrder = 4
     end
-    object chk1: TCheckBox
+    object ckDateInput: TCheckBox
       Left = 14
       Top = 7
       Width = 59
@@ -529,14 +441,27 @@ object MaterialDeduction: TMaterialDeduction
       Font.Style = []
       ParentFont = False
       State = cbChecked
+      TabOrder = 5
+    end
+    object edtRy: TEdit
+      Left = 345
+      Top = 34
+      Width = 84
+      Height = 24
+      CharCase = ecUpperCase
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -13
+      Font.Name = 'MS Sans Serif'
+      Font.Style = []
+      ParentFont = False
       TabOrder = 6
     end
-    object edt6: TEdit
-      Left = 506
-      Top = 2
-      Width = 50
+    object edtArticle: TEdit
+      Left = 128
+      Top = 58
+      Width = 140
       Height = 24
-      Color = cl3DLight
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -13
@@ -545,65 +470,13 @@ object MaterialDeduction: TMaterialDeduction
       ParentFont = False
       TabOrder = 7
     end
-    object edt7: TEdit
-      Left = 567
-      Top = 2
-      Width = 50
-      Height = 24
-      Color = cl3DLight
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -13
-      Font.Name = 'MS Sans Serif'
-      Font.Style = []
-      ParentFont = False
-      TabOrder = 8
-    end
-    object edtRy: TEdit
-      Left = 345
-      Top = 50
-      Width = 84
-      Height = 24
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -13
-      Font.Name = 'MS Sans Serif'
-      Font.Style = []
-      ParentFont = False
-      TabOrder = 9
-    end
-    object edtCustPo: TEdit
-      Left = 506
-      Top = 26
-      Width = 111
-      Height = 24
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -13
-      Font.Name = 'MS Sans Serif'
-      Font.Style = []
-      ParentFont = False
-      TabOrder = 10
-    end
-    object edtArticle: TEdit
-      Left = 506
-      Top = 50
-      Width = 111
-      Height = 24
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -13
-      Font.Name = 'MS Sans Serif'
-      Font.Style = []
-      ParentFont = False
-      TabOrder = 11
-    end
     object GroupBox1: TGroupBox
-      Left = 644
-      Top = 33
+      Left = 844
+      Top = 65
       Width = 302
       Height = 34
-      TabOrder = 12
+      TabOrder = 8
+      Visible = False
       object chkInspection: TCheckBox
         Left = 96
         Top = 13
@@ -669,45 +542,38 @@ object MaterialDeduction: TMaterialDeduction
         TabOrder = 3
       end
     end
-    object cboLab_Final: TComboBox
-      Left = 128
-      Top = 50
-      Width = 141
-      Height = 24
-      Color = cl3DLight
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -13
-      Font.Name = 'MS Sans Serif'
-      Font.Style = []
-      ItemHeight = 16
-      ParentFont = False
-      TabOrder = 13
-      Items.Strings = (
-        ''
-        'Go to Production'
-        'Return'
-        'Waiting for Purchasing')
-    end
-    object edtRKNO: TEdit
-      Left = 682
-      Top = 2
-      Width = 111
-      Height = 24
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -13
-      Font.Name = 'MS Sans Serif'
-      Font.Style = []
-      ParentFont = False
-      TabOrder = 14
-    end
     object edtDefects: TEdit
       Left = 345
-      Top = 72
+      Top = 56
       Width = 84
       Height = 24
-      TabOrder = 15
+      CharCase = ecUpperCase
+      TabOrder = 9
+    end
+    object MenuCode: TEdit
+      Left = 1000
+      Top = 32
+      Width = 121
+      Height = 24
+      TabOrder = 10
+      Text = 'MenuCode'
+      Visible = False
+    end
+    object edtRID: TEdit
+      Left = 492
+      Top = 10
+      Width = 121
+      Height = 24
+      TabOrder = 11
+    end
+    object cbPDF: TCheckBox
+      Left = 816
+      Top = 24
+      Width = 97
+      Height = 17
+      Caption = 'PDF'
+      TabOrder = 12
+      Visible = False
     end
   end
   object PageControl1: TPageControl
@@ -725,7 +591,7 @@ object MaterialDeduction: TMaterialDeduction
     ParentFont = False
     TabOrder = 2
     object TabSheet1: TTabSheet
-      Caption = 'All'
+      Caption = 'Master'
       object Splitter3: TSplitter
         Left = 0
         Top = 345
@@ -759,7 +625,6 @@ object MaterialDeduction: TMaterialDeduction
         FrozenCols = 5
         OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghMultiSortMarking, dghDialogFind]
         ParentFont = False
-        PopupMenu = Pop_All
         SumList.Active = True
         TabOrder = 0
         TitleFont.Charset = DEFAULT_CHARSET
@@ -769,10 +634,14 @@ object MaterialDeduction: TMaterialDeduction
         TitleFont.Style = []
         UseMultiTitle = True
         VTitleMargin = 0
+        OnGetCellParams = DBGridDetailGetCellParams
+        OnKeyPress = DBGridDetailKeyPress
         Columns = <
           item
             EditButtons = <>
             FieldName = 'ReportID'
+            Footer.Color = clYellow
+            Footer.ValueType = fvtCount
             Footers = <>
             ReadOnly = True
           end
@@ -780,11 +649,15 @@ object MaterialDeduction: TMaterialDeduction
             EditButtons = <>
             FieldName = 'DateInput'
             Footers = <>
+            Width = 100
           end
           item
+            ButtonStyle = cbsEllipsis
             EditButtons = <>
             FieldName = 'CLBH'
             Footers = <>
+            Width = 90
+            OnEditButtonClick = DBGridDetailColumns2EditButtonClick
           end
           item
             EditButtons = <>
@@ -798,7 +671,7 @@ object MaterialDeduction: TMaterialDeduction
             Footers = <>
             ReadOnly = True
             Title.Caption = 'SupplierName'
-            Width = 200
+            Width = 150
           end
           item
             EditButtons = <>
@@ -806,12 +679,13 @@ object MaterialDeduction: TMaterialDeduction
             Footers = <>
             ReadOnly = True
             Title.Caption = 'MatName'
-            Width = 200
+            Width = 150
           end
           item
             EditButtons = <>
             FieldName = 'Qty'
             Footers = <>
+            Width = 60
           end
           item
             EditButtons = <>
@@ -819,20 +693,29 @@ object MaterialDeduction: TMaterialDeduction
             Footers = <>
             ReadOnly = True
             Title.Caption = 'Unit'
-            Width = 44
+            Width = 40
+          end
+          item
+            EditButtons = <>
+            FieldName = 'RandomQty'
+            Footers = <>
+            ReadOnly = True
+            Title.Caption = 'QC Inspection|RandomQty'
+            Width = 90
           end
           item
             EditButtons = <>
             FieldName = 'NGQty'
             Footers = <>
             Title.Caption = 'QC Inspection|NGQty'
+            Width = 60
           end
           item
             EditButtons = <>
             FieldName = 'Defects'
             Footers = <>
             Title.Caption = 'QC Inspection|Defects'
-            Width = 100
+            Width = 80
             OnEditButtonClick = DBGridDetailColumns9EditButtonClick
           end
           item
@@ -840,6 +723,7 @@ object MaterialDeduction: TMaterialDeduction
             FieldName = 'QC_FinishDate'
             Footers = <>
             Title.Caption = 'QC Inspection|FinishDate'
+            Width = 100
           end
           item
             EditButtons = <>
@@ -849,7 +733,7 @@ object MaterialDeduction: TMaterialDeduction
               'Pass'
               'Fail')
             Title.Caption = 'QC Inspection|Result'
-            Width = 100
+            Width = 80
           end
           item
             EditButtons = <>
@@ -864,17 +748,19 @@ object MaterialDeduction: TMaterialDeduction
             Footers = <>
             ReadOnly = True
             Title.Caption = 'QC Inspection|UserDate'
+            Width = 100
           end
           item
             EditButtons = <>
             FieldName = 'SendDate'
             Footers = <>
+            Width = 90
           end
           item
             EditButtons = <>
             FieldName = 'Lab_ID'
             Footers = <>
-            Title.Caption = 'Lab Test|ID'
+            Title.Caption = 'Lab Test|LabID'
             Width = 100
           end
           item
@@ -885,7 +771,7 @@ object MaterialDeduction: TMaterialDeduction
               'Pass'
               'Fail')
             Title.Caption = 'Lab Test|Result'
-            Width = 100
+            Width = 60
           end
           item
             EditButtons = <>
@@ -900,7 +786,7 @@ object MaterialDeduction: TMaterialDeduction
             Footers = <>
             ReadOnly = True
             Title.Caption = 'Lab Test|UserID'
-            Width = 100
+            Width = 60
           end
           item
             EditButtons = <>
@@ -908,18 +794,34 @@ object MaterialDeduction: TMaterialDeduction
             Footers = <>
             ReadOnly = True
             Title.Caption = 'Lab Test|UserDate'
+            Width = 100
           end
           item
             EditButtons = <>
             FieldName = 'USERID'
             Footers = <>
-            Width = 74
+            ReadOnly = True
+            Width = 70
           end
           item
             EditButtons = <>
             FieldName = 'USERDate'
             Footers = <>
+            ReadOnly = True
             Width = 100
+          end
+          item
+            EditButtons = <>
+            FieldName = 'SCFID'
+            Footers = <>
+            ReadOnly = True
+            Width = 60
+          end
+          item
+            EditButtons = <>
+            FieldName = 'SCFDate'
+            Footers = <>
+            ReadOnly = True
           end>
       end
       object PageControl3: TPageControl
@@ -931,7 +833,7 @@ object MaterialDeduction: TMaterialDeduction
         Align = alClient
         TabOrder = 1
         object TabSheet7: TTabSheet
-          Caption = 'Actual'
+          Caption = 'Detail_RY'
           object Panel3: TPanel
             Left = 0
             Top = 0
@@ -1128,6 +1030,7 @@ object MaterialDeduction: TMaterialDeduction
             TitleFont.Name = 'MS Sans Serif'
             TitleFont.Style = []
             UseMultiTitle = True
+            OnGetCellParams = DBGrid_RYGetCellParams
             Columns = <
               item
                 EditButtons = <>
@@ -1205,7 +1108,9 @@ object MaterialDeduction: TMaterialDeduction
       '  Lab_Reject = :Lab_Reject,'
       '  Lab_UserID = :Lab_UserID,'
       '  Lab_Date = :Lab_Date,'
-      '  YN = :YN'
+      '  YN = :YN,'
+      '  SCFID = :SCFID,'
+      '  SCFDate = :SCFDate'
       'where'
       '  ReportID = :OLD_ReportID')
     InsertSQL.Strings = (
@@ -1216,7 +1121,7 @@ object MaterialDeduction: TMaterialDeduction
       
         '   QC_Result, QC_UserID, QC_Date, SendDate, Lab_ID, Lab_Result, ' +
         'Lab_Reject, '
-      '   Lab_UserID, Lab_Date, USERID, YN)'
+      '   Lab_UserID, Lab_Date, USERID, YN, SCFID, SCFDate)'
       'values'
       
         '  (:ReportID, :DateInput, :CLBH, :ZSBH, :Qty, :NGQty, :Defects, ' +
@@ -1224,7 +1129,9 @@ object MaterialDeduction: TMaterialDeduction
       
         '   :QC_FinishDate, :QC_Result, :QC_UserID, :QC_Date, :SendDate, ' +
         ':Lab_ID, '
-      '   :Lab_Result, :Lab_Reject, :Lab_UserID, :Lab_Date, :USERID, 1)')
+      
+        '   :Lab_Result, :Lab_Reject, :Lab_UserID, :Lab_Date, :USERID, 1,' +
+        ' :SCFID, :SCFDate)')
     DeleteSQL.Strings = (
       'delete from QC_MaterialDeduction'
       'where'
@@ -1232,32 +1139,12 @@ object MaterialDeduction: TMaterialDeduction
     Left = 168
     Top = 392
   end
-  object Pop_All: TPopupMenu
-    AutoHotkeys = maManual
-    Left = 568
-    Top = 288
-    object mnu2: TMenuItem
-      Caption = 'Download Reprot/GL'
-      Enabled = False
-    end
-    object mnu4: TMenuItem
-      Caption = 'Download Lab GL'
-      Enabled = False
-    end
-    object mnu5: TMenuItem
-      Caption = 'Download PDM Report'
-      Enabled = False
-    end
-    object OpenLabGL1: TMenuItem
-      Caption = 'Open Lab GL'
-    end
-  end
   object OpenDialog1: TOpenDialog
     Filter = '*.*'
     Left = 628
     Top = 298
   end
-  object SaveDialog1: TSaveDialog
+  object SaveDialog: TSaveDialog
     Filter = '*.*'
     Left = 700
     Top = 298
@@ -1267,10 +1154,37 @@ object MaterialDeduction: TMaterialDeduction
     DatabaseName = 'DB'
     SQL.Strings = (
       
-        'select QC_MaterialDeduction.*, ywpm, zsywjc, dwbh from QC_Materi' +
-        'alDeduction'
-      'inner join clzl on clzl.cldh = QC_MaterialDeduction.CLBH'
-      'inner join zszl on zszl.zsdh = QC_MaterialDeduction.ZSBH'
+        'select QC_MaterialDeduction.*, ywpm, zsywjc, dwbh, RandomQty fro' +
+        'm QC_MaterialDeduction'
+      'LEFT join clzl on clzl.cldh = QC_MaterialDeduction.CLBH'
+      'LEFT join zszl on zszl.zsdh = QC_MaterialDeduction.ZSBH'
+      'LEFT JOIN ('
+      '    SELECT'
+      '        CLBH, ReportID, CONVERT(numeric(18,2),'
+      '        CASE'
+      '            WHEN Qty >= 2     AND Qty <= 8       THEN 2'
+      '            WHEN Qty > 8      AND Qty <= 15      THEN 3'
+      '            WHEN Qty > 15     AND Qty <= 25      THEN 5'
+      '            WHEN Qty > 25     AND Qty <= 50      THEN 8'
+      '            WHEN Qty > 50     AND Qty <= 90      THEN 13'
+      '            WHEN Qty > 90     AND Qty <= 150     THEN 20'
+      '            WHEN Qty > 150    AND Qty <= 280     THEN 32'
+      '            WHEN Qty > 280    AND Qty <= 500     THEN 50'
+      '            WHEN Qty > 500    AND Qty <= 1200    THEN 80'
+      '            WHEN Qty > 1200   AND Qty <= 3200    THEN 125'
+      '            WHEN Qty > 3200   AND Qty <= 10000   THEN 200'
+      '            WHEN Qty > 10000  AND Qty <= 35000   THEN 315'
+      '            WHEN Qty > 35000  AND Qty <= 70000   THEN 500'
+      '            WHEN Qty > 70000  AND Qty <= 120000  THEN 800'
+      '            WHEN Qty > 120000 AND Qty <= 170000  THEN 1250'
+      '            WHEN Qty > 170000 AND Qty <= 250000  THEN 2000'
+      '            WHEN Qty > 250000                    THEN 2000'
+      '            ELSE Qty'
+      '        END) AS RandomQty'
+      '    FROM QC_MaterialDeduction'
+      
+        ') AS S ON S.CLBH = QC_MaterialDeduction.CLBH and S.ReportID = QC' +
+        '_MaterialDeduction.ReportID'
       'where 1=1')
     UpdateObject = Upd_QC
     Left = 168
@@ -1293,19 +1207,21 @@ object MaterialDeduction: TMaterialDeduction
     end
     object qry_QcQty: TCurrencyField
       FieldName = 'Qty'
+      currency = False
     end
     object qry_QcNGQty: TCurrencyField
       FieldName = 'NGQty'
+      currency = False
     end
     object qry_QcDefects: TStringField
       FieldName = 'Defects'
       FixedChar = True
-      Size = 100
+      Size = 200
     end
     object qry_QcDefectName: TStringField
       FieldName = 'DefectName'
       FixedChar = True
-      Size = 200
+      Size = 1000
     end
     object qry_QcQC_FinishDate: TDateTimeField
       FieldName = 'QC_FinishDate'
@@ -1335,9 +1251,6 @@ object MaterialDeduction: TMaterialDeduction
       FieldName = 'Lab_Result'
       FixedChar = True
       Size = 50
-    end
-    object qry_QcLab_Reject: TDateTimeField
-      FieldName = 'Lab_Reject'
     end
     object qry_QcLab_UserID: TStringField
       FieldName = 'Lab_UserID'
@@ -1373,11 +1286,22 @@ object MaterialDeduction: TMaterialDeduction
       FixedChar = True
       Size = 15
     end
-  end
-  object Query1: TQuery
-    DatabaseName = 'DB'
-    Left = 219
-    Top = 352
+    object qry_QcRandomQty: TFloatField
+      FieldName = 'RandomQty'
+    end
+    object qry_QcLab_Reject: TStringField
+      FieldName = 'Lab_Reject'
+      FixedChar = True
+      Size = 100
+    end
+    object qry_QcSCFID: TStringField
+      FieldName = 'SCFID'
+      FixedChar = True
+      Size = 15
+    end
+    object qry_QcSCFDate: TDateTimeField
+      FieldName = 'SCFDate'
+    end
   end
   object qry_RY: TQuery
     DatabaseName = 'DB'
@@ -1396,8 +1320,8 @@ object MaterialDeduction: TMaterialDeduction
         'ing = DDZL.XieXing'
       'WHERE  ReportID = :ReportID;')
     UpdateObject = Upd_RY
-    Left = 284
-    Top = 527
+    Left = 300
+    Top = 663
     ParamData = <
       item
         DataType = ftInteger
@@ -1448,8 +1372,8 @@ object MaterialDeduction: TMaterialDeduction
   end
   object DS_RY: TDataSource
     DataSet = qry_RY
-    Left = 324
-    Top = 535
+    Left = 332
+    Top = 663
   end
   object Upd_RY: TUpdateSQL
     ModifySQL.Strings = (
@@ -1473,7 +1397,7 @@ object MaterialDeduction: TMaterialDeduction
       '  ReportID = :OLD_ReportID'
       '  AND RY = :OLD_RY')
     Left = 364
-    Top = 527
+    Top = 663
   end
   object QGetID: TQuery
     DatabaseName = 'DB'

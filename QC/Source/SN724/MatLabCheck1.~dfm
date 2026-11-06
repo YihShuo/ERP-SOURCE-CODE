@@ -850,8 +850,7 @@ object MatLabCheck: TMatLabCheck
         Footers = <>
         ReadOnly = True
         Title.Caption = 'Lab Test|Confirmed Result'
-        Visible = False
-        Width = 65
+        Width = 70
       end
       item
         ButtonStyle = cbsNone

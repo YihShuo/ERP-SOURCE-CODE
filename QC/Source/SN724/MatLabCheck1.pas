@@ -205,6 +205,7 @@ type
     procedure upmnu2Click(Sender: TObject);
     procedure btnEx1Click(Sender: TObject);
     procedure Button4Click(Sender: TObject);
+    procedure DBGridDetailKeyPress(Sender: TObject; var Key: Char);
   private
     AppDir:string;
     SFL:string;
@@ -941,7 +942,25 @@ end;}
 
 procedure TMatLabCheck.qry_QcLab_CheckChange(Sender: TField);
 begin
-  if (qry_Qc.FieldByName('Lab_Check').AsString <> '') then
+  if (Trim(qry_Qc.FieldByName('Lab_Check').AsString) <> '') And (qry_Qc.CachedUpdates) then
+  begin
+    if (not qry_Qc.FieldByName('Lab_ConfirmDate').IsNull) and
+       (Trunc(qry_Qc.FieldByName('Lab_ConfirmDate').AsDateTime) <> Date) then
+    begin
+      MessageDlg('You can not change value in this result!', mtWarning, [mbYes], 0);
+      btncancelClick(nil);
+    end
+    else
+    begin
+      qry_Qc.FieldByName('Lab_ConfirmDate').AsDateTime := Date;
+      qry_Qc.FieldByName('Lab_UserID').AsString := main.edit1.Text;
+    end;
+  end;
+end;
+
+{procedure TMatLabCheck.qry_QcLab_CheckChange(Sender: TField);
+begin
+  if (Trim(qry_Qc.FieldByName('Lab_Check').AsString) <> '') then
    begin
        if (qry_Qc.fieldbyname('Lab_ConfirmDate').Value <> null) and (qry_Qc.fieldbyname('Lab_ConfirmDate').Value <> date) then
        begin
@@ -954,7 +973,7 @@ begin
           qry_Qc.fieldbyname('Lab_UserID').Value:=main.edit1.text;
        end;
    end;
-end;
+end;}
 
 procedure TMatLabCheck.DBGridDetailColumns14EditButtonClick(
   Sender: TObject; var Handled: Boolean);
@@ -1829,6 +1848,16 @@ begin
   qry_Qc.Edit;
   qry_Qc.FieldByName('MaterialTestDate').Value := FormatDateTime('yyyy-mm-dd', Date);
   qry_Qc.Post;
+end;
+
+procedure TMatLabCheck.DBGridDetailKeyPress(Sender: TObject;
+  var Key: Char);
+begin
+  if DBGridDetail.SelectedField.FieldName = 'Lab_Check' then
+  begin
+    // chan het ky tu ngoai tru Enter de mo picklist
+    Key := #0;
+  end;
 end;
 
 end.

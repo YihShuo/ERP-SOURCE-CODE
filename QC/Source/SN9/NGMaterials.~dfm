@@ -16,6 +16,7 @@ object NGMaterial: TNGMaterial
   Visible = True
   WindowState = wsMaximized
   OnClose = FormClose
+  OnCreate = FormCreate
   OnDestroy = FormDestroy
   PixelsPerInch = 96
   TextHeight = 13
@@ -105,9 +106,16 @@ object NGMaterial: TNGMaterial
       Height = 20
       Caption = 'CLBH:'
     end
+    object Label7: TLabel
+      Left = 624
+      Top = 112
+      Width = 102
+      Height = 20
+      Caption = 'RackLocation:'
+    end
     object Button1: TButton
-      Left = 835
-      Top = 89
+      Left = 851
+      Top = 73
       Width = 81
       Height = 33
       Caption = 'Search'
@@ -509,6 +517,13 @@ object NGMaterial: TNGMaterial
       CharCase = ecUpperCase
       TabOrder = 22
     end
+    object edtRack: TEdit
+      Left = 728
+      Top = 112
+      Width = 121
+      Height = 28
+      TabOrder = 23
+    end
   end
   object DBGrid1: TDBGridEh
     Left = 0
@@ -544,6 +559,7 @@ object NGMaterial: TNGMaterial
       item
         EditButtons = <>
         FieldName = 'ReportID'
+        Footer.Color = clYellow
         Footer.ValueType = fvtCount
         Footers = <>
         ReadOnly = True
@@ -609,6 +625,8 @@ object NGMaterial: TNGMaterial
       item
         EditButtons = <>
         FieldName = 'DQty'
+        Footer.Color = clYellow
+        Footer.ValueType = fvtSum
         Footers = <>
         Width = 60
       end
@@ -717,16 +735,6 @@ object NGMaterial: TNGMaterial
       FieldName = 'InspecDate'
       Origin = 'DB.QC_NGMaterial.InspecDate'
     end
-    object Query1Qty: TStringField
-      FieldName = 'Qty'
-      Origin = 'DB.QC_NGMaterial.Qty'
-      FixedChar = True
-    end
-    object Query1DQty: TStringField
-      FieldName = 'DQty'
-      Origin = 'DB.QC_NGMaterial.DQty'
-      FixedChar = True
-    end
     object Query1Issue: TStringField
       FieldName = 'Issue'
       Origin = 'DB.QC_NGMaterial.Issue'
@@ -782,6 +790,14 @@ object NGMaterial: TNGMaterial
       FieldName = 'RackLocation'
       FixedChar = True
       Size = 10
+    end
+    object Query1Qty: TCurrencyField
+      FieldName = 'Qty'
+      currency = False
+    end
+    object Query1DQty: TCurrencyField
+      FieldName = 'DQty'
+      currency = False
     end
   end
   object DS1: TDataSource

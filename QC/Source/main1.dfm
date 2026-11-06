@@ -603,7 +603,18 @@ object main: Tmain
       end
       object SN9E: TMenuItem
         Caption = 'N9E Material Deduction'
-        OnClick = SN9EClick
+        object SN9E1: TMenuItem
+          Caption = 'N9E1 QC Input'
+          OnClick = SN9E1Click
+        end
+        object SN9E2: TMenuItem
+          Caption = 'N9E2 Lab Input'
+          OnClick = SN9E2Click
+        end
+        object SN9E3: TMenuItem
+          Caption = 'N9E3 KCS Supervisor Cfm'
+          OnClick = SN9E3Click
+        end
       end
     end
   end

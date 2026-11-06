@@ -5,7 +5,7 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, DB, DBTables, Menus, GridsEh, DBGridEh, ExtCtrls, ComCtrls,
-  StdCtrls, DBCtrls, Buttons;
+  StdCtrls, DBCtrls, Buttons, ComObj, ShellAPI;
 
 type
   TMaterialDeduction = class(TForm)
@@ -20,48 +20,30 @@ type
     DBMemo1: TDBMemo;
     Panel2: TPanel;
     Label15: TLabel;
-    Label2: TLabel;
     Label3: TLabel;
     Label4: TLabel;
-    Label6: TLabel;
-    Label7: TLabel;
     Label8: TLabel;
-    Label9: TLabel;
     Label10: TLabel;
-    Label12: TLabel;
-    Label1: TLabel;
     Label5: TLabel;
-    edt2: TEdit;
-    edt1: TEdit;
+    edtCLBH: TEdit;
     DTP1: TDateTimePicker;
     DTP2: TDateTimePicker;
     Button1: TButton;
-    edt3: TEdit;
-    chk1: TCheckBox;
-    edt6: TEdit;
-    edt7: TEdit;
+    edtSupName: TEdit;
+    ckDateInput: TCheckBox;
     edtRy: TEdit;
-    edtCustPo: TEdit;
     edtArticle: TEdit;
     GroupBox1: TGroupBox;
     chkInspection: TCheckBox;
     chkNotesting: TCheckBox;
     chkpass: TCheckBox;
     chkFail: TCheckBox;
-    cboLab_Final: TComboBox;
-    edtRKNO: TEdit;
     edtDefects: TEdit;
     DS_Qc: TDataSource;
     Upd_QC: TUpdateSQL;
-    Pop_All: TPopupMenu;
-    mnu2: TMenuItem;
-    mnu4: TMenuItem;
-    mnu5: TMenuItem;
-    OpenLabGL1: TMenuItem;
     OpenDialog1: TOpenDialog;
-    SaveDialog1: TSaveDialog;
+    SaveDialog: TSaveDialog;
     qry_Qc: TQuery;
-    Query1: TQuery;
     qry_RY: TQuery;
     DS_RY: TDataSource;
     Upd_RY: TUpdateSQL;
@@ -80,7 +62,6 @@ type
     qry_QcSendDate: TDateTimeField;
     qry_QcLab_ID: TStringField;
     qry_QcLab_Result: TStringField;
-    qry_QcLab_Reject: TDateTimeField;
     qry_QcLab_UserID: TStringField;
     qry_QcLab_Date: TDateTimeField;
     qry_Qcywpm: TStringField;
@@ -113,6 +94,14 @@ type
     DBGrid_RY: TDBGridEh;
     qry_QcUSERDate: TDateTimeField;
     qry_QcUSERID: TStringField;
+    qry_QcRandomQty: TFloatField;
+    qry_QcLab_Reject: TStringField;
+    MenuCode: TEdit;
+    Label1: TLabel;
+    edtRID: TEdit;
+    qry_QcSCFID: TStringField;
+    qry_QcSCFDate: TDateTimeField;
+    cbPDF: TCheckBox;
     procedure btnmodifyClick(Sender: TObject);
     procedure btnsaveClick(Sender: TObject);
     function GetUsernameByID(const AID: string): string;
@@ -127,10 +116,29 @@ type
     procedure btnsave1Click(Sender: TObject);
     procedure btncancel1Click(Sender: TObject);
     procedure btndeleteClick(Sender: TObject);
+    procedure SetColumnsReadOnly;
     procedure DBGridDetailColumns9EditButtonClick(Sender: TObject;
       var Handled: Boolean);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
+    procedure DBGridDetailColumns2EditButtonClick(Sender: TObject;
+      var Handled: Boolean);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure DBGridDetailGetCellParams(Sender: TObject; Column: TColumnEh;
+      AFont: TFont; var Background: TColor; State: TGridDrawState);
+    procedure DBGrid_RYGetCellParams(Sender: TObject; Column: TColumnEh;
+      AFont: TFont; var Background: TColor; State: TGridDrawState);
+    procedure DBGridDetailKeyPress(Sender: TObject; var Key: Char);
+    procedure btnexcelClick(Sender: TObject);
+    procedure WriteCellAppend(Cell: OleVariant; const Txt: WideString; NewLine: Boolean);
+    procedure PrintSign(
+      AWorksheet: OleVariant;
+      AQuery: TQuery;
+      AInsertRow: Integer;
+      const AIDField, ADateField: string;
+      ACol: Integer;
+      UseUserName: Boolean
+    );
   private
     { Private declarations }
   public
@@ -142,9 +150,123 @@ var
 
 implementation
 
-uses main1, QC_MatDefect1;
+uses main1, QC_MatDefect1, RYDetail1;
 
 {$R *.dfm}
+
+procedure TMaterialDeduction.PrintSign(
+  AWorksheet: OleVariant;
+  AQuery: TQuery;
+  AInsertRow: Integer;
+  const AIDField, ADateField: string;
+  ACol: Integer;
+  UseUserName: Boolean
+);
+var
+  s, SignFile: string;
+  Cell, MergeCell: OleVariant;
+  CellLeft, CellTop, CellWidth, CellHeight: Double;
+  PicWidth, PicHeight: Double;
+begin
+  if AQuery.FieldByName(AIDField).IsNull
+     or (Trim(AQuery.FieldByName(AIDField).AsString) = '') then
+    Exit;
+
+  Cell := AWorksheet.Cells[AInsertRow + 1, ACol];
+  MergeCell := Cell.MergeArea;
+
+  MergeCell.WrapText := True;
+  MergeCell.HorizontalAlignment := -4108; // xlCenter
+  MergeCell.VerticalAlignment := -4108;   // xlCenter
+
+  s := AQuery.FieldByName(AIDField).AsString;
+  s := StringReplace(s, '_', Chr(10), [rfReplaceAll]);
+
+  if UseUserName then
+  begin
+    Cell.Value :=
+      Chr(10) + Chr(10) + Chr(10) +
+      GetUsernameByID(AQuery.FieldByName(AIDField).AsString)
+      + Chr(10)
+      + FormatDateTime(
+          'dd-mm-yyyy',
+          AQuery.FieldByName(ADateField).AsDateTime
+        );
+
+    SignFile := ExtractFilePath(Application.ExeName) +
+                'Signatures\' +
+                Trim(AQuery.FieldByName(AIDField).AsString) +
+                '.bmp';
+
+    if FileExists(SignFile) then
+    begin
+      CellLeft   := MergeCell.Left;
+      CellTop    := MergeCell.Top;
+      CellWidth  := MergeCell.Width;
+      CellHeight := MergeCell.Height;
+
+      PicWidth  := CellWidth * 0.4;
+      PicHeight := CellHeight * 0.45;
+
+      AWorksheet.Shapes.AddPicture(
+        SignFile,
+        False,
+        True,
+        CellLeft + (CellWidth - PicWidth) / 2, // can giua ngang
+        CellTop + (CellHeight * 0.1),          // phia tren
+        PicWidth,
+        PicHeight
+      );
+    end;
+  end
+  else
+    Cell.Value := s;
+end;
+
+procedure TMaterialDeduction.WriteCellAppend(Cell: OleVariant; const Txt: WideString; NewLine: Boolean);
+var
+  s: WideString;
+  p: Integer;
+begin
+  s := VarToWideStr(Cell.Value);
+
+  if NewLine then
+  begin
+    p := LastDelimiter(#10, s);
+    if p = 0 then
+      Cell.Characters(Length(s) + 1, 0).Text := #10 + Txt
+    else
+      Cell.Characters(Length(s) + 1, 0).Text := ' ' + Txt;
+  end
+  else
+    Cell.Characters(Length(s) + 1, 0).Text := ' ' + Txt;
+end;
+
+procedure TMaterialDeduction.SetColumnsReadOnly;
+begin
+  if MenuCode.Text = 'N9E1' then
+  begin
+    DBGridDetail.FieldColumns['Lab_ID'].ReadOnly     := True;
+    DBGridDetail.FieldColumns['Lab_Result'].ReadOnly     := True;
+    DBGridDetail.FieldColumns['Lab_Reject'].ReadOnly     := True;
+    DBGrid_RY.Enabled := true;
+  end;
+
+  if MenuCode.Text = 'N9E2' then
+  begin
+    DBGridDetail.FieldColumns['CLBH'].ReadOnly     := True;
+    DBGridDetail.FieldColumns['ZSBH'].ReadOnly     := True;
+    DBGridDetail.FieldColumns['NGQty'].ReadOnly     := True;
+    DBGridDetail.FieldColumns['Defects'].ReadOnly     := True;
+    DBGridDetail.FieldColumns['QC_FinishDate'].ReadOnly     := True;
+    DBGridDetail.FieldColumns['QC_Result'].ReadOnly     := True;
+    DBGridDetail.FieldColumns['SendDate'].ReadOnly     := True;
+    DBGrid_RY.Enabled := false;
+    btninsert.Visible := false;
+    btndelete.Visible := false;
+    btnsave1.Visible := false;
+  end;
+end;
 
 function TMaterialDeduction.GetUsernameByID(const AID: string): string;
 begin
@@ -250,6 +372,18 @@ begin
                  end else
                  begin
                   qry_Qc.Edit;
+                  if MenuCode.Text = 'N9E1' then
+                  begin
+                    qry_Qc.FieldByName('QC_UserID').Value := main.Edit1.Text;
+                    qry_Qc.FieldByName('QC_Date').Value := Date;
+                  end;
+
+                  if MenuCode.Text = 'N9E2' then
+                  begin
+                    qry_Qc.FieldByName('Lab_UserID').Value := main.Edit1.Text;
+                    qry_Qc.FieldByName('Lab_Date').Value := Date;
+                  end;
+
                   {if DBGrid1.SelectedField.FieldName = 'PreparedID' then
                     //qry_Qc.FieldByName('PreparedDate').Value := FormatDateTime('yyyy-mm-dd hh:nn:ss', Now)
                   else
@@ -288,25 +422,66 @@ end;
 
 procedure TMaterialDeduction.Button1Click(Sender: TObject);
 begin
+  SetColumnsReadOnly;
   with qry_Qc do
   begin
     Close;
     SQL.Clear;
-    SQL.Add('SELECT QC_MaterialDeduction.*,');
+    SQL.Add('SELECT DISTINCT QC_MaterialDeduction.*,');
     SQL.Add('       clzl.ywpm,');
     SQL.Add('       zszl.zsywjc,');
-    SQL.Add('       dwbh');
+    SQL.Add('       dwbh, RandomQty');
     SQL.Add('FROM QC_MaterialDeduction');
-    SQL.Add('INNER JOIN clzl');
+    SQL.Add('LEFT JOIN clzl');
     SQL.Add('  ON clzl.cldh = QC_MaterialDeduction.CLBH');
-    SQL.Add('INNER JOIN zszl');
+    SQL.Add('LEFT JOIN zszl');
     SQL.Add('  ON zszl.zsdh = QC_MaterialDeduction.ZSBH');
+    SQL.Add('LEFT JOIN QC_MaterialDeduction_RY');
+    SQL.Add('  ON QC_MaterialDeduction_RY.ReportID = QC_MaterialDeduction.ReportID');
+    SQL.Add('LEFT JOIN (');
+    SQL.Add('  SELECT CLBH, ReportID,');
+    SQL.Add('    CONVERT(NUMERIC(18,2),');
+    SQL.Add('      CASE');
+    SQL.Add('        WHEN Qty >= 2 AND Qty <= 8 THEN 2');
+    SQL.Add('        WHEN Qty > 8 AND Qty <= 15 THEN 3');
+    SQL.Add('        WHEN Qty > 15 AND Qty <= 25 THEN 5');
+    SQL.Add('        WHEN Qty > 25 AND Qty <= 50 THEN 8');
+    SQL.Add('        WHEN Qty > 50 AND Qty <= 90 THEN 13');
+    SQL.Add('        WHEN Qty > 90 AND Qty <= 150 THEN 20');
+    SQL.Add('        WHEN Qty > 150 AND Qty <= 280 THEN 32');
+    SQL.Add('        WHEN Qty > 280 AND Qty <= 500 THEN 50');
+    SQL.Add('        WHEN Qty > 500 AND Qty <= 1200 THEN 80');
+    SQL.Add('        WHEN Qty > 1200 AND Qty <= 3200 THEN 125');
+    SQL.Add('        WHEN Qty > 3200 AND Qty <= 10000 THEN 200');
+    SQL.Add('        WHEN Qty > 10000 AND Qty <= 35000 THEN 315');
+    SQL.Add('        WHEN Qty > 35000 AND Qty <= 70000 THEN 500');
+    SQL.Add('        WHEN Qty > 70000 AND Qty <= 120000 THEN 800');
+    SQL.Add('        WHEN Qty > 120000 AND Qty <= 170000 THEN 1250');
+    SQL.Add('        WHEN Qty > 170000 AND Qty <= 250000 THEN 2000');
+    SQL.Add('        WHEN Qty > 250000 THEN 2000');
+    SQL.Add('        ELSE Qty');
+    SQL.Add('      END');
+    SQL.Add('    ) AS RandomQty');
+    SQL.Add('  FROM QC_MaterialDeduction');
+    SQL.Add(') AS S');
+    SQL.Add('  ON S.CLBH = QC_MaterialDeduction.CLBH');
+    SQL.Add(' AND S.ReportID = QC_MaterialDeduction.ReportID');
     SQL.Add('WHERE 1=1');
-    if edt2.Text <> '' then
-      SQL.Add('AND CLBH like '''+Trim(edt2.Text)+'%'' ');
-    if edt3.Text <> '' then
-      SQL.Add('AND zsywjc like '''+Trim(edt3.Text)+'%'' ');
+
+    if edtRID.Text <> '' then
+      SQL.Add('AND QC_MaterialDeduction.ReportID like '''+Trim(edtRID.Text)+'%'' ');
+    if edtCLBH.Text <> '' then
+      SQL.Add('AND CLBH like '''+Trim(edtCLBH.Text)+'%'' ');
+    if edtSupName.Text <> '' then
+      SQL.Add('AND zsywjc like '''+Trim(edtSupName.Text)+'%'' ');
+    if edtDefects.Text <> '' then
+      SQL.Add('AND Defects like '''+Trim(edtDefects.Text)+'%'' ');
+    if edtRy.Text <> '' then
+      SQL.Add('AND RY like '''+Trim(edtRy.Text)+'%'' ');
+    if ckDateInput.Checked then
+      SQL.Add('AND DateInput >= ''' + FormatDateTime('yyyy-MM-dd', DTP1.Date) + ''' AND DateInput <= ''' + FormatDateTime('yyyy-MM-dd', DTP1.Date) + '''');
     Open;
+
   end;
 end;
 
@@ -320,13 +495,15 @@ begin
   begin
     btninsert1.Enabled := true;
     btnmodify1.Enabled := true;
-    btndelete1.Enabled := true
+    btndelete1.Enabled := true;
+    btnexcel.Enabled := true
   end
   else
   begin
     btninsert1.Enabled := false;
     btnmodify1.Enabled := false;
     btndelete1.Enabled := false;
+    btnexcel.Enabled := true;
   end;
   qry_RY.Active := true;
 end;
@@ -468,6 +645,12 @@ begin
       abort;
     end;
 
+  if not qry_RY.IsEmpty then
+    begin
+      MessageDlg('You must delete detail first!!!', mtWarning, [mbYes], 0);
+      Abort;
+    end;
+
   if messagedlg('Are you sure you want to delete?',mtconfirmation,[mbYes,mbNo],0)<>mrYes then
     begin
       abort;
@@ -499,6 +682,196 @@ end;
 procedure TMaterialDeduction.FormDestroy(Sender: TObject);
 begin
   MaterialDeduction := nil;
+end;
+
+procedure TMaterialDeduction.DBGridDetailColumns2EditButtonClick(
+  Sender: TObject; var Handled: Boolean);
+begin
+  if RYDetail <> nil then
+    RYDetail.show
+  else
+    begin
+      RYDetail := TRYDetail.Create(self);
+      RYDetail.show;
+    end;
+end;
+
+procedure TMaterialDeduction.FormClose(Sender: TObject;
+  var Action: TCloseAction);
+begin
+  if (btnsave.Enabled) or (btnsave1.Enabled) then
+    begin
+      Messagedlg('You must save data first !!!', mtwarning, [mbyes], 0);
+      abort;
+    end
+  else
+    action := cafree;
+end;
+
+procedure TMaterialDeduction.DBGridDetailGetCellParams(Sender: TObject;
+  Column: TColumnEh; AFont: TFont; var Background: TColor;
+  State: TGridDrawState);
+begin
+  if qry_Qc.FieldByName('YN').Value = '0' then
+    DBGridDetail.Canvas.Font.Color := clRed;
+end;
+
+procedure TMaterialDeduction.DBGrid_RYGetCellParams(Sender: TObject;
+  Column: TColumnEh; AFont: TFont; var Background: TColor;
+  State: TGridDrawState);
+begin
+    if qry_RY.FieldByName('YN').Value = '0' then
+    DBGrid_RY.Canvas.Font.Color := clRed;
+end;
+
+procedure TMaterialDeduction.DBGridDetailKeyPress(Sender: TObject;
+  var Key: Char);
+begin
+  if Key = #13 then
+  begin
+    if (DBGridDetail.SelectedField.FieldName = 'SCFID') and (MenuCode.Text = 'N9E3') and qry_Qc.CachedUpdates then
+    begin
+      qry_Qc.Edit;
+      qry_Qc.FieldByName('SCFID').AsString := main.Edit1.Text;
+      qry_Qc.FieldByName('SCFDate').AsDateTime := Date;
+      qry_Qc.Post;
+    end;
+  end;
+end;
+
+procedure TMaterialDeduction.btnexcelClick(Sender: TObject);
+var
+  ExcelApp, Workbook, Worksheet, borderRange: OleVariant;
+  StartRow, InsertRow: Integer;
+  DuongDanFile, SaveFile, AppDir, SrcFile, DstFile: string;
+  s: WideString;
+  i, p: Integer;
+  MaxHeight: Double;
+  SigS, SigMS, SigL, SigP: Boolean;
+begin
+
+  DuongDanFile := ExtractFilePath(ParamStr(0)) + 'A-QIP-WS001-01D.xlsx';
+
+  StartRow := 5;
+
+  SaveDialog := TSaveDialog.Create(nil);
+  try
+    if not cbPDF.Checked then
+    begin
+      SaveDialog.Filter := 'Excel Files (*.xlsx)|*.xlsx';
+      SaveDialog.DefaultExt := 'xlsx';
+      SaveDialog.FileName := 'A-QIP-WS001-01D_' + FormatDateTime('yyyy-mm-dd_hh-nn-ss', Now) + '.xlsx';
+      SaveDialog.Title := 'Chon noi luu file Excel moi';
+    end else
+    begin
+      SaveDialog.Filter := 'PDF (*.pdf)|*.pdf';
+      SaveDialog.DefaultExt := 'pdf';
+      SaveDialog.FileName := 'A-QIP-WS001-01D_' + FormatDateTime('yyyy-mm-dd_hh-nn-ss', Now) + '.pdf';
+      SaveDialog.Title := 'Chon noi luu file PDF moi';
+    end;
+
+    if not SaveDialog.Execute then
+      Exit;
+
+    SaveFile := SaveDialog.FileName;
+  finally
+    SaveDialog.Free;
+  end;
+
+  ExcelApp := CreateOleObject('Excel.Application');
+
+  Workbook := ExcelApp.Workbooks.Open(DuongDanFile);
+  Worksheet := Workbook.WorkSheets[1];
+
+  //hang 2
+  for i := 1 to 20 do
+  begin
+    case i of
+      {1: WriteCellAppend(Worksheet.Cells[2,i],
+          qry_Qc.FieldByName('Cont').AsString,
+          False);}
+
+      2: WriteCellAppend(Worksheet.Cells[2,i],
+          FormatDateTime('dd-mm-yyyy', qry_Qc.FieldByName('DateInput').AsDateTime),
+          True);
+
+      5: WriteCellAppend(Worksheet.Cells[2,i],
+          FormatDateTime('dd-mm-yyyy', qry_Qc.FieldByName('QC_Date').AsDateTime),
+          True);
+
+      {9: WriteCellAppend(Worksheet.Cells[2,i],
+          qry_Qc.FieldByName('Brand').AsString,
+          True);}
+
+      12: WriteCellAppend(Worksheet.Cells[2,i],
+          qry_Qc.FieldByName('zsywjc').AsString,
+          True);
+    end;
+  end;
+
+  qry_RY.First;
+  InsertRow := StartRow;
+
+  while not qry_RY.Eof do
+  begin
+    Worksheet.Rows[Format('%d:%d', [InsertRow, InsertRow])].Insert;
+
+    borderRange := Worksheet.Range[Format('A%d:N%d', [InsertRow, InsertRow])];
+    borderRange.Borders.LineStyle := 1;
+    borderRange.Borders.Weight := 2;
+
+
+    Worksheet.Cells[InsertRow, 1].Value := qry_Qc.FieldByName('ywpm').AsString;
+    Worksheet.Cells[InsertRow, 2].Value := qry_RY.FieldByName('XieMing').AsString;
+    Worksheet.Cells[InsertRow, 3].Value := qry_RY.FieldByName('Article').AsString;
+    Worksheet.Cells[InsertRow, 4].Value := qry_Qc.FieldByName('CLBH').AsString;
+    Worksheet.Cells[InsertRow, 5].Value := qry_RY.FieldByName('RY').AsString;
+    Worksheet.Rows[InsertRow].AutoFit;
+
+    Inc(InsertRow);
+    qry_RY.Next;
+  end;
+
+  Worksheet.Cells[5, 6].Value := qry_Qc.FieldByName('Qty').AsString;
+  Worksheet.Cells[5, 7].Value := qry_Qc.FieldByName('RandomQty').AsString;
+  Worksheet.Cells[5, 8].Value := qry_Qc.FieldByName('NGQty').AsString;
+  Worksheet.Cells[5, 9].Value := qry_Qc.FieldByName('DefectName').AsString;
+  Worksheet.Cells[5, 10].Value := qry_Qc.FieldByName('QC_Result').AsString;
+
+  if Trim(qry_Qc.FieldByName('SendDate').AsString) <> '' then
+    Worksheet.Cells[5, 11].Value := FormatDateTime('dd-mm-yyyy', qry_Qc.FieldByName('SendDate').AsDateTime)
+  else
+    Worksheet.Cells[5, 11].Value := '';
+
+  Worksheet.Cells[5, 12].Value := qry_Qc.FieldByName('Lab_ID').AsString;
+  Worksheet.Cells[5, 13].Value := qry_Qc.FieldByName('Lab_Result').AsString;
+  Worksheet.Cells[5, 14].Value := qry_Qc.FieldByName('Lab_Reject').AsString;
+
+  Worksheet.Rows[Format('%d:%d', [InsertRow, InsertRow])].Delete;
+
+  PrintSign(Worksheet, qry_Qc, InsertRow, 'SCFID',  'SCFDate',  3, True);
+
+  if cbPDF.Checked then
+  begin
+    Worksheet.PageSetup.PrintTitleRows := '$1:$4';
+    Worksheet.PageSetup.RightHeader := '&P / &N';
+    Workbook.ExportAsFixedFormat(0, SaveFile);
+    ShowMessage('Duong dan PDF: ' + SaveFile);
+    ShellExecute(0, 'open', PChar(SaveFile), nil, nil, SW_SHOWNORMAL);
+  end
+  else
+  begin
+    Worksheet.PageSetup.PrintTitleRows := '$1:$4';
+    Worksheet.PageSetup.RightHeader := '&P / &N';
+    Workbook.SaveAs(SaveFile);
+    ShowMessage('Duong dan Excel: ' + SaveFile);
+    ExcelApp.Visible := True;
+  end;
+
+  ExcelApp := Unassigned;
+  Workbook := Unassigned;
+  Worksheet := Unassigned;
+
 end;
 
 end.

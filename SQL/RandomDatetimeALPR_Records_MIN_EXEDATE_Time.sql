@@ -7,7 +7,7 @@ WITH RawData AS (
         Y.EXEDATE
     FROM INVOICE_D I
     INNER JOIN (
-        SELECT
+        SELECT 
             DDBH,
             CON_NO,
             REPLACE(BIEN_SO, '-', '') AS BIEN_SO,

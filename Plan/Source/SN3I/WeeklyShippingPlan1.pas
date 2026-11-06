@@ -75,6 +75,7 @@ type
     PopupMenu2: TPopupMenu;
     mnuDelete: TMenuItem;
     mnuDeleteAll: TMenuItem;
+    DeleteDate1: TMenuItem;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormDestroy(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -91,6 +92,7 @@ type
     procedure InsertShippingPlanCarton;
     procedure mnuDeleteClick(Sender: TObject);
     procedure mnuDeleteAllClick(Sender: TObject);
+    procedure DeleteDate1Click(Sender: TObject);
 //    procedure Query1AfterScroll(DataSet: TDataSet);
   private
     { Private declarations }
@@ -992,9 +994,15 @@ end;
 procedure TWeeklyShippingPlan.PopupMenu1Popup(Sender: TObject);
 begin
   if (Query2.Active) AND (Query2.FieldByName('Container').AsString <> '') then
-    Delete1.Visible := true
+  begin
+    Delete1.Visible := true;
+    DeleteDate1.Visible := true
+  end
   else
+  begin
     Delete1.Visible := false;
+    DeleteDate1.Visible := false;
+  end;
 end;
 
 //xu hinh anh .
@@ -1147,6 +1155,41 @@ begin
 
     Query1.Close;
     Query1.Open;
+    Query2.Close;
+    Query2.Open;
+
+    ShowMessage('Execution success.');
+  end;
+end;
+
+procedure TWeeklyShippingPlan.DeleteDate1Click(Sender: TObject);
+var
+  DeleteDate: string;
+begin
+  DeleteDate := FormatDateTime('yyyy-mm-dd',
+    Query2.FieldByName('Date').AsDateTime);
+
+  if MessageDlg('Are you sure you want to delete all containers for ' +
+    DeleteDate + '?', mtConfirmation, [mbYes, mbNo], 0) = mrYes then
+  begin
+    with QDelCarton do
+    begin
+      Close;
+      SQL.Clear;
+      SQL.Add('DELETE FROM ShippingPlanCarton');
+      SQL.Add('WHERE CAST(Date AS date) = ''' + DeleteDate + '''');
+      ExecSQL;
+    end;
+
+    with QTemp do
+    begin
+      Close;
+      SQL.Clear;
+      SQL.Add('DELETE FROM ShippingPlan');
+      SQL.Add('WHERE CAST(Date AS date) = ''' + DeleteDate + '''');
+      ExecSQL;
+    end;
+
     Query2.Close;
     Query2.Open;
 

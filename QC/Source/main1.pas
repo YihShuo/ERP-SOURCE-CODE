@@ -159,6 +159,9 @@ type
     SN9C: TMenuItem;
     SN9D: TMenuItem;
     SN9E: TMenuItem;
+    SN9E1: TMenuItem;
+    SN9E2: TMenuItem;
+    SN9E3: TMenuItem;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure SN11Click(Sender: TObject);
@@ -272,7 +275,9 @@ type
     procedure SN9BClick(Sender: TObject);
     procedure SN9CClick(Sender: TObject);
     procedure SN9DClick(Sender: TObject);
-    procedure SN9EClick(Sender: TObject);
+    procedure SN9E1Click(Sender: TObject);
+    procedure SN9E2Click(Sender: TObject);
+    procedure SN9E3Click(Sender: TObject);
 
   private
     MKID: string;
@@ -1290,9 +1295,21 @@ begin
   ShowFm(Pointer(NGMaterial), TNGMaterial, TMenuItem(Sender).Name);
 end;
 
-procedure Tmain.SN9EClick(Sender: TObject);
+procedure Tmain.SN9E1Click(Sender: TObject);
 begin
-  ShowFm(Pointer(MaterialDeduction), TMaterialDeduction, TMenuItem(Sender).Name);
+ ShowFm(Pointer(MaterialDeduction), TMaterialDeduction, TMenuItem(Sender).Name);
+ MaterialDeduction.MenuCode.Text := 'N9E1'
+end;
+
+procedure Tmain.SN9E2Click(Sender: TObject);
+begin
+ ShowFm(Pointer(MaterialDeduction), TMaterialDeduction, TMenuItem(Sender).Name);
+ MaterialDeduction.MenuCode.Text := 'N9E2'
+end;
+procedure Tmain.SN9E3Click(Sender: TObject);
+begin
+ ShowFm(Pointer(MaterialDeduction), TMaterialDeduction, TMenuItem(Sender).Name);
+ MaterialDeduction.MenuCode.Text := 'N9E3'
 end;
 
 end.

@@ -53,8 +53,6 @@ type
     Query1SKU: TStringField;
     Query1RDate: TDateTimeField;
     Query1InspecDate: TDateTimeField;
-    Query1Qty: TStringField;
-    Query1DQty: TStringField;
     Query1Issue: TStringField;
     Query1DefectName: TStringField;
     Query1Brand: TStringField;
@@ -70,6 +68,10 @@ type
     Query1RackLocation: TStringField;
     Label5: TLabel;
     edtCLBH: TEdit;
+    Query1Qty: TCurrencyField;
+    Query1DQty: TCurrencyField;
+    edtRack: TEdit;
+    Label7: TLabel;
     procedure Button1Click(Sender: TObject);
     procedure BB1Click(Sender: TObject);
     procedure BB2Click(Sender: TObject);
@@ -209,6 +211,8 @@ begin
       SQL.Add('and Issue like ''%'+edtIssue.Text+'%'' ');
     if edtCLBH.Text <> '' then
       SQL.Add('and CLBH like '''+edtCLBH.Text+'%'' ');
+    if edtRack.Text <> '' then
+      SQL.Add('and RackLocation = '''+edtRack.Text+''' ');
     SQL.Add('order by RIGHT(''000'' + RackLocation, 3)');
 
     Active := true;

@@ -192,7 +192,7 @@ begin
   Application.Title := 'Lai Yih ERP system----QC';
   Application.CreateForm(TDM2, DM2);
   Application.CreateForm(Tmain, main);
-  Application.CreateForm(TMaterialDeduction, MaterialDeduction);
+  //Application.CreateForm(TMaterialDeduction, MaterialDeduction);
   //Application.CreateForm(TN721Detail1, N721Detail1);
   //Application.CreateForm(TChemicalStockIn, ChemicalStockIn);
   //Application.CreateForm(TChemicalSearchs, ChemicalSearchs);
